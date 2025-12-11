@@ -59,18 +59,38 @@ type Bot struct {
 
 ### 3. Validation Tool
 
-Run the validation tool to check API synchronization:
+The validation tool automatically checks API synchronization by:
+- Comparing resource field definitions against the API schema
+- Validating field types (string, int64, float64, bool, etc.)
+- Detecting missing required and optional fields
+- Checking JSON tag correctness
+- Attempting to fetch the latest schema from the API endpoint
+- Using an embedded schema as a fallback when the API is unavailable
+
+Run the validation tool:
 
 ```bash
+# Run validation
 go run tools/validate-api-sync.go
+
+# Or use the Makefile
+make validate-api
+
+# Export the embedded schema for reference
+go run tools/validate-api-sync.go -export-schema schema.json
 ```
+
+The validation tool provides detailed output:
+- ✓ Successfully validated resources
+- ✗ Validation errors (missing required fields, type mismatches)
+- ⚠ Warnings (missing optional fields, extra fields)
 
 ### 4. Build-Time Checks
 
 The provider includes build-time validation:
 
 ```bash
-make check
+make check  # Runs fmt, lint, validate-api, and test
 ```
 
 ## Excluded Resources
@@ -97,7 +117,8 @@ When the ChatBotKit API adds new resources:
 5. **Register in provider** (`internal/provider/provider.go`)
 6. **Add tests** for the new resource
 7. **Update documentation** and examples
-8. **Update validation tool** (`tools/validate-api-sync.go`)
+8. **Update embedded schema** in `tools/validate-api-sync.go` (function `getEmbeddedAPISchema()`)
+9. **Run validation** to ensure the new resource is correctly synchronized
 
 ## Handling API Changes
 
