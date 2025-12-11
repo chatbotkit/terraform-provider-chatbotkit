@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/chatbotkit/terraform-provider/internal/client"
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 const (
@@ -41,9 +42,10 @@ type ResourceSchema struct {
 
 // fetchAPISchema attempts to fetch the API schema from the endpoint
 func fetchAPISchema() (map[string]ResourceSchema, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	// Fetch the spec as JSON first to work around missing $ref issues
 	req, err := http.NewRequestWithContext(ctx, "GET", APISpecURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -64,16 +66,19 @@ func fetchAPISchema() (map[string]ResourceSchema, error) {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	// Try to parse the response as JSON
-	var specData map[string]interface{}
-	if err := json.Unmarshal(body, &specData); err != nil {
-		return nil, fmt.Errorf("failed to parse API spec: %w", err)
+	// Parse with a loader that's more lenient
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+	
+	doc, err := loader.LoadFromData(body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load OpenAPI spec: %w", err)
 	}
 
+	fmt.Printf("Successfully loaded OpenAPI spec\n")
+
 	// Parse the OpenAPI spec and extract resource schemas
-	// This is a simplified parser - a full implementation would need to handle
-	// OpenAPI 3.0 spec format properly
-	return parseOpenAPISpec(specData)
+	return parseOpenAPISpec(doc)
 }
 
 // isIntegrationType checks if a schema name represents an integration type
@@ -84,96 +89,69 @@ func isIntegrationType(name string) bool {
 }
 
 // parseOpenAPISpec parses an OpenAPI specification and extracts resource schemas
-func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, error) {
+func parseOpenAPISpec(doc *openapi3.T) (map[string]ResourceSchema, error) {
 	schemas := make(map[string]ResourceSchema)
 	
-	// Check for OpenAPI 3.0 components/schemas structure
-	components, ok := spec["components"].(map[string]interface{})
-	if !ok {
-		return schemas, fmt.Errorf("no components found in OpenAPI spec")
+	if doc.Components == nil || doc.Components.Schemas == nil {
+		return schemas, fmt.Errorf("no schemas found in OpenAPI spec components")
 	}
 	
-	schemasObj, ok := components["schemas"].(map[string]interface{})
-	if !ok {
-		return schemas, fmt.Errorf("no schemas found in components")
-	}
+	fmt.Printf("Found %d schemas in OpenAPI spec\n", len(doc.Components.Schemas))
 	
 	// Parse each schema for our resources
 	// Note: The API may have multiple integration types as separate schemas
 	resourceNames := []string{"Bot", "Dataset", "Skillset", "File", "Secret"}
 	
 	// Add all integration types found in the API spec
-	for schemaName := range schemasObj {
+	for schemaName := range doc.Components.Schemas {
 		// Check if this is an integration type (e.g., SlackIntegration, DiscordIntegration, etc.)
 		if isIntegrationType(schemaName) {
 			resourceNames = append(resourceNames, schemaName)
 		}
 	}
 	
+	fmt.Printf("Looking for %d resource schemas: %v\n", len(resourceNames), resourceNames)
+	
 	for _, resourceName := range resourceNames {
-		schemaData, ok := schemasObj[resourceName].(map[string]interface{})
+		schemaRef, ok := doc.Components.Schemas[resourceName]
 		if !ok {
+			fmt.Printf("  Schema '%s' not found in spec\n", resourceName)
+			continue
+		}
+		
+		schema := schemaRef.Value
+		if schema == nil {
+			fmt.Printf("  Schema '%s' has nil value\n", resourceName)
 			continue
 		}
 		
 		// Extract properties
-		properties, ok := schemaData["properties"].(map[string]interface{})
-		if !ok {
+		if schema.Properties == nil {
+			fmt.Printf("  Schema '%s' has no properties\n", resourceName)
 			continue
 		}
 		
-		// Get required fields list
-		requiredList := []string{}
-		if required, ok := schemaData["required"].([]interface{}); ok {
-			for _, r := range required {
-				if reqStr, ok := r.(string); ok {
-					requiredList = append(requiredList, reqStr)
-				}
-			}
-		}
+		// Get required fields set
 		requiredMap := make(map[string]bool)
-		for _, r := range requiredList {
+		for _, r := range schema.Required {
 			requiredMap[r] = true
 		}
 		
 		// Build field definitions
 		var fields []FieldDefinition
-		for propName, propData := range properties {
-			propMap, ok := propData.(map[string]interface{})
-			if !ok {
+		for propName, propRef := range schema.Properties {
+			if propRef.Value == nil {
 				continue
 			}
 			
-			fieldType := "string" // default
-			if propType, ok := propMap["type"].(string); ok {
-				switch propType {
-				case "number":
-					if format, ok := propMap["format"].(string); ok && format == "float" {
-						fieldType = "float64"
-					} else {
-						fieldType = "float64"
-					}
-				case "integer":
-					fieldType = "int64"
-				case "boolean":
-					fieldType = "bool"
-				case "object":
-					fieldType = "map[string]interface{}"
-				default:
-					fieldType = propType
-				}
-			}
-			
-			isReadOnly := false
-			if readOnly, ok := propMap["readOnly"].(bool); ok {
-				isReadOnly = readOnly
-			}
+			prop := propRef.Value
+			fieldType := mapOpenAPITypeToGo(prop)
 			
 			fields = append(fields, FieldDefinition{
 				Name:     propName,
 				Type:     fieldType,
 				Required: requiredMap[propName],
-				ReadOnly: isReadOnly,
+				ReadOnly: prop.ReadOnly,
 			})
 		}
 		
@@ -181,9 +159,45 @@ func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, e
 			Name:   strings.ToLower(resourceName),
 			Fields: fields,
 		}
+		
+		fmt.Printf("  ✓ Parsed schema '%s' with %d fields\n", resourceName, len(fields))
 	}
 	
 	return schemas, nil
+}
+
+// mapOpenAPITypeToGo maps OpenAPI types to Go types
+func mapOpenAPITypeToGo(schema *openapi3.Schema) string {
+	// Type is *openapi3.Types which is a slice of strings
+	if schema.Type == nil || len(*schema.Type) == 0 {
+		return "interface{}"
+	}
+	
+	// Get the first type (OpenAPI 3.1 allows multiple types)
+	typeStr := (*schema.Type)[0]
+	
+	switch typeStr {
+	case "number":
+		if schema.Format == "float" || schema.Format == "double" {
+			return "float64"
+		}
+		return "float64"
+	case "integer":
+		if schema.Format == "int32" {
+			return "int32"
+		}
+		return "int64"
+	case "boolean":
+		return "bool"
+	case "object":
+		return "map[string]interface{}"
+	case "array":
+		return "[]interface{}"
+	case "string":
+		return "string"
+	default:
+		return "interface{}"
+	}
 }
 
 // getClientModel returns the reflect.Type for a client model by resource name
