@@ -32,3 +32,21 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Provider binary
+terraform-provider-chatbotkit
+/dist/
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test coverage
+*.out
+coverage.txt
+
+# Go module cache
+go.sum
