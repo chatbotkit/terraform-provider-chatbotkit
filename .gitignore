@@ -47,6 +47,3 @@ terraform-provider-chatbotkit
 # Go test coverage
 *.out
 coverage.txt
-
-# Go module cache
-go.sum
