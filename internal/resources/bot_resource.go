@@ -126,7 +126,7 @@ func (r *botResource) Configure(_ context.Context, req resource.ConfigureRequest
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *client.Client, got: %T.", req.ProviderData),
 		)
 		return
 	}
