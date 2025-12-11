@@ -162,11 +162,94 @@ func fetchAPISchema() (map[string]ResourceSchema, error) {
 
 // parseOpenAPISpec parses an OpenAPI specification and extracts resource schemas
 func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, error) {
-	// This is a simplified implementation
-	// A full implementation would properly parse OpenAPI 3.0 spec
 	schemas := make(map[string]ResourceSchema)
 	
-	// For now, return empty as we'll use the embedded schema as fallback
+	// Check for OpenAPI 3.0 components/schemas structure
+	components, ok := spec["components"].(map[string]interface{})
+	if !ok {
+		return schemas, fmt.Errorf("no components found in OpenAPI spec")
+	}
+	
+	schemasObj, ok := components["schemas"].(map[string]interface{})
+	if !ok {
+		return schemas, fmt.Errorf("no schemas found in components")
+	}
+	
+	// Parse each schema for our resources
+	resourceNames := []string{"Bot", "Dataset", "Skillset", "File", "Integration", "Secret"}
+	for _, resourceName := range resourceNames {
+		schemaData, ok := schemasObj[resourceName].(map[string]interface{})
+		if !ok {
+			continue
+		}
+		
+		// Extract properties
+		properties, ok := schemaData["properties"].(map[string]interface{})
+		if !ok {
+			continue
+		}
+		
+		// Get required fields list
+		requiredList := []string{}
+		if required, ok := schemaData["required"].([]interface{}); ok {
+			for _, r := range required {
+				if reqStr, ok := r.(string); ok {
+					requiredList = append(requiredList, reqStr)
+				}
+			}
+		}
+		requiredMap := make(map[string]bool)
+		for _, r := range requiredList {
+			requiredMap[r] = true
+		}
+		
+		// Build field definitions
+		var fields []FieldDefinition
+		for propName, propData := range properties {
+			propMap, ok := propData.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			
+			fieldType := "string" // default
+			if propType, ok := propMap["type"].(string); ok {
+				switch propType {
+				case "number":
+					if format, ok := propMap["format"].(string); ok && format == "float" {
+						fieldType = "float64"
+					} else {
+						fieldType = "float64"
+					}
+				case "integer":
+					fieldType = "int64"
+				case "boolean":
+					fieldType = "bool"
+				case "object":
+					fieldType = "map[string]interface{}"
+				default:
+					fieldType = propType
+				}
+			}
+			
+			isReadOnly := false
+			if readOnly, ok := propMap["readOnly"].(bool); ok {
+				isReadOnly = readOnly
+			}
+			
+			fields = append(fields, FieldDefinition{
+				Name:     propName,
+				Type:     fieldType,
+				Required: requiredMap[propName],
+				ReadOnly: isReadOnly,
+			})
+		}
+		
+		schemas[strings.ToLower(resourceName)] = ResourceSchema{
+			Name:   strings.ToLower(resourceName),
+			Fields: fields,
+		}
+	}
+	
 	return schemas, nil
 }
 
@@ -252,11 +335,12 @@ func normalizeTypeName(typeName string) string {
 		return "string"
 	}
 	
-	// Handle map types
-	if strings.HasPrefix(typeName, "map[") {
+	// Handle map types - only normalize generic interface maps
+	if typeName == "map[string]interface{}" || strings.HasPrefix(typeName, "map[string]interface") {
 		return "map[string]interface{}"
 	}
 	
+	// Return other map types unchanged to catch specific map type mismatches
 	return typeName
 }
 
@@ -369,7 +453,8 @@ func ValidateAPISync() error {
 	
 	// Save the schema to a file for reference if fetched from API
 	if fetchedFromAPI {
-		schemaFile := "/tmp/chatbotkit-api-schema.json"
+		// Use os.TempDir() for cross-platform compatibility
+		schemaFile := fmt.Sprintf("%s/chatbotkit-api-schema-%d.json", os.TempDir(), time.Now().Unix())
 		if err := saveSchemaToFile(apiSchemas, schemaFile); err != nil {
 			fmt.Printf("⚠ Failed to save schema to file: %v\n", err)
 		} else {
