@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/chatbotkit/terraform-provider/internal/client"
-	"github.com/chatbotkit/terraform-provider/internal/resources"
 	"github.com/chatbotkit/terraform-provider/internal/datasources"
+	"github.com/chatbotkit/terraform-provider/internal/resources"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"

@@ -8,20 +8,20 @@ import (
 
 // Bot represents a ChatBotKit bot
 type Bot struct {
-	ID              string                 `json:"id,omitempty"`
-	Name            string                 `json:"name"`
-	Description     string                 `json:"description,omitempty"`
-	Model           string                 `json:"model,omitempty"`
-	DatasetID       string                 `json:"datasetId,omitempty"`
-	SkillsetID      string                 `json:"skillsetId,omitempty"`
-	Backstory       string                 `json:"backstory,omitempty"`
-	Temperature     float64                `json:"temperature,omitempty"`
-	Instructions    string                 `json:"instructions,omitempty"`
-	Moderation      bool                   `json:"moderation,omitempty"`
-	Privacy         bool                   `json:"privacy,omitempty"`
-	Meta            map[string]interface{} `json:"meta,omitempty"`
-	CreatedAt       int64                  `json:"createdAt,omitempty"`
-	UpdatedAt       int64                  `json:"updatedAt,omitempty"`
+	ID           string                 `json:"id,omitempty"`
+	Name         string                 `json:"name"`
+	Description  string                 `json:"description,omitempty"`
+	Model        string                 `json:"model,omitempty"`
+	DatasetID    string                 `json:"datasetId,omitempty"`
+	SkillsetID   string                 `json:"skillsetId,omitempty"`
+	Backstory    string                 `json:"backstory,omitempty"`
+	Temperature  float64                `json:"temperature,omitempty"`
+	Instructions string                 `json:"instructions,omitempty"`
+	Moderation   bool                   `json:"moderation,omitempty"`
+	Privacy      bool                   `json:"privacy,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	CreatedAt    int64                  `json:"createdAt,omitempty"`
+	UpdatedAt    int64                  `json:"updatedAt,omitempty"`
 }
 
 // BotListResponse represents the response from listing bots
