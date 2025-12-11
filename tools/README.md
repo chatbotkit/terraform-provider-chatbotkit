@@ -11,13 +11,10 @@ A validation tool that ensures the provider's resource definitions are synchroni
 - **Automatic Schema Validation**: Compares provider resource fields against the API schema
 - **Field Type Checking**: Validates that field types match between the provider and API
 - **Missing Field Detection**: Identifies required and optional fields that may be missing
-- **API Endpoint Support**: Can fetch the latest schema from the ChatBotKit API endpoint
-- **Embedded Schema Fallback**: Uses an embedded schema when the API endpoint is unavailable
-- **Schema Export**: Export the embedded schema to a JSON file for reference
+- **Dynamic Schema Fetching**: Fetches the latest schema directly from the ChatBotKit API endpoint
+- **Multiple Integration Support**: Automatically detects and validates all integration types from the API spec
 
 ### Usage
-
-#### Run Validation
 
 Run the validation tool to check all resources:
 
@@ -31,13 +28,7 @@ Or use the Makefile target:
 make validate-api
 ```
 
-#### Export Schema
-
-Export the embedded API schema to a JSON file:
-
-```bash
-go run tools/validate-api-sync.go -export-schema schema.json
-```
+The tool will fetch the current API schema and save it to a temporary file for reference.
 
 ### Output
 
@@ -53,8 +44,9 @@ Example output:
 API Sync Validation
 ===================
 
-Attempting to fetch API schema from: https://api.chatbotkit.com/v1/spec
+Fetching API schema from: https://api.chatbotkit.com/v1/spec
 ✓ Successfully fetched API schema from endpoint
+✓ Saved API schema to: /tmp/chatbotkit-api-schema-1234567890.json
 
 Validating resource: bot
   ✓ Resource 'bot' is correctly synchronized
@@ -113,25 +105,18 @@ Or run it individually:
 make validate-api
 ```
 
-### Updating the Embedded Schema
-
-When the ChatBotKit API changes:
-
-1. Update the embedded schema in `getEmbeddedAPISchema()` function
-2. Run validation to ensure all resources are synchronized
-3. Update client models in `internal/client/` if needed
-4. Update resource definitions in `internal/resources/` if needed
-
 ### Resources Validated
 
-The tool validates the following resources:
+The tool automatically validates all resources defined in the ChatBotKit API specification:
 
 - **bot**: Bot resource with AI model configuration
 - **dataset**: Dataset resource for knowledge bases
 - **skillset**: Skillset resource for custom abilities
 - **file**: File resource for document management
-- **integration**: Integration resource for connecting bots to platforms
+- **integration types**: All integration resources (Slack, Discord, WhatsApp, etc.)
 - **secret**: Secret resource for sensitive data management
+
+When the ChatBotKit API changes, simply run the validation tool to ensure all resources remain synchronized.
 
 ### Exit Codes
 
@@ -147,9 +132,9 @@ The tool uses:
 
 ### Troubleshooting
 
-**Issue**: "Could not fetch API schema from endpoint"
+**Issue**: "Failed to fetch API schema"
 
-**Solution**: This is expected if the API endpoint is unavailable. The tool will automatically fall back to the embedded schema.
+**Solution**: Ensure you have internet connectivity and the ChatBotKit API endpoint is accessible. The validation requires a live connection to the API.
 
 **Issue**: "Missing required field"
 

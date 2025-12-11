@@ -8,7 +8,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -38,90 +37,7 @@ type ResourceSchema struct {
 	Fields []FieldDefinition
 }
 
-// getEmbeddedAPISchema returns the embedded API schema based on current implementation
-// This serves as a fallback when the API spec endpoint is not accessible
-func getEmbeddedAPISchema() map[string]ResourceSchema {
-	return map[string]ResourceSchema{
-		"bot": {
-			Name: "bot",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "description", Type: "string", Required: false, ReadOnly: false},
-				{Name: "model", Type: "string", Required: false, ReadOnly: false},
-				{Name: "datasetId", Type: "string", Required: false, ReadOnly: false},
-				{Name: "skillsetId", Type: "string", Required: false, ReadOnly: false},
-				{Name: "backstory", Type: "string", Required: false, ReadOnly: false},
-				{Name: "temperature", Type: "float64", Required: false, ReadOnly: false},
-				{Name: "instructions", Type: "string", Required: false, ReadOnly: false},
-				{Name: "moderation", Type: "bool", Required: false, ReadOnly: false},
-				{Name: "privacy", Type: "bool", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-		"dataset": {
-			Name: "dataset",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "description", Type: "string", Required: false, ReadOnly: false},
-				{Name: "type", Type: "string", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-		"skillset": {
-			Name: "skillset",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "description", Type: "string", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-		"file": {
-			Name: "file",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "type", Type: "string", Required: false, ReadOnly: false},
-				{Name: "source", Type: "string", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-		"integration": {
-			Name: "integration",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "description", Type: "string", Required: false, ReadOnly: false},
-				{Name: "type", Type: "string", Required: false, ReadOnly: false},
-				{Name: "botId", Type: "string", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-		"secret": {
-			Name: "secret",
-			Fields: []FieldDefinition{
-				{Name: "id", Type: "string", Required: false, ReadOnly: true},
-				{Name: "name", Type: "string", Required: true, ReadOnly: false},
-				{Name: "value", Type: "string", Required: false, ReadOnly: false},
-				{Name: "meta", Type: "map[string]interface{}", Required: false, ReadOnly: false},
-				{Name: "createdAt", Type: "int64", Required: false, ReadOnly: true},
-				{Name: "updatedAt", Type: "int64", Required: false, ReadOnly: true},
-			},
-		},
-	}
-}
+
 
 // fetchAPISchema attempts to fetch the API schema from the endpoint
 func fetchAPISchema() (map[string]ResourceSchema, error) {
@@ -176,7 +92,17 @@ func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, e
 	}
 	
 	// Parse each schema for our resources
-	resourceNames := []string{"Bot", "Dataset", "Skillset", "File", "Integration", "Secret"}
+	// Note: The API may have multiple integration types as separate schemas
+	resourceNames := []string{"Bot", "Dataset", "Skillset", "File", "Secret"}
+	
+	// Add all integration types found in the API spec
+	for schemaName := range schemasObj {
+		// Check if this is an integration type (e.g., SlackIntegration, DiscordIntegration, etc.)
+		if strings.Contains(strings.ToLower(schemaName), "integration") {
+			resourceNames = append(resourceNames, schemaName)
+		}
+	}
+	
 	for _, resourceName := range resourceNames {
 		schemaData, ok := schemasObj[resourceName].(map[string]interface{})
 		if !ok {
@@ -264,11 +190,13 @@ func getClientModel(resourceName string) (reflect.Type, error) {
 		return reflect.TypeOf(client.Skillset{}), nil
 	case "file":
 		return reflect.TypeOf(client.File{}), nil
-	case "integration":
-		return reflect.TypeOf(client.Integration{}), nil
 	case "secret":
 		return reflect.TypeOf(client.Secret{}), nil
 	default:
+		// Handle integration types - all integration types map to the same Integration struct
+		if strings.Contains(strings.ToLower(resourceName), "integration") {
+			return reflect.TypeOf(client.Integration{}), nil
+		}
 		return nil, fmt.Errorf("unknown resource: %s", resourceName)
 	}
 }
@@ -432,34 +360,25 @@ func ValidateAPISync() error {
 	fmt.Println("===================")
 	fmt.Println()
 	
-	// Try to fetch the API schema from the endpoint
-	fmt.Println("Attempting to fetch API schema from:", APISpecURL)
+	// Fetch the API schema from the endpoint
+	fmt.Println("Fetching API schema from:", APISpecURL)
 	apiSchemas, err := fetchAPISchema()
-	fetchedFromAPI := false
 	if err != nil {
-		fmt.Printf("⚠ Could not fetch API schema from endpoint: %v\n", err)
-		fmt.Println("⚠ Using embedded schema as fallback")
-		apiSchemas = getEmbeddedAPISchema()
-	} else {
-		fmt.Println("✓ Successfully fetched API schema from endpoint")
-		fetchedFromAPI = true
-		// If we got an empty schema from the API, use embedded as fallback
-		if len(apiSchemas) == 0 {
-			fmt.Println("⚠ API returned empty schema, using embedded schema as fallback")
-			apiSchemas = getEmbeddedAPISchema()
-			fetchedFromAPI = false
-		}
+		return fmt.Errorf("failed to fetch API schema: %w", err)
 	}
 	
-	// Save the schema to a file for reference if fetched from API
-	if fetchedFromAPI {
-		// Use os.TempDir() for cross-platform compatibility
-		schemaFile := fmt.Sprintf("%s/chatbotkit-api-schema-%d.json", os.TempDir(), time.Now().Unix())
-		if err := saveSchemaToFile(apiSchemas, schemaFile); err != nil {
-			fmt.Printf("⚠ Failed to save schema to file: %v\n", err)
-		} else {
-			fmt.Printf("✓ Saved API schema to: %s\n", schemaFile)
-		}
+	if len(apiSchemas) == 0 {
+		return fmt.Errorf("API returned empty schema")
+	}
+	
+	fmt.Println("✓ Successfully fetched API schema from endpoint")
+	
+	// Save the schema to a file for reference
+	schemaFile := fmt.Sprintf("%s/chatbotkit-api-schema-%d.json", os.TempDir(), time.Now().Unix())
+	if err := saveSchemaToFile(apiSchemas, schemaFile); err != nil {
+		fmt.Printf("⚠ Failed to save schema to file: %v\n", err)
+	} else {
+		fmt.Printf("✓ Saved API schema to: %s\n", schemaFile)
 	}
 	
 	fmt.Println()
@@ -520,23 +439,6 @@ func ValidateAPISync() error {
 }
 
 func main() {
-	// Parse command line flags
-	exportSchema := flag.String("export-schema", "", "Export embedded schema to specified file (JSON format)")
-	flag.Parse()
-	
-	// Handle schema export if requested
-	if *exportSchema != "" {
-		fmt.Println("Exporting embedded API schema...")
-		schema := getEmbeddedAPISchema()
-		if err := saveSchemaToFile(schema, *exportSchema); err != nil {
-			fmt.Fprintf(os.Stderr, "✗ Failed to export schema: %v\n", err)
-			os.Exit(1)
-		}
-		fmt.Printf("✓ Schema exported to: %s\n", *exportSchema)
-		return
-	}
-	
-	// Run validation
 	if err := ValidateAPISync(); err != nil {
 		fmt.Fprintf(os.Stderr, "\n✗ API sync validation failed: %v\n", err)
 		os.Exit(1)
