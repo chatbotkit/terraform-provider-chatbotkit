@@ -76,6 +76,13 @@ func fetchAPISchema() (map[string]ResourceSchema, error) {
 	return parseOpenAPISpec(specData)
 }
 
+// isIntegrationType checks if a schema name represents an integration type
+func isIntegrationType(name string) bool {
+	lowerName := strings.ToLower(name)
+	// Check for integration suffix or exact match
+	return strings.HasSuffix(lowerName, "integration") || lowerName == "integration"
+}
+
 // parseOpenAPISpec parses an OpenAPI specification and extracts resource schemas
 func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, error) {
 	schemas := make(map[string]ResourceSchema)
@@ -98,7 +105,7 @@ func parseOpenAPISpec(spec map[string]interface{}) (map[string]ResourceSchema, e
 	// Add all integration types found in the API spec
 	for schemaName := range schemasObj {
 		// Check if this is an integration type (e.g., SlackIntegration, DiscordIntegration, etc.)
-		if strings.Contains(strings.ToLower(schemaName), "integration") {
+		if isIntegrationType(schemaName) {
 			resourceNames = append(resourceNames, schemaName)
 		}
 	}
@@ -194,7 +201,7 @@ func getClientModel(resourceName string) (reflect.Type, error) {
 		return reflect.TypeOf(client.Secret{}), nil
 	default:
 		// Handle integration types - all integration types map to the same Integration struct
-		if strings.Contains(strings.ToLower(resourceName), "integration") {
+		if isIntegrationType(resourceName) {
 			return reflect.TypeOf(client.Integration{}), nil
 		}
 		return nil, fmt.Errorf("unknown resource: %s", resourceName)
