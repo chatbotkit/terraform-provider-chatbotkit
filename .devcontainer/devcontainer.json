@@ -1,0 +1,33 @@
+{
+    "name": "ChatBotKit Terraform Provider",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "go.useLanguageServer": true,
+                "go.lintOnSave": "workspace",
+                "go.vetOnSave": "workspace",
+                "go.testOnSave": false,
+                "editor.formatOnSave": true,
+                "[go]": {
+                    "editor.defaultFormatter": "golang.go"
+                }
+            },
+            "extensions": [
+                "golang.go"
+            ]
+        }
+    },
+    "postCreateCommand": "go mod download",
+    "runArgs": [
+        "--cap-add=SYS_ADMIN",
+        "--device=/dev/fuse",
+        "--security-opt=apparmor:unconfined"
+    ],
+    "remoteUser": "vscode"
+}
