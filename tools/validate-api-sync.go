@@ -8,6 +8,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -189,9 +190,17 @@ func getClientModel(resourceName string) (reflect.Type, error) {
 	}
 }
 
+// StructFieldInfo contains information about a struct field
+type StructFieldInfo struct {
+	Name     string
+	Type     string
+	JSONName string
+	Omitempty bool
+}
+
 // extractFieldsFromStruct extracts field information from a Go struct using reflection
-func extractFieldsFromStruct(t reflect.Type) map[string]string {
-	fields := make(map[string]string)
+func extractFieldsFromStruct(t reflect.Type) map[string]StructFieldInfo {
+	fields := make(map[string]StructFieldInfo)
 	
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
@@ -200,29 +209,67 @@ func extractFieldsFromStruct(t reflect.Type) map[string]string {
 			continue
 		}
 		
-		// Parse the JSON tag to get the field name
-		jsonName := strings.Split(jsonTag, ",")[0]
+		// Parse the JSON tag to get the field name and options
+		parts := strings.Split(jsonTag, ",")
+		jsonName := parts[0]
 		if jsonName == "" {
 			jsonName = field.Name
 		}
 		
+		omitempty := false
+		for _, part := range parts[1:] {
+			if part == "omitempty" {
+				omitempty = true
+				break
+			}
+		}
+		
 		// Get the Go type
 		fieldType := field.Type.String()
-		fields[jsonName] = fieldType
+		
+		fields[jsonName] = StructFieldInfo{
+			Name:      field.Name,
+			Type:      fieldType,
+			JSONName:  jsonName,
+			Omitempty: omitempty,
+		}
 	}
 	
 	return fields
 }
 
+// normalizeTypeName normalizes type names for comparison
+func normalizeTypeName(typeName string) string {
+	// Handle common type variations
+	switch typeName {
+	case "float64", "float32", "float":
+		return "float64"
+	case "int", "int64", "int32":
+		return "int64"
+	case "bool", "boolean":
+		return "bool"
+	case "string":
+		return "string"
+	}
+	
+	// Handle map types
+	if strings.HasPrefix(typeName, "map[") {
+		return "map[string]interface{}"
+	}
+	
+	return typeName
+}
+
 // validateResource validates a single resource against the API schema
-func validateResource(resourceName string, schema ResourceSchema) (bool, []string) {
+func validateResource(resourceName string, schema ResourceSchema) (bool, []string, []string) {
 	errors := []string{}
+	warnings := []string{}
 	
 	// Get the client model for this resource
 	modelType, err := getClientModel(resourceName)
 	if err != nil {
 		errors = append(errors, fmt.Sprintf("Failed to get client model: %v", err))
-		return false, errors
+		return false, errors, warnings
 	}
 	
 	// Extract fields from the struct
@@ -236,21 +283,63 @@ func validateResource(resourceName string, schema ResourceSchema) (bool, []strin
 	
 	// Check if all schema fields are present in the struct
 	for fieldName, fieldDef := range expectedFields {
-		if _, exists := structFields[fieldName]; !exists {
-			errors = append(errors, fmt.Sprintf("  ✗ Missing field '%s' (type: %s, required: %v)", 
-				fieldName, fieldDef.Type, fieldDef.Required))
+		structField, exists := structFields[fieldName]
+		if !exists {
+			if fieldDef.Required {
+				errors = append(errors, fmt.Sprintf("  ✗ Missing required field '%s' (expected type: %s)", 
+					fieldName, fieldDef.Type))
+			} else {
+				warnings = append(warnings, fmt.Sprintf("  ⚠ Missing optional field '%s' (expected type: %s)", 
+					fieldName, fieldDef.Type))
+			}
+		} else {
+			// Field exists, check if type matches
+			expectedType := normalizeTypeName(fieldDef.Type)
+			actualType := normalizeTypeName(structField.Type)
+			
+			if expectedType != actualType {
+				errors = append(errors, fmt.Sprintf("  ✗ Field '%s' type mismatch: expected %s, got %s", 
+					fieldName, expectedType, actualType))
+			}
+			
+			// Check if read-only fields have omitempty tag
+			if fieldDef.ReadOnly && !structField.Omitempty {
+				warnings = append(warnings, fmt.Sprintf("  ⚠ Read-only field '%s' should have 'omitempty' tag", 
+					fieldName))
+			}
 		}
 	}
 	
 	// Check for extra fields in struct that aren't in schema
-	for fieldName := range structFields {
+	for fieldName, structField := range structFields {
 		if _, exists := expectedFields[fieldName]; !exists {
-			// This is informational, not necessarily an error
-			// Some fields might be intentionally added by the provider
+			warnings = append(warnings, fmt.Sprintf("  ⚠ Extra field '%s' (type: %s) not in API schema - may be provider-specific", 
+				fieldName, structField.Type))
 		}
 	}
 	
-	return len(errors) == 0, errors
+	return len(errors) == 0, errors, warnings
+}
+
+// saveSchemaToFile saves the schema to a JSON file for reference
+func saveSchemaToFile(schemas map[string]ResourceSchema, filename string) error {
+	data, err := json.MarshalIndent(schemas, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal schema: %w", err)
+	}
+	
+	file, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+	defer file.Close()
+	
+	_, err = file.Write(data)
+	if err != nil {
+		return fmt.Errorf("failed to write to file: %w", err)
+	}
+	
+	return nil
 }
 
 // ValidateAPISync ensures that all expected resources are implemented and match the API schema
@@ -262,16 +351,29 @@ func ValidateAPISync() error {
 	// Try to fetch the API schema from the endpoint
 	fmt.Println("Attempting to fetch API schema from:", APISpecURL)
 	apiSchemas, err := fetchAPISchema()
+	fetchedFromAPI := false
 	if err != nil {
 		fmt.Printf("⚠ Could not fetch API schema from endpoint: %v\n", err)
 		fmt.Println("⚠ Using embedded schema as fallback")
 		apiSchemas = getEmbeddedAPISchema()
 	} else {
 		fmt.Println("✓ Successfully fetched API schema from endpoint")
+		fetchedFromAPI = true
 		// If we got an empty schema from the API, use embedded as fallback
 		if len(apiSchemas) == 0 {
 			fmt.Println("⚠ API returned empty schema, using embedded schema as fallback")
 			apiSchemas = getEmbeddedAPISchema()
+			fetchedFromAPI = false
+		}
+	}
+	
+	// Save the schema to a file for reference if fetched from API
+	if fetchedFromAPI {
+		schemaFile := "/tmp/chatbotkit-api-schema.json"
+		if err := saveSchemaToFile(apiSchemas, schemaFile); err != nil {
+			fmt.Printf("⚠ Failed to save schema to file: %v\n", err)
+		} else {
+			fmt.Printf("✓ Saved API schema to: %s\n", schemaFile)
 		}
 	}
 	
@@ -280,18 +382,31 @@ func ValidateAPISync() error {
 	// Validate each resource
 	allValid := true
 	validationResults := make(map[string]bool)
+	totalWarnings := 0
 	
 	for resourceName, schema := range apiSchemas {
 		fmt.Printf("Validating resource: %s\n", resourceName)
-		isValid, errors := validateResource(resourceName, schema)
+		isValid, errors, warnings := validateResource(resourceName, schema)
 		validationResults[resourceName] = isValid
+		totalWarnings += len(warnings)
 		
-		if isValid {
+		if isValid && len(warnings) == 0 {
 			fmt.Printf("  ✓ Resource '%s' is correctly synchronized\n", resourceName)
+		} else if isValid && len(warnings) > 0 {
+			fmt.Printf("  ✓ Resource '%s' is synchronized (with warnings)\n", resourceName)
+			for _, warnMsg := range warnings {
+				fmt.Println(warnMsg)
+			}
 		} else {
 			fmt.Printf("  ✗ Resource '%s' has validation errors:\n", resourceName)
 			for _, errMsg := range errors {
 				fmt.Println(errMsg)
+			}
+			if len(warnings) > 0 {
+				fmt.Println("  Warnings:")
+				for _, warnMsg := range warnings {
+					fmt.Println(warnMsg)
+				}
 			}
 			allValid = false
 		}
@@ -308,6 +423,9 @@ func ValidateAPISync() error {
 		}
 	}
 	fmt.Printf("Resources validated: %d/%d\n", validCount, len(validationResults))
+	if totalWarnings > 0 {
+		fmt.Printf("Total warnings: %d\n", totalWarnings)
+	}
 	
 	if !allValid {
 		return fmt.Errorf("validation failed for one or more resources")
@@ -317,6 +435,23 @@ func ValidateAPISync() error {
 }
 
 func main() {
+	// Parse command line flags
+	exportSchema := flag.String("export-schema", "", "Export embedded schema to specified file (JSON format)")
+	flag.Parse()
+	
+	// Handle schema export if requested
+	if *exportSchema != "" {
+		fmt.Println("Exporting embedded API schema...")
+		schema := getEmbeddedAPISchema()
+		if err := saveSchemaToFile(schema, *exportSchema); err != nil {
+			fmt.Fprintf(os.Stderr, "✗ Failed to export schema: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("✓ Schema exported to: %s\n", *exportSchema)
+		return
+	}
+	
+	// Run validation
 	if err := ValidateAPISync(); err != nil {
 		fmt.Fprintf(os.Stderr, "\n✗ API sync validation failed: %v\n", err)
 		os.Exit(1)
