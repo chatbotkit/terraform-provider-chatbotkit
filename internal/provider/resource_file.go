@@ -109,21 +109,24 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	// TODO: Implement API call to create file
-	// Example:
-	// result, err := r.client.CreateFile(ctx, types.FileCreateRequest{
+	// Call the ChatBotKit GraphQL API to create file
+	result, err := r.client.CreateFile(ctx, CreateFileInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create file: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create file: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -140,14 +143,28 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 		return
 	}
 
-	// TODO: Implement API call to read file
-	// Example:
-	// result, err := r.client.GetFile(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read file
+	result, err := r.client.GetFile(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read file: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,20 +181,19 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	// TODO: Implement API call to update file
-	// Example:
-	// _, err := r.client.UpdateFile(ctx, data.ID.ValueString(), types.FileUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update file
+	_, err := r.client.UpdateFile(ctx, data.ID.ValueString(), UpdateFileInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update file: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update file: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,13 +210,12 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 		return
 	}
 
-	// TODO: Implement API call to delete file
-	// Example:
-	// _, err := r.client.DeleteFile(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete file
+	_, err := r.client.DeleteFile(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

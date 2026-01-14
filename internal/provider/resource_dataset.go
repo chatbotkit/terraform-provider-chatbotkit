@@ -154,30 +154,33 @@ func (r *DatasetResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	// TODO: Implement API call to create dataset
-	// Example:
-	// result, err := r.client.CreateDataset(ctx, types.DatasetCreateRequest{
+	// Call the ChatBotKit GraphQL API to create dataset
+	result, err := r.client.CreateDataset(ctx, CreateDatasetInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
-	//     Reranker: data.Reranker.ValueStringPointer(),
-	//     SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
-	//     SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
-	//     SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
-	//     Separators: data.Separators.ValueStringPointer(),
-	//     Store: data.Store.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create dataset: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
+		Name: data.Name.ValueStringPointer(),
+		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
+		Reranker: data.Reranker.ValueStringPointer(),
+		SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
+		SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
+		SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
+		Separators: data.Separators.ValueStringPointer(),
+		Store: data.Store.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create dataset: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,14 +197,55 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	// TODO: Implement API call to read dataset
-	// Example:
-	// result, err := r.client.GetDataset(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read dataset: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read dataset
+	result, err := r.client.GetDataset(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read dataset: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.MatchInstruction != nil {
+		data.MatchInstruction = types.StringPointerValue(result.MatchInstruction)
+	}
+	// Meta: TODO: set from response
+	if result.MismatchInstruction != nil {
+		data.MismatchInstruction = types.StringPointerValue(result.MismatchInstruction)
+	}
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.RecordMaxTokens != nil {
+		data.RecordMaxTokens = types.Int64PointerValue(result.RecordMaxTokens)
+	}
+	if result.Reranker != nil {
+		data.Reranker = types.StringPointerValue(result.Reranker)
+	}
+	if result.SearchMaxRecords != nil {
+		data.SearchMaxRecords = types.Int64PointerValue(result.SearchMaxRecords)
+	}
+	if result.SearchMaxTokens != nil {
+		data.SearchMaxTokens = types.Int64PointerValue(result.SearchMaxTokens)
+	}
+	if result.SearchMinScore != nil {
+		data.SearchMinScore = types.Float64PointerValue(result.SearchMinScore)
+	}
+	if result.Separators != nil {
+		data.Separators = types.StringPointerValue(result.Separators)
+	}
+	if result.Store != nil {
+		data.Store = types.StringPointerValue(result.Store)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -218,29 +262,28 @@ func (r *DatasetResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	// TODO: Implement API call to update dataset
-	// Example:
-	// _, err := r.client.UpdateDataset(ctx, data.ID.ValueString(), types.DatasetUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update dataset
+	_, err := r.client.UpdateDataset(ctx, data.ID.ValueString(), UpdateDatasetInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
-	//     Reranker: data.Reranker.ValueStringPointer(),
-	//     SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
-	//     SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
-	//     SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
-	//     Separators: data.Separators.ValueStringPointer(),
-	//     Store: data.Store.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update dataset: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
+		Name: data.Name.ValueStringPointer(),
+		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
+		Reranker: data.Reranker.ValueStringPointer(),
+		SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
+		SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
+		SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
+		Separators: data.Separators.ValueStringPointer(),
+		Store: data.Store.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update dataset: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -257,13 +300,12 @@ func (r *DatasetResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	// TODO: Implement API call to delete dataset
-	// Example:
-	// _, err := r.client.DeleteDataset(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete dataset: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete dataset
+	_, err := r.client.DeleteDataset(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete dataset: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

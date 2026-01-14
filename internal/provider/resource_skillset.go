@@ -109,21 +109,24 @@ func (r *SkillsetResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// TODO: Implement API call to create skillset
-	// Example:
-	// result, err := r.client.CreateSkillset(ctx, types.SkillsetCreateRequest{
+	// Call the ChatBotKit GraphQL API to create skillset
+	result, err := r.client.CreateSkillset(ctx, CreateSkillsetInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillset: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillset: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -140,14 +143,28 @@ func (r *SkillsetResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
-	// TODO: Implement API call to read skillset
-	// Example:
-	// result, err := r.client.GetSkillset(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillset: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read skillset
+	result, err := r.client.GetSkillset(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillset: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,20 +181,19 @@ func (r *SkillsetResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	// TODO: Implement API call to update skillset
-	// Example:
-	// _, err := r.client.UpdateSkillset(ctx, data.ID.ValueString(), types.SkillsetUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update skillset
+	_, err := r.client.UpdateSkillset(ctx, data.ID.ValueString(), UpdateSkillsetInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillset: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillset: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,13 +210,12 @@ func (r *SkillsetResource) Delete(ctx context.Context, req resource.DeleteReques
 		return
 	}
 
-	// TODO: Implement API call to delete skillset
-	// Example:
-	// _, err := r.client.DeleteSkillset(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillset: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete skillset
+	_, err := r.client.DeleteSkillset(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillset: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

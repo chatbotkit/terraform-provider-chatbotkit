@@ -104,20 +104,23 @@ func (r *BlueprintResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	// TODO: Implement API call to create blueprint
-	// Example:
-	// result, err := r.client.CreateBlueprint(ctx, types.BlueprintCreateRequest{
+	// Call the ChatBotKit GraphQL API to create blueprint
+	result, err := r.client.CreateBlueprint(ctx, CreateBlueprintInput{
 
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create blueprint: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create blueprint: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -134,14 +137,25 @@ func (r *BlueprintResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	// TODO: Implement API call to read blueprint
-	// Example:
-	// result, err := r.client.GetBlueprint(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read blueprint: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read blueprint
+	result, err := r.client.GetBlueprint(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read blueprint: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -158,19 +172,18 @@ func (r *BlueprintResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	// TODO: Implement API call to update blueprint
-	// Example:
-	// _, err := r.client.UpdateBlueprint(ctx, data.ID.ValueString(), types.BlueprintUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update blueprint
+	_, err := r.client.UpdateBlueprint(ctx, data.ID.ValueString(), UpdateBlueprintInput{
 
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update blueprint: %s", err))
-	//     return
-	// }
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update blueprint: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -187,13 +200,12 @@ func (r *BlueprintResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	// TODO: Implement API call to delete blueprint
-	// Example:
-	// _, err := r.client.DeleteBlueprint(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete blueprint: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete blueprint
+	_, err := r.client.DeleteBlueprint(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete blueprint: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

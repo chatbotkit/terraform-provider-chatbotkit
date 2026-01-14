@@ -129,25 +129,28 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	// TODO: Implement API call to create secret
-	// Example:
-	// result, err := r.client.CreateSecret(ctx, types.SecretCreateRequest{
+	// Call the ChatBotKit GraphQL API to create secret
+	result, err := r.client.CreateSecret(ctx, CreateSecretInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Config: data.Config.Elements(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Kind: data.Kind.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Type: data.Type.ValueStringPointer(),
-	//     Value: data.Value.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create secret: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		// Config: TODO: convert map type,
+		Description: data.Description.ValueStringPointer(),
+		Kind: data.Kind.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Type: data.Type.ValueStringPointer(),
+		Value: data.Value.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create secret: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,14 +167,38 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	// TODO: Implement API call to read secret
-	// Example:
-	// result, err := r.client.GetSecret(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read secret: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read secret
+	result, err := r.client.GetSecret(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read secret: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	// Config: TODO: set from response
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.Kind != nil {
+		data.Kind = types.StringPointerValue(result.Kind)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Type != nil {
+		data.Type = types.StringPointerValue(result.Type)
+	}
+	if result.Value != nil {
+		data.Value = types.StringPointerValue(result.Value)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -188,24 +215,23 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	// TODO: Implement API call to update secret
-	// Example:
-	// _, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), types.SecretUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update secret
+	_, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), UpdateSecretInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Config: data.Config.Elements(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Kind: data.Kind.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Type: data.Type.ValueStringPointer(),
-	//     Value: data.Value.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update secret: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		// Config: TODO: convert map type,
+		Description: data.Description.ValueStringPointer(),
+		Kind: data.Kind.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Type: data.Type.ValueStringPointer(),
+		Value: data.Value.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update secret: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -222,13 +248,12 @@ func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	// TODO: Implement API call to delete secret
-	// Example:
-	// _, err := r.client.DeleteSecret(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete secret: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete secret
+	_, err := r.client.DeleteSecret(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete secret: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

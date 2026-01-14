@@ -124,24 +124,27 @@ func (r *MessengerIntegrationResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to create messengerintegration
-	// Example:
-	// result, err := r.client.CreateMessengerIntegration(ctx, types.MessengerIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create messengerintegration
+	result, err := r.client.CreateMessengerIntegration(ctx, CreateMessengerIntegrationInput{
 
-	//     AccessToken: data.AccessToken.ValueStringPointer(),
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create messengerintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		AccessToken: data.AccessToken.ValueStringPointer(),
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create messengerintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -158,14 +161,37 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	// TODO: Implement API call to read messengerintegration
-	// Example:
-	// result, err := r.client.GetMessengerIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read messengerintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read messengerintegration
+	result, err := r.client.GetMessengerIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read messengerintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.AccessToken != nil {
+		data.AccessToken = types.StringPointerValue(result.AccessToken)
+	}
+	if result.Attachments != nil {
+		data.Attachments = types.BoolPointerValue(result.Attachments)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -182,23 +208,22 @@ func (r *MessengerIntegrationResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to update messengerintegration
-	// Example:
-	// _, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), types.MessengerIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update messengerintegration
+	_, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), UpdateMessengerIntegrationInput{
 
-	//     AccessToken: data.AccessToken.ValueStringPointer(),
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update messengerintegration: %s", err))
-	//     return
-	// }
+		AccessToken: data.AccessToken.ValueStringPointer(),
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update messengerintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -215,13 +240,12 @@ func (r *MessengerIntegrationResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to delete messengerintegration
-	// Example:
-	// _, err := r.client.DeleteMessengerIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete messengerintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete messengerintegration
+	_, err := r.client.DeleteMessengerIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete messengerintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

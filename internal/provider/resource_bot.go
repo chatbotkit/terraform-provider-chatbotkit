@@ -139,27 +139,30 @@ func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, re
 		return
 	}
 
-	// TODO: Implement API call to create bot
-	// Example:
-	// result, err := r.client.CreateBot(ctx, types.BotCreateRequest{
+	// Call the ChatBotKit GraphQL API to create bot
+	result, err := r.client.CreateBot(ctx, CreateBotInput{
 
-	//     Backstory: data.Backstory.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Model: data.Model.ValueStringPointer(),
-	//     Moderation: data.Moderation.ValueBoolPointer(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Privacy: data.Privacy.ValueBoolPointer(),
-	//     SkillsetId: data.SkillsetId.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create bot: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		Backstory: data.Backstory.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Model: data.Model.ValueStringPointer(),
+		Moderation: data.Moderation.ValueBoolPointer(),
+		Name: data.Name.ValueStringPointer(),
+		Privacy: data.Privacy.ValueBoolPointer(),
+		SkillsetId: data.SkillsetId.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create bot: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -176,14 +179,46 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		return
 	}
 
-	// TODO: Implement API call to read bot
-	// Example:
-	// result, err := r.client.GetBot(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read bot: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read bot
+	result, err := r.client.GetBot(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read bot: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.Backstory != nil {
+		data.Backstory = types.StringPointerValue(result.Backstory)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.DatasetId != nil {
+		data.DatasetId = types.StringPointerValue(result.DatasetId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Model != nil {
+		data.Model = types.StringPointerValue(result.Model)
+	}
+	if result.Moderation != nil {
+		data.Moderation = types.BoolPointerValue(result.Moderation)
+	}
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Privacy != nil {
+		data.Privacy = types.BoolPointerValue(result.Privacy)
+	}
+	if result.SkillsetId != nil {
+		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
+	}
+	if result.Visibility != nil {
+		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -200,26 +235,25 @@ func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	// TODO: Implement API call to update bot
-	// Example:
-	// _, err := r.client.UpdateBot(ctx, data.ID.ValueString(), types.BotUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update bot
+	_, err := r.client.UpdateBot(ctx, data.ID.ValueString(), UpdateBotInput{
 
-	//     Backstory: data.Backstory.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Model: data.Model.ValueStringPointer(),
-	//     Moderation: data.Moderation.ValueBoolPointer(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Privacy: data.Privacy.ValueBoolPointer(),
-	//     SkillsetId: data.SkillsetId.ValueStringPointer(),
-	//     Visibility: data.Visibility.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update bot: %s", err))
-	//     return
-	// }
+		Backstory: data.Backstory.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Model: data.Model.ValueStringPointer(),
+		Moderation: data.Moderation.ValueBoolPointer(),
+		Name: data.Name.ValueStringPointer(),
+		Privacy: data.Privacy.ValueBoolPointer(),
+		SkillsetId: data.SkillsetId.ValueStringPointer(),
+		Visibility: data.Visibility.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update bot: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -236,13 +270,12 @@ func (r *BotResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 		return
 	}
 
-	// TODO: Implement API call to delete bot
-	// Example:
-	// _, err := r.client.DeleteBot(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete bot: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete bot
+	_, err := r.client.DeleteBot(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete bot: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

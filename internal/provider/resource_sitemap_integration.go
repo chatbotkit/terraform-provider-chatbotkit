@@ -139,27 +139,30 @@ func (r *SitemapIntegrationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	// TODO: Implement API call to create sitemapintegration
-	// Example:
-	// result, err := r.client.CreateSitemapIntegration(ctx, types.SitemapIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create sitemapintegration
+	result, err := r.client.CreateSitemapIntegration(ctx, CreateSitemapIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-	//     Glob: data.Glob.ValueStringPointer(),
-	//     Javascript: data.Javascript.ValueBoolPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Selectors: data.Selectors.ValueStringPointer(),
-	//     SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-	//     URL: data.URL.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create sitemapintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
+		Glob: data.Glob.ValueStringPointer(),
+		Javascript: data.Javascript.ValueBoolPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Selectors: data.Selectors.ValueStringPointer(),
+		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
+		URL: data.URL.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create sitemapintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -176,14 +179,46 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	// TODO: Implement API call to read sitemapintegration
-	// Example:
-	// result, err := r.client.GetSitemapIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read sitemapintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read sitemapintegration
+	result, err := r.client.GetSitemapIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read sitemapintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.DatasetId != nil {
+		data.DatasetId = types.StringPointerValue(result.DatasetId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.ExpiresIn != nil {
+		data.ExpiresIn = types.Int64PointerValue(result.ExpiresIn)
+	}
+	if result.Glob != nil {
+		data.Glob = types.StringPointerValue(result.Glob)
+	}
+	if result.Javascript != nil {
+		data.Javascript = types.BoolPointerValue(result.Javascript)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Selectors != nil {
+		data.Selectors = types.StringPointerValue(result.Selectors)
+	}
+	if result.SyncSchedule != nil {
+		data.SyncSchedule = types.StringPointerValue(result.SyncSchedule)
+	}
+	if result.URL != nil {
+		data.URL = types.StringPointerValue(result.URL)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -200,26 +235,25 @@ func (r *SitemapIntegrationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	// TODO: Implement API call to update sitemapintegration
-	// Example:
-	// _, err := r.client.UpdateSitemapIntegration(ctx, data.ID.ValueString(), types.SitemapIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update sitemapintegration
+	_, err := r.client.UpdateSitemapIntegration(ctx, data.ID.ValueString(), UpdateSitemapIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-	//     Glob: data.Glob.ValueStringPointer(),
-	//     Javascript: data.Javascript.ValueBoolPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Selectors: data.Selectors.ValueStringPointer(),
-	//     SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-	//     URL: data.URL.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update sitemapintegration: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
+		Glob: data.Glob.ValueStringPointer(),
+		Javascript: data.Javascript.ValueBoolPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Selectors: data.Selectors.ValueStringPointer(),
+		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
+		URL: data.URL.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update sitemapintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -236,13 +270,12 @@ func (r *SitemapIntegrationResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	// TODO: Implement API call to delete sitemapintegration
-	// Example:
-	// _, err := r.client.DeleteSitemapIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete sitemapintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete sitemapintegration
+	_, err := r.client.DeleteSitemapIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete sitemapintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

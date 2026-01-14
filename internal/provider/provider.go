@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -24,12 +25,6 @@ type ChatBotKitProviderModel struct {
 	BaseURL types.String `tfsdk:"base_url"`
 }
 
-// Client represents the ChatBotKit API client.
-type Client struct {
-	APIKey  string
-	BaseURL string
-}
-
 func (p *ChatBotKitProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "chatbotkit"
 	resp.Version = p.version
@@ -45,7 +40,7 @@ func (p *ChatBotKitProvider) Schema(ctx context.Context, req provider.SchemaRequ
 				Sensitive:           true,
 			},
 			"base_url": schema.StringAttribute{
-				MarkdownDescription: "The base URL for the ChatBotKit API. Defaults to https://api.chatbotkit.com",
+				MarkdownDescription: "The base URL for the ChatBotKit API. Defaults to https://api.chatbotkit.com/graphql",
 				Optional:            true,
 			},
 		},
@@ -61,21 +56,26 @@ func (p *ChatBotKitProvider) Configure(ctx context.Context, req provider.Configu
 		return
 	}
 
-	// TODO: Initialize the ChatBotKit API client
-	// apiKey := data.APIKey.ValueString()
-	// if apiKey == "" {
-	//     apiKey = os.Getenv("CHATBOTKIT_API_KEY")
-	// }
-	// baseURL := data.BaseURL.ValueString()
-	// if baseURL == "" {
-	//     baseURL = "https://api.chatbotkit.com"
-	// }
-	// client := &Client{
-	//     APIKey:  apiKey,
-	//     BaseURL: baseURL,
-	// }
+	// Get API key from config or environment
+	apiKey := data.APIKey.ValueString()
+	if apiKey == "" {
+		apiKey = os.Getenv("CHATBOTKIT_API_KEY")
+	}
 
-	client := &Client{}
+	if apiKey == "" {
+		resp.Diagnostics.AddError(
+			"Missing API Key",
+			"The API key is required. Set it in the provider configuration or via the CHATBOTKIT_API_KEY environment variable.",
+		)
+		return
+	}
+
+	// Get base URL from config or use default
+	baseURL := data.BaseURL.ValueString()
+
+	// Create the API client
+	client := NewClient(apiKey, baseURL)
+
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
@@ -108,7 +108,7 @@ func (p *ChatBotKitProvider) Resources(ctx context.Context) []func() resource.Re
 
 func (p *ChatBotKitProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		// TODO: Add data sources here
+		// Data sources can be added here
 	}
 }
 

@@ -109,21 +109,24 @@ func (r *McpserverIntegrationResource) Create(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to create mcpserverintegration
-	// Example:
-	// result, err := r.client.CreateMcpserverIntegration(ctx, types.McpserverIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create mcpserverintegration
+	result, err := r.client.CreateMcpserverIntegration(ctx, CreateMcpserverIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SkillsetId: data.SkillsetId.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create mcpserverintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SkillsetId: data.SkillsetId.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create mcpserverintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -140,14 +143,28 @@ func (r *McpserverIntegrationResource) Read(ctx context.Context, req resource.Re
 		return
 	}
 
-	// TODO: Implement API call to read mcpserverintegration
-	// Example:
-	// result, err := r.client.GetMcpserverIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read mcpserverintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read mcpserverintegration
+	result, err := r.client.GetMcpserverIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read mcpserverintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SkillsetId != nil {
+		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,20 +181,19 @@ func (r *McpserverIntegrationResource) Update(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to update mcpserverintegration
-	// Example:
-	// _, err := r.client.UpdateMcpserverIntegration(ctx, data.ID.ValueString(), types.McpserverIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update mcpserverintegration
+	_, err := r.client.UpdateMcpserverIntegration(ctx, data.ID.ValueString(), UpdateMcpserverIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SkillsetId: data.SkillsetId.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update mcpserverintegration: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SkillsetId: data.SkillsetId.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update mcpserverintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,13 +210,12 @@ func (r *McpserverIntegrationResource) Delete(ctx context.Context, req resource.
 		return
 	}
 
-	// TODO: Implement API call to delete mcpserverintegration
-	// Example:
-	// _, err := r.client.DeleteMcpserverIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete mcpserverintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete mcpserverintegration
+	_, err := r.client.DeleteMcpserverIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete mcpserverintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

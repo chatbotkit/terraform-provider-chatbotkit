@@ -124,24 +124,27 @@ func (r *NotionIntegrationResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	// TODO: Implement API call to create notionintegration
-	// Example:
-	// result, err := r.client.CreateNotionIntegration(ctx, types.NotionIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create notionintegration
+	result, err := r.client.CreateNotionIntegration(ctx, CreateNotionIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-	//     Token: data.Token.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create notionintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
+		Token: data.Token.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create notionintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -158,14 +161,37 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	// TODO: Implement API call to read notionintegration
-	// Example:
-	// result, err := r.client.GetNotionIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read notionintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read notionintegration
+	result, err := r.client.GetNotionIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read notionintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.DatasetId != nil {
+		data.DatasetId = types.StringPointerValue(result.DatasetId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.ExpiresIn != nil {
+		data.ExpiresIn = types.Int64PointerValue(result.ExpiresIn)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SyncSchedule != nil {
+		data.SyncSchedule = types.StringPointerValue(result.SyncSchedule)
+	}
+	if result.Token != nil {
+		data.Token = types.StringPointerValue(result.Token)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -182,23 +208,22 @@ func (r *NotionIntegrationResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	// TODO: Implement API call to update notionintegration
-	// Example:
-	// _, err := r.client.UpdateNotionIntegration(ctx, data.ID.ValueString(), types.NotionIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update notionintegration
+	_, err := r.client.UpdateNotionIntegration(ctx, data.ID.ValueString(), UpdateNotionIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     DatasetId: data.DatasetId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-	//     Token: data.Token.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update notionintegration: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		DatasetId: data.DatasetId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
+		Token: data.Token.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update notionintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -215,13 +240,12 @@ func (r *NotionIntegrationResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	// TODO: Implement API call to delete notionintegration
-	// Example:
-	// _, err := r.client.DeleteNotionIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete notionintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete notionintegration
+	_, err := r.client.DeleteNotionIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete notionintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

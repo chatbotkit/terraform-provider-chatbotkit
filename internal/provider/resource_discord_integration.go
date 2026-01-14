@@ -139,27 +139,30 @@ func (r *DiscordIntegrationResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	// TODO: Implement API call to create discordintegration
-	// Example:
-	// result, err := r.client.CreateDiscordIntegration(ctx, types.DiscordIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create discordintegration
+	result, err := r.client.CreateDiscordIntegration(ctx, CreateDiscordIntegrationInput{
 
-	//     AppId: data.AppId.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Handle: data.Handle.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     PublicKey: data.PublicKey.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create discordintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		AppId: data.AppId.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		Handle: data.Handle.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		PublicKey: data.PublicKey.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create discordintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -176,14 +179,46 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 		return
 	}
 
-	// TODO: Implement API call to read discordintegration
-	// Example:
-	// result, err := r.client.GetDiscordIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read discordintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read discordintegration
+	result, err := r.client.GetDiscordIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read discordintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.AppId != nil {
+		data.AppId = types.StringPointerValue(result.AppId)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.BotToken != nil {
+		data.BotToken = types.StringPointerValue(result.BotToken)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.Handle != nil {
+		data.Handle = types.StringPointerValue(result.Handle)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.PublicKey != nil {
+		data.PublicKey = types.StringPointerValue(result.PublicKey)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -200,26 +235,25 @@ func (r *DiscordIntegrationResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
-	// TODO: Implement API call to update discordintegration
-	// Example:
-	// _, err := r.client.UpdateDiscordIntegration(ctx, data.ID.ValueString(), types.DiscordIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update discordintegration
+	_, err := r.client.UpdateDiscordIntegration(ctx, data.ID.ValueString(), UpdateDiscordIntegrationInput{
 
-	//     AppId: data.AppId.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Handle: data.Handle.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     PublicKey: data.PublicKey.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update discordintegration: %s", err))
-	//     return
-	// }
+		AppId: data.AppId.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		Handle: data.Handle.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		PublicKey: data.PublicKey.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update discordintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -236,13 +270,12 @@ func (r *DiscordIntegrationResource) Delete(ctx context.Context, req resource.De
 		return
 	}
 
-	// TODO: Implement API call to delete discordintegration
-	// Example:
-	// _, err := r.client.DeleteDiscordIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete discordintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete discordintegration
+	_, err := r.client.DeleteDiscordIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete discordintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

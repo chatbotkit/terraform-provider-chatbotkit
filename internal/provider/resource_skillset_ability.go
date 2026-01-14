@@ -129,25 +129,28 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 		return
 	}
 
-	// TODO: Implement API call to create skillsetability
-	// Example:
-	// result, err := r.client.CreateSkillsetAbility(ctx, types.SkillsetAbilityCreateRequest{
+	// Call the ChatBotKit GraphQL API to create skillsetability
+	result, err := r.client.CreateSkillsetAbility(ctx, CreateSkillsetAbilityInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     FileId: data.FileId.ValueStringPointer(),
-	//     Instruction: data.Instruction.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SecretId: data.SecretId.ValueStringPointer(),
-	//     SpaceId: data.SpaceId.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillsetability: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		FileId: data.FileId.ValueStringPointer(),
+		Instruction: data.Instruction.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SecretId: data.SecretId.ValueStringPointer(),
+		SpaceId: data.SpaceId.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillsetability: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,14 +167,40 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 		return
 	}
 
-	// TODO: Implement API call to read skillsetability
-	// Example:
-	// result, err := r.client.GetSkillsetAbility(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillsetability: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read skillsetability
+	result, err := r.client.GetSkillsetAbility(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillsetability: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	if result.FileId != nil {
+		data.FileId = types.StringPointerValue(result.FileId)
+	}
+	if result.Instruction != nil {
+		data.Instruction = types.StringPointerValue(result.Instruction)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SecretId != nil {
+		data.SecretId = types.StringPointerValue(result.SecretId)
+	}
+	if result.SpaceId != nil {
+		data.SpaceId = types.StringPointerValue(result.SpaceId)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -188,24 +217,23 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 		return
 	}
 
-	// TODO: Implement API call to update skillsetability
-	// Example:
-	// _, err := r.client.UpdateSkillsetAbility(ctx, data.ID.ValueString(), types.SkillsetAbilityUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update skillsetability
+	_, err := r.client.UpdateSkillsetAbility(ctx, data.ID.ValueString(), UpdateSkillsetAbilityInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     FileId: data.FileId.ValueStringPointer(),
-	//     Instruction: data.Instruction.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SecretId: data.SecretId.ValueStringPointer(),
-	//     SpaceId: data.SpaceId.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillsetability: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		Description: data.Description.ValueStringPointer(),
+		FileId: data.FileId.ValueStringPointer(),
+		Instruction: data.Instruction.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SecretId: data.SecretId.ValueStringPointer(),
+		SpaceId: data.SpaceId.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillsetability: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -222,13 +250,12 @@ func (r *SkillsetAbilityResource) Delete(ctx context.Context, req resource.Delet
 		return
 	}
 
-	// TODO: Implement API call to delete skillsetability
-	// Example:
-	// _, err := r.client.DeleteSkillsetAbility(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillsetability: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete skillsetability
+	_, err := r.client.DeleteSkillsetAbility(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillsetability: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

@@ -124,24 +124,27 @@ func (r *EmailIntegrationResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	// TODO: Implement API call to create emailintegration
-	// Example:
-	// result, err := r.client.CreateEmailIntegration(ctx, types.EmailIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create emailintegration
+	result, err := r.client.CreateEmailIntegration(ctx, CreateEmailIntegrationInput{
 
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create emailintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create emailintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -158,14 +161,37 @@ func (r *EmailIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	// TODO: Implement API call to read emailintegration
-	// Example:
-	// result, err := r.client.GetEmailIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read emailintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read emailintegration
+	result, err := r.client.GetEmailIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read emailintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.Attachments != nil {
+		data.Attachments = types.BoolPointerValue(result.Attachments)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -182,23 +208,22 @@ func (r *EmailIntegrationResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	// TODO: Implement API call to update emailintegration
-	// Example:
-	// _, err := r.client.UpdateEmailIntegration(ctx, data.ID.ValueString(), types.EmailIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update emailintegration
+	_, err := r.client.UpdateEmailIntegration(ctx, data.ID.ValueString(), UpdateEmailIntegrationInput{
 
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update emailintegration: %s", err))
-	//     return
-	// }
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update emailintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -215,13 +240,12 @@ func (r *EmailIntegrationResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	// TODO: Implement API call to delete emailintegration
-	// Example:
-	// _, err := r.client.DeleteEmailIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete emailintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete emailintegration
+	_, err := r.client.DeleteEmailIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete emailintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

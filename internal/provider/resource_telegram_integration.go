@@ -129,25 +129,28 @@ func (r *TelegramIntegrationResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	// TODO: Implement API call to create telegramintegration
-	// Example:
-	// result, err := r.client.CreateTelegramIntegration(ctx, types.TelegramIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create telegramintegration
+	result, err := r.client.CreateTelegramIntegration(ctx, CreateTelegramIntegrationInput{
 
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create telegramintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create telegramintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -164,14 +167,40 @@ func (r *TelegramIntegrationResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	// TODO: Implement API call to read telegramintegration
-	// Example:
-	// result, err := r.client.GetTelegramIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read telegramintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read telegramintegration
+	result, err := r.client.GetTelegramIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read telegramintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.Attachments != nil {
+		data.Attachments = types.BoolPointerValue(result.Attachments)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.BotToken != nil {
+		data.BotToken = types.StringPointerValue(result.BotToken)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -188,24 +217,23 @@ func (r *TelegramIntegrationResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	// TODO: Implement API call to update telegramintegration
-	// Example:
-	// _, err := r.client.UpdateTelegramIntegration(ctx, data.ID.ValueString(), types.TelegramIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update telegramintegration
+	_, err := r.client.UpdateTelegramIntegration(ctx, data.ID.ValueString(), UpdateTelegramIntegrationInput{
 
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update telegramintegration: %s", err))
-	//     return
-	// }
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update telegramintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -222,13 +250,12 @@ func (r *TelegramIntegrationResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	// TODO: Implement API call to delete telegramintegration
-	// Example:
-	// _, err := r.client.DeleteTelegramIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete telegramintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete telegramintegration
+	_, err := r.client.DeleteTelegramIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete telegramintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

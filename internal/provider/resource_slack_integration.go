@@ -154,30 +154,33 @@ func (r *SlackIntegrationResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
-	// TODO: Implement API call to create slackintegration
-	// Example:
-	// result, err := r.client.CreateSlackIntegration(ctx, types.SlackIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create slackintegration
+	result, err := r.client.CreateSlackIntegration(ctx, CreateSlackIntegrationInput{
 
-	//     AutoRespond: data.AutoRespond.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Ratings: data.Ratings.ValueBoolPointer(),
-	//     References: data.References.ValueBoolPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	//     SigningSecret: data.SigningSecret.ValueStringPointer(),
-	//     UserToken: data.UserToken.ValueStringPointer(),
-	//     VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create slackintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		AutoRespond: data.AutoRespond.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Ratings: data.Ratings.ValueBoolPointer(),
+		References: data.References.ValueBoolPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		SigningSecret: data.SigningSecret.ValueStringPointer(),
+		UserToken: data.UserToken.ValueStringPointer(),
+		VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create slackintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,14 +197,55 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
-	// TODO: Implement API call to read slackintegration
-	// Example:
-	// result, err := r.client.GetSlackIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read slackintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read slackintegration
+	result, err := r.client.GetSlackIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read slackintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.AutoRespond != nil {
+		data.AutoRespond = types.StringPointerValue(result.AutoRespond)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.BotToken != nil {
+		data.BotToken = types.StringPointerValue(result.BotToken)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Ratings != nil {
+		data.Ratings = types.BoolPointerValue(result.Ratings)
+	}
+	if result.References != nil {
+		data.References = types.BoolPointerValue(result.References)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.SigningSecret != nil {
+		data.SigningSecret = types.StringPointerValue(result.SigningSecret)
+	}
+	if result.UserToken != nil {
+		data.UserToken = types.StringPointerValue(result.UserToken)
+	}
+	if result.VisibleMessages != nil {
+		data.VisibleMessages = types.Int64PointerValue(result.VisibleMessages)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -218,29 +262,28 @@ func (r *SlackIntegrationResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
-	// TODO: Implement API call to update slackintegration
-	// Example:
-	// _, err := r.client.UpdateSlackIntegration(ctx, data.ID.ValueString(), types.SlackIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update slackintegration
+	_, err := r.client.UpdateSlackIntegration(ctx, data.ID.ValueString(), UpdateSlackIntegrationInput{
 
-	//     AutoRespond: data.AutoRespond.ValueStringPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     BotToken: data.BotToken.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Ratings: data.Ratings.ValueBoolPointer(),
-	//     References: data.References.ValueBoolPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	//     SigningSecret: data.SigningSecret.ValueStringPointer(),
-	//     UserToken: data.UserToken.ValueStringPointer(),
-	//     VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update slackintegration: %s", err))
-	//     return
-	// }
+		AutoRespond: data.AutoRespond.ValueStringPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		BotToken: data.BotToken.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Ratings: data.Ratings.ValueBoolPointer(),
+		References: data.References.ValueBoolPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		SigningSecret: data.SigningSecret.ValueStringPointer(),
+		UserToken: data.UserToken.ValueStringPointer(),
+		VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update slackintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -257,13 +300,12 @@ func (r *SlackIntegrationResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
-	// TODO: Implement API call to delete slackintegration
-	// Example:
-	// _, err := r.client.DeleteSlackIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete slackintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete slackintegration
+	_, err := r.client.DeleteSlackIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete slackintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

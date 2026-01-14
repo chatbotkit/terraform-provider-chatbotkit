@@ -119,23 +119,26 @@ func (r *TwilioIntegrationResource) Create(ctx context.Context, req resource.Cre
 		return
 	}
 
-	// TODO: Implement API call to create twiliointegration
-	// Example:
-	// result, err := r.client.CreateTwilioIntegration(ctx, types.TwilioIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create twiliointegration
+	result, err := r.client.CreateTwilioIntegration(ctx, CreateTwilioIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create twiliointegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create twiliointegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -152,14 +155,34 @@ func (r *TwilioIntegrationResource) Read(ctx context.Context, req resource.ReadR
 		return
 	}
 
-	// TODO: Implement API call to read twiliointegration
-	// Example:
-	// result, err := r.client.GetTwilioIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read twiliointegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read twiliointegration
+	result, err := r.client.GetTwilioIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read twiliointegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -176,22 +199,21 @@ func (r *TwilioIntegrationResource) Update(ctx context.Context, req resource.Upd
 		return
 	}
 
-	// TODO: Implement API call to update twiliointegration
-	// Example:
-	// _, err := r.client.UpdateTwilioIntegration(ctx, data.ID.ValueString(), types.TwilioIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update twiliointegration
+	_, err := r.client.UpdateTwilioIntegration(ctx, data.ID.ValueString(), UpdateTwilioIntegrationInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update twiliointegration: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update twiliointegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -208,13 +230,12 @@ func (r *TwilioIntegrationResource) Delete(ctx context.Context, req resource.Del
 		return
 	}
 
-	// TODO: Implement API call to delete twiliointegration
-	// Example:
-	// _, err := r.client.DeleteTwilioIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete twiliointegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete twiliointegration
+	_, err := r.client.DeleteTwilioIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete twiliointegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

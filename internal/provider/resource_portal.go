@@ -114,22 +114,25 @@ func (r *PortalResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	// TODO: Implement API call to create portal
-	// Example:
-	// result, err := r.client.CreatePortal(ctx, types.PortalCreateRequest{
+	// Call the ChatBotKit GraphQL API to create portal
+	result, err := r.client.CreatePortal(ctx, CreatePortalInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Config: data.Config.Elements(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Slug: data.Slug.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create portal: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		// Config: TODO: convert map type,
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Slug: data.Slug.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create portal: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -146,14 +149,29 @@ func (r *PortalResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	// TODO: Implement API call to read portal
-	// Example:
-	// result, err := r.client.GetPortal(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read portal: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read portal
+	result, err := r.client.GetPortal(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read portal: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	// Config: TODO: set from response
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.Slug != nil {
+		data.Slug = types.StringPointerValue(result.Slug)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -170,21 +188,20 @@ func (r *PortalResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	// TODO: Implement API call to update portal
-	// Example:
-	// _, err := r.client.UpdatePortal(ctx, data.ID.ValueString(), types.PortalUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update portal
+	_, err := r.client.UpdatePortal(ctx, data.ID.ValueString(), UpdatePortalInput{
 
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     Config: data.Config.Elements(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     Slug: data.Slug.ValueStringPointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update portal: %s", err))
-	//     return
-	// }
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		// Config: TODO: convert map type,
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		Slug: data.Slug.ValueStringPointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update portal: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -201,13 +218,12 @@ func (r *PortalResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	// TODO: Implement API call to delete portal
-	// Example:
-	// _, err := r.client.DeletePortal(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete portal: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete portal
+	_, err := r.client.DeletePortal(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete portal: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.

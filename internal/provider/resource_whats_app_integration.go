@@ -134,26 +134,29 @@ func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	// TODO: Implement API call to create whatsappintegration
-	// Example:
-	// result, err := r.client.CreateWhatsAppIntegration(ctx, types.WhatsAppIntegrationCreateRequest{
+	// Call the ChatBotKit GraphQL API to create whatsappintegration
+	result, err := r.client.CreateWhatsAppIntegration(ctx, CreateWhatsAppIntegrationInput{
 
-	//     AccessToken: data.AccessToken.ValueStringPointer(),
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create whatsappintegration: %s", err))
-	//     return
-	// }
-	// data.ID = types.StringValue(result.ID)
+		AccessToken: data.AccessToken.ValueStringPointer(),
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create whatsappintegration: %s", err))
+		return
+	}
+
+	// Set the ID from the response
+	if result.ID != nil {
+		data.ID = types.StringPointerValue(result.ID)
+	}
 
 	// Save data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -170,14 +173,43 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	// TODO: Implement API call to read whatsappintegration
-	// Example:
-	// result, err := r.client.GetWhatsAppIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read whatsappintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to read whatsappintegration
+	result, err := r.client.GetWhatsAppIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read whatsappintegration: %s", err))
+		return
+	}
+
 	// Update data model with response values
+
+	if result.AccessToken != nil {
+		data.AccessToken = types.StringPointerValue(result.AccessToken)
+	}
+	if result.Attachments != nil {
+		data.Attachments = types.BoolPointerValue(result.Attachments)
+	}
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
+	}
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	// Meta: TODO: set from response
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.PhoneNumberId != nil {
+		data.PhoneNumberId = types.StringPointerValue(result.PhoneNumberId)
+	}
+	if result.SessionDuration != nil {
+		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -194,25 +226,24 @@ func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	// TODO: Implement API call to update whatsappintegration
-	// Example:
-	// _, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), types.WhatsAppIntegrationUpdateRequest{
+	// Call the ChatBotKit GraphQL API to update whatsappintegration
+	_, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), UpdateWhatsAppIntegrationInput{
 
-	//     AccessToken: data.AccessToken.ValueStringPointer(),
-	//     Attachments: data.Attachments.ValueBoolPointer(),
-	//     BlueprintId: data.BlueprintId.ValueStringPointer(),
-	//     BotId: data.BotId.ValueStringPointer(),
-	//     ContactCollection: data.ContactCollection.ValueBoolPointer(),
-	//     Description: data.Description.ValueStringPointer(),
-	//     Meta: data.Meta.Elements(),
-	//     Name: data.Name.ValueStringPointer(),
-	//     PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
-	//     SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-	// })
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update whatsappintegration: %s", err))
-	//     return
-	// }
+		AccessToken: data.AccessToken.ValueStringPointer(),
+		Attachments: data.Attachments.ValueBoolPointer(),
+		BlueprintId: data.BlueprintId.ValueStringPointer(),
+		BotId: data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description: data.Description.ValueStringPointer(),
+		// Meta: TODO: convert map type,
+		Name: data.Name.ValueStringPointer(),
+		PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
+		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+	})
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update whatsappintegration: %s", err))
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -229,13 +260,12 @@ func (r *WhatsAppIntegrationResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	// TODO: Implement API call to delete whatsappintegration
-	// Example:
-	// _, err := r.client.DeleteWhatsAppIntegration(ctx, data.ID.ValueString())
-	// if err != nil {
-	//     resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete whatsappintegration: %s", err))
-	//     return
-	// }
+	// Call the ChatBotKit GraphQL API to delete whatsappintegration
+	_, err := r.client.DeleteWhatsAppIntegration(ctx, data.ID.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete whatsappintegration: %s", err))
+		return
+	}
 }
 
 // ImportState imports the resource state from Terraform.
