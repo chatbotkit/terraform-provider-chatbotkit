@@ -70,6 +70,7 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"config": schema.MapAttribute{
 				MarkdownDescription: "Additional configuration for the secret",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "The description of the secret",
@@ -82,6 +83,7 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the secret",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the secret",

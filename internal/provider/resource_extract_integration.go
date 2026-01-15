@@ -76,6 +76,7 @@ func (r *ExtractIntegrationResource) Schema(ctx context.Context, req resource.Sc
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the integration",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the integration",
@@ -88,6 +89,7 @@ func (r *ExtractIntegrationResource) Schema(ctx context.Context, req resource.Sc
 			"schema": schema.MapAttribute{
 				MarkdownDescription: "The JSON schema defining the data structure to extract",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "Timestamp when the resource was created",

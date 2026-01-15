@@ -70,6 +70,7 @@ func (r *SkillsetResource) Schema(ctx context.Context, req resource.SchemaReques
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the skillset",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the skillset",

@@ -99,6 +99,17 @@ The provider supports the following resources:
 | `chatbotkit_twilio_integration`    | Manages Twilio integration     |
 | `chatbotkit_whatsapp_integration`  | Manages WhatsApp integration   |
 
+## Data Sources
+
+The provider supports the following data sources for reading existing resources:
+
+| Data Source          | Description                         |
+| -------------------- | ----------------------------------- |
+| `chatbotkit_bot`     | Read information about an existing bot |
+| `chatbotkit_dataset` | Read information about an existing dataset |
+| `chatbotkit_blueprint` | Read information about an existing blueprint |
+| `chatbotkit_skillset` | Read information about an existing skillset |
+
 ## Example Usage
 
 ```hcl
@@ -114,6 +125,7 @@ provider "chatbotkit" {
   # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
 }
 
+# Create a new bot
 resource "chatbotkit_bot" "assistant" {
   name        = "Customer Support Bot"
   description = "Handles customer inquiries"
@@ -121,8 +133,18 @@ resource "chatbotkit_bot" "assistant" {
   model       = "gpt-4"
 }
 
+# Create a dataset
 resource "chatbotkit_dataset" "knowledge" {
   name        = "Product Knowledge Base"
   description = "Contains product documentation"
+}
+
+# Reference an existing bot by ID
+data "chatbotkit_bot" "existing" {
+  id = "bot_abc123"
+}
+
+output "existing_bot_name" {
+  value = data.chatbotkit_bot.existing.name
 }
 ```

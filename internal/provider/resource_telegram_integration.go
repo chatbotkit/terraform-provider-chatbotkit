@@ -91,6 +91,7 @@ func (r *TelegramIntegrationResource) Schema(ctx context.Context, req resource.S
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the integration",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the integration",

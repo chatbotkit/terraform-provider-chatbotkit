@@ -70,6 +70,7 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the file",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the file",

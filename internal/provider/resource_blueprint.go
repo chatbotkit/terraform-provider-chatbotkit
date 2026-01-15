@@ -65,6 +65,7 @@ func (r *BlueprintResource) Schema(ctx context.Context, req resource.SchemaReque
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the blueprint",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the blueprint",

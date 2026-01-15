@@ -86,6 +86,7 @@ func (r *SkillsetAbilityResource) Schema(ctx context.Context, req resource.Schem
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the ability",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the ability",

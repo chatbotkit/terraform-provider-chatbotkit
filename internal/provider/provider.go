@@ -108,7 +108,11 @@ func (p *ChatBotKitProvider) Resources(ctx context.Context) []func() resource.Re
 
 func (p *ChatBotKitProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		// Data sources can be added here
+
+		NewBlueprintDataSource,
+		NewBotDataSource,
+		NewDatasetDataSource,
+		NewSkillsetDataSource,
 	}
 }
 

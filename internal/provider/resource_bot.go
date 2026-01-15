@@ -84,6 +84,7 @@ func (r *BotResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the bot",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"model": schema.StringAttribute{
 				MarkdownDescription: "The AI model to use for the bot",

@@ -86,6 +86,7 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the integration",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the integration",

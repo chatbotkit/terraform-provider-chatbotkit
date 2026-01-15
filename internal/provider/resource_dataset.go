@@ -83,6 +83,7 @@ func (r *DatasetResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the dataset",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"mismatch_instruction": schema.StringAttribute{
 				MarkdownDescription: "Instruction when no matches are found",

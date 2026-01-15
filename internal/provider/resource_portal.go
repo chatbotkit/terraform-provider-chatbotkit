@@ -67,6 +67,7 @@ func (r *PortalResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"config": schema.MapAttribute{
 				MarkdownDescription: "Configuration settings for the portal",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "The description of the portal",
@@ -75,6 +76,7 @@ func (r *PortalResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"meta": schema.MapAttribute{
 				MarkdownDescription: "Additional metadata for the portal",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the portal",
