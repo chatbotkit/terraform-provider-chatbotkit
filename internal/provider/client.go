@@ -2507,17 +2507,18 @@ type CreateSkillsetAbilityResponse struct {
 }
 
 // CreateSkillsetAbility creates a new skillsetability.
-func (c *Client) CreateSkillsetAbility(ctx context.Context, input CreateSkillsetAbilityInput) (*CreateSkillsetAbilityResponse, error) {
+func (c *Client) CreateSkillsetAbility(ctx context.Context, skillsetId string, input CreateSkillsetAbilityInput) (*CreateSkillsetAbilityResponse, error) {
 	query := `
-		mutation CreateSkillsetAbility($input: SkillsetAbilityCreateRequest!) {
-			createSkillsetAbility(input: $input) {
+		mutation CreateSkillsetAbility($skillsetId: ID!, $input: SkillsetAbilityCreateRequest!) {
+			createSkillsetAbility(skillsetId: $skillsetId, input: $input) {
 				id
 			}
 		}
 	`
 
 	variables := map[string]interface{}{
-		"input": input,
+		"skillsetId": skillsetId,
+		"input":      input,
 	}
 
 	var response struct {
@@ -2550,18 +2551,19 @@ type UpdateSkillsetAbilityResponse struct {
 }
 
 // UpdateSkillsetAbility updates an existing skillsetability.
-func (c *Client) UpdateSkillsetAbility(ctx context.Context, id string, input UpdateSkillsetAbilityInput) (*UpdateSkillsetAbilityResponse, error) {
+func (c *Client) UpdateSkillsetAbility(ctx context.Context, skillsetId string, abilityId string, input UpdateSkillsetAbilityInput) (*UpdateSkillsetAbilityResponse, error) {
 	query := `
-		mutation UpdateSkillsetAbility($skillsetAbilityId: ID!, $input: SkillsetAbilityUpdateRequest!) {
-			updateSkillsetAbility(skillsetAbilityId: $skillsetAbilityId, input: $input) {
+		mutation UpdateSkillsetAbility($skillsetId: ID!, $abilityId: ID!, $input: SkillsetAbilityUpdateRequest!) {
+			updateSkillsetAbility(skillsetId: $skillsetId, abilityId: $abilityId, input: $input) {
 				id
 			}
 		}
 	`
 
 	variables := map[string]interface{}{
-		"skillsetAbilityId": id,
-		"input":              input,
+		"skillsetId": skillsetId,
+		"abilityId":  abilityId,
+		"input":      input,
 	}
 
 	var response struct {
@@ -2581,17 +2583,18 @@ type DeleteSkillsetAbilityResponse struct {
 }
 
 // DeleteSkillsetAbility deletes a skillsetability.
-func (c *Client) DeleteSkillsetAbility(ctx context.Context, id string) (*DeleteSkillsetAbilityResponse, error) {
+func (c *Client) DeleteSkillsetAbility(ctx context.Context, skillsetId string, abilityId string) (*DeleteSkillsetAbilityResponse, error) {
 	query := `
-		mutation DeleteSkillsetAbility($skillsetAbilityId: ID!) {
-			deleteSkillsetAbility(skillsetAbilityId: $skillsetAbilityId) {
+		mutation DeleteSkillsetAbility($skillsetId: ID!, $abilityId: ID!) {
+			deleteSkillsetAbility(skillsetId: $skillsetId, abilityId: $abilityId) {
 				id
 			}
 		}
 	`
 
 	variables := map[string]interface{}{
-		"skillsetAbilityId": id,
+		"skillsetId": skillsetId,
+		"abilityId":  abilityId,
 	}
 
 	var response struct {
@@ -2608,6 +2611,7 @@ func (c *Client) DeleteSkillsetAbility(ctx context.Context, id string) (*DeleteS
 // GetSkillsetAbilityResponse represents the response from fetching a skillsetability.
 type GetSkillsetAbilityResponse struct {
 	ID *string `json:"id"`
+	SkillsetId *string `json:"skillsetId,omitempty"`
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	BotId *string `json:"botId,omitempty"`
 	Description *string `json:"description,omitempty"`
@@ -2622,55 +2626,134 @@ type GetSkillsetAbilityResponse struct {
 }
 
 // GetSkillsetAbility fetches a skillsetability by ID.
-func (c *Client) GetSkillsetAbility(ctx context.Context, id string) (*GetSkillsetAbilityResponse, error) {
-	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, abilityId string) (*GetSkillsetAbilityResponse, error) {
+	// Query abilities through the skillset connection
 	query := `
-		query GetSkillsetAbility($cursor: ID) {
-			skillsetAbilitys(first: 1, after: $cursor) {
+		query GetSkillsetAbility($skillsetIds: [ID!]) {
+			skillsets(first: 1, skillsetIds: $skillsetIds) {
 				edges {
 					node {
 						id
-						blueprintId
-						botId
-						description
-						fileId
-						instruction
-						meta
-						name
-						secretId
-						spaceId
-						createdAt
-						updatedAt
+						abilities(first: 100) {
+							edges {
+								node {
+									id
+									description
+									instruction
+									name
+									createdAt
+									updatedAt
+									skillset {
+										id
+									}
+									blueprint {
+										id
+									}
+									bot {
+										id
+									}
+									file {
+										id
+									}
+									secret {
+										id
+									}
+									space {
+										id
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 		}
 	`
 
-	// For read operations, we need to iterate through results to find by ID
-	// This is a simplified implementation - in production, you'd want proper pagination
-	variables := map[string]interface{}{}
+	variables := map[string]interface{}{
+		"skillsetIds": []string{skillsetId},
+	}
 
 	var response struct {
-		SkillsetAbilitys struct {
+		Skillsets struct {
 			Edges []struct {
-				Node *GetSkillsetAbilityResponse `json:"node"`
+				Node struct {
+					ID       string `json:"id"`
+					Abilities struct {
+						Edges []struct {
+							Node struct {
+								ID          *string `json:"id"`
+								Description *string `json:"description"`
+								Instruction *string `json:"instruction"`
+								Name        *string `json:"name"`
+								CreatedAt   *string `json:"createdAt"`
+								UpdatedAt   *string `json:"updatedAt"`
+								Skillset    *struct {
+									ID *string `json:"id"`
+								} `json:"skillset"`
+								Blueprint *struct {
+									ID *string `json:"id"`
+								} `json:"blueprint"`
+								Bot *struct {
+									ID *string `json:"id"`
+								} `json:"bot"`
+								File *struct {
+									ID *string `json:"id"`
+								} `json:"file"`
+								Secret *struct {
+									ID *string `json:"id"`
+								} `json:"secret"`
+								Space *struct {
+									ID *string `json:"id"`
+								} `json:"space"`
+							} `json:"node"`
+						} `json:"edges"`
+					} `json:"abilities"`
+				} `json:"node"`
 			} `json:"edges"`
-		} `json:"skillsetAbilitys"`
+		} `json:"skillsets"`
 	}
 
 	if err := c.doRequest(ctx, query, variables, &response); err != nil {
 		return nil, err
 	}
 
-	// Find the resource with matching ID
-	for _, edge := range response.SkillsetAbilitys.Edges {
-		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
-			return edge.Node, nil
+	// Find the ability with matching ID
+	for _, skillsetEdge := range response.Skillsets.Edges {
+		for _, abilityEdge := range skillsetEdge.Node.Abilities.Edges {
+			if abilityEdge.Node.ID != nil && *abilityEdge.Node.ID == abilityId {
+				result := &GetSkillsetAbilityResponse{
+					ID:          abilityEdge.Node.ID,
+					Description: abilityEdge.Node.Description,
+					Instruction: abilityEdge.Node.Instruction,
+					Name:        abilityEdge.Node.Name,
+					CreatedAt:   abilityEdge.Node.CreatedAt,
+					UpdatedAt:   abilityEdge.Node.UpdatedAt,
+				}
+				if abilityEdge.Node.Skillset != nil {
+					result.SkillsetId = abilityEdge.Node.Skillset.ID
+				}
+				if abilityEdge.Node.Blueprint != nil {
+					result.BlueprintId = abilityEdge.Node.Blueprint.ID
+				}
+				if abilityEdge.Node.Bot != nil {
+					result.BotId = abilityEdge.Node.Bot.ID
+				}
+				if abilityEdge.Node.File != nil {
+					result.FileId = abilityEdge.Node.File.ID
+				}
+				if abilityEdge.Node.Secret != nil {
+					result.SecretId = abilityEdge.Node.Secret.ID
+				}
+				if abilityEdge.Node.Space != nil {
+					result.SpaceId = abilityEdge.Node.Space.ID
+				}
+				return result, nil
+			}
 		}
 	}
 
-	return nil, fmt.Errorf("skillsetability with ID %s not found", id)
+	return nil, fmt.Errorf("skillsetability with ID %s not found in skillset %s", abilityId, skillsetId)
 }
 
 

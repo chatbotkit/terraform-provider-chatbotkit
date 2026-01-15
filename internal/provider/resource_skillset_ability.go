@@ -32,6 +32,7 @@ type SkillsetAbilityResource struct {
 type SkillsetAbilityResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	SkillsetId types.String `tfsdk:"skillset_id"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
 	BotId types.String `tfsdk:"bot_id"`
 	Description types.String `tfsdk:"description"`
@@ -63,6 +64,13 @@ func (r *SkillsetAbilityResource) Schema(ctx context.Context, req resource.Schem
 				},
 			},
 
+			"skillset_id": schema.StringAttribute{
+				MarkdownDescription: "The ID of the skillset to attach this ability to",
+				Required:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -143,7 +151,7 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 	}
 
 	// Call the ChatBotKit GraphQL API to create skillsetability
-	result, err := r.client.CreateSkillsetAbility(ctx, CreateSkillsetAbilityInput{
+	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), CreateSkillsetAbilityInput{
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -181,7 +189,7 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	}
 
 	// Call the ChatBotKit GraphQL API to read skillsetability
-	result, err := r.client.GetSkillsetAbility(ctx, data.ID.ValueString())
+	result, err := r.client.GetSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
 		if strings.Contains(err.Error(), "not found") {
@@ -246,7 +254,7 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 	}
 
 	// Call the ChatBotKit GraphQL API to update skillsetability
-	_, err := r.client.UpdateSkillsetAbility(ctx, data.ID.ValueString(), UpdateSkillsetAbilityInput{
+	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), UpdateSkillsetAbilityInput{
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -279,7 +287,7 @@ func (r *SkillsetAbilityResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	// Call the ChatBotKit GraphQL API to delete skillsetability
-	_, err := r.client.DeleteSkillsetAbility(ctx, data.ID.ValueString())
+	_, err := r.client.DeleteSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillsetability: %s", err))
 		return
