@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -45,6 +46,8 @@ type DatasetResourceModel struct {
 	Separators types.String `tfsdk:"separators"`
 	Store types.String `tfsdk:"store"`
 	Visibility types.String `tfsdk:"visibility"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -121,6 +124,14 @@ func (r *DatasetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				MarkdownDescription: "The visibility level of the dataset",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -160,7 +171,7 @@ func (r *DatasetResource) Create(ctx context.Context, req resource.CreateRequest
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
 		Name: data.Name.ValueStringPointer(),
 		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
@@ -200,6 +211,11 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	// Call the ChatBotKit GraphQL API to read dataset
 	result, err := r.client.GetDataset(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read dataset: %s", err))
 		return
 	}
@@ -215,7 +231,11 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if result.MatchInstruction != nil {
 		data.MatchInstruction = types.StringPointerValue(result.MatchInstruction)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.MismatchInstruction != nil {
 		data.MismatchInstruction = types.StringPointerValue(result.MismatchInstruction)
 	}
@@ -246,6 +266,12 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
 	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -268,7 +294,7 @@ func (r *DatasetResource) Update(ctx context.Context, req resource.UpdateRequest
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
 		Name: data.Name.ValueStringPointer(),
 		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),

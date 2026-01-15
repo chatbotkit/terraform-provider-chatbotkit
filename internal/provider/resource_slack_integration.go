@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -45,6 +46,8 @@ type SlackIntegrationResourceModel struct {
 	SigningSecret types.String `tfsdk:"signing_secret"`
 	UserToken types.String `tfsdk:"user_token"`
 	VisibleMessages types.Int64 `tfsdk:"visible_messages"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -80,6 +83,7 @@ func (r *SlackIntegrationResource) Schema(ctx context.Context, req resource.Sche
 			"bot_token": schema.StringAttribute{
 				MarkdownDescription: "The Slack bot token for API access",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"contact_collection": schema.BoolAttribute{
 				MarkdownDescription: "Whether to collect contact information",
@@ -112,6 +116,7 @@ func (r *SlackIntegrationResource) Schema(ctx context.Context, req resource.Sche
 			"signing_secret": schema.StringAttribute{
 				MarkdownDescription: "The Slack signing secret for request verification",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"user_token": schema.StringAttribute{
 				MarkdownDescription: "The Slack user token for additional permissions",
@@ -120,6 +125,14 @@ func (r *SlackIntegrationResource) Schema(ctx context.Context, req resource.Sche
 			"visible_messages": schema.Int64Attribute{
 				MarkdownDescription: "The number of visible messages in the conversation",
 				Optional:            true,
+			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
 			},
 		},
 	}
@@ -163,7 +176,7 @@ func (r *SlackIntegrationResource) Create(ctx context.Context, req resource.Crea
 		BotToken: data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Ratings: data.Ratings.ValueBoolPointer(),
 		References: data.References.ValueBoolPointer(),
@@ -200,6 +213,11 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	// Call the ChatBotKit GraphQL API to read slackintegration
 	result, err := r.client.GetSlackIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read slackintegration: %s", err))
 		return
 	}
@@ -224,7 +242,11 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -245,6 +267,12 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	}
 	if result.VisibleMessages != nil {
 		data.VisibleMessages = types.Int64PointerValue(result.VisibleMessages)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -271,7 +299,7 @@ func (r *SlackIntegrationResource) Update(ctx context.Context, req resource.Upda
 		BotToken: data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Ratings: data.Ratings.ValueBoolPointer(),
 		References: data.References.ValueBoolPointer(),

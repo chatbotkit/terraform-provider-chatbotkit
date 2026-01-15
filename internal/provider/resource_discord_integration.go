@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,6 +43,8 @@ type DiscordIntegrationResourceModel struct {
 	Name types.String `tfsdk:"name"`
 	PublicKey types.String `tfsdk:"public_key"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -77,6 +80,7 @@ func (r *DiscordIntegrationResource) Schema(ctx context.Context, req resource.Sc
 			"bot_token": schema.StringAttribute{
 				MarkdownDescription: "The Discord bot token for API access",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"contact_collection": schema.BoolAttribute{
 				MarkdownDescription: "Whether to collect contact information",
@@ -105,6 +109,14 @@ func (r *DiscordIntegrationResource) Schema(ctx context.Context, req resource.Sc
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
+			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
 			},
 		},
 	}
@@ -149,7 +161,7 @@ func (r *DiscordIntegrationResource) Create(ctx context.Context, req resource.Cr
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Handle: data.Handle.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		PublicKey: data.PublicKey.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
@@ -182,6 +194,11 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 	// Call the ChatBotKit GraphQL API to read discordintegration
 	result, err := r.client.GetDiscordIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read discordintegration: %s", err))
 		return
 	}
@@ -209,7 +226,11 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.Handle != nil {
 		data.Handle = types.StringPointerValue(result.Handle)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -218,6 +239,12 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -245,7 +272,7 @@ func (r *DiscordIntegrationResource) Update(ctx context.Context, req resource.Up
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Handle: data.Handle.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		PublicKey: data.PublicKey.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),

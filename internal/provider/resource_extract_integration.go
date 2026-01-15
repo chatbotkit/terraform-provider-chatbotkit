@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -38,6 +39,8 @@ type ExtractIntegrationResourceModel struct {
 	Name types.String `tfsdk:"name"`
 	Request types.String `tfsdk:"request"`
 	Schema types.Map `tfsdk:"schema"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -86,6 +89,14 @@ func (r *ExtractIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "The JSON schema defining the data structure to extract",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -125,10 +136,10 @@ func (r *ExtractIntegrationResource) Create(ctx context.Context, req resource.Cr
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Request: data.Request.ValueStringPointer(),
-		// Schema: TODO: convert map type,
+		Schema: convertMapToInterface(ctx, data.Schema),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create extractintegration: %s", err))
@@ -158,6 +169,11 @@ func (r *ExtractIntegrationResource) Read(ctx context.Context, req resource.Read
 	// Call the ChatBotKit GraphQL API to read extractintegration
 	result, err := r.client.GetExtractIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read extractintegration: %s", err))
 		return
 	}
@@ -173,14 +189,28 @@ func (r *ExtractIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
 	if result.Request != nil {
 		data.Request = types.StringPointerValue(result.Request)
 	}
-	// Schema: TODO: set from response
+	if result.Schema != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Schema)
+		resp.Diagnostics.Append(diags...)
+		data.Schema = mapValue
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -203,10 +233,10 @@ func (r *ExtractIntegrationResource) Update(ctx context.Context, req resource.Up
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Request: data.Request.ValueStringPointer(),
-		// Schema: TODO: convert map type,
+		Schema: convertMapToInterface(ctx, data.Schema),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update extractintegration: %s", err))

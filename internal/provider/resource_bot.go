@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,6 +43,8 @@ type BotResourceModel struct {
 	Privacy types.Bool `tfsdk:"privacy"`
 	SkillsetId types.String `tfsdk:"skillset_id"`
 	Visibility types.String `tfsdk:"visibility"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -106,6 +109,14 @@ func (r *BotResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 				MarkdownDescription: "The visibility level of the bot",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -146,7 +157,7 @@ func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, re
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Model: data.Model.ValueStringPointer(),
 		Moderation: data.Moderation.ValueBoolPointer(),
 		Name: data.Name.ValueStringPointer(),
@@ -182,6 +193,11 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	// Call the ChatBotKit GraphQL API to read bot
 	result, err := r.client.GetBot(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read bot: %s", err))
 		return
 	}
@@ -200,7 +216,11 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Model != nil {
 		data.Model = types.StringPointerValue(result.Model)
 	}
@@ -218,6 +238,12 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	}
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -242,7 +268,7 @@ func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Model: data.Model.ValueStringPointer(),
 		Moderation: data.Moderation.ValueBoolPointer(),
 		Name: data.Name.ValueStringPointer(),

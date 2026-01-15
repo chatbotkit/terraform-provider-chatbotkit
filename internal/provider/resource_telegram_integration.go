@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -40,6 +41,8 @@ type TelegramIntegrationResourceModel struct {
 	Meta types.Map `tfsdk:"meta"`
 	Name types.String `tfsdk:"name"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -75,6 +78,7 @@ func (r *TelegramIntegrationResource) Schema(ctx context.Context, req resource.S
 			"bot_token": schema.StringAttribute{
 				MarkdownDescription: "The Telegram bot token for API access",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"contact_collection": schema.BoolAttribute{
 				MarkdownDescription: "Whether to collect contact information",
@@ -95,6 +99,14 @@ func (r *TelegramIntegrationResource) Schema(ctx context.Context, req resource.S
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
+			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
 			},
 		},
 	}
@@ -138,7 +150,7 @@ func (r *TelegramIntegrationResource) Create(ctx context.Context, req resource.C
 		BotToken: data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})
@@ -170,6 +182,11 @@ func (r *TelegramIntegrationResource) Read(ctx context.Context, req resource.Rea
 	// Call the ChatBotKit GraphQL API to read telegramintegration
 	result, err := r.client.GetTelegramIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read telegramintegration: %s", err))
 		return
 	}
@@ -194,12 +211,22 @@ func (r *TelegramIntegrationResource) Read(ctx context.Context, req resource.Rea
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -226,7 +253,7 @@ func (r *TelegramIntegrationResource) Update(ctx context.Context, req resource.U
 		BotToken: data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})

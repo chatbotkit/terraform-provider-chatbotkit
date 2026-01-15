@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -40,6 +41,8 @@ type SkillsetAbilityResourceModel struct {
 	Name types.String `tfsdk:"name"`
 	SecretId types.String `tfsdk:"secret_id"`
 	SpaceId types.String `tfsdk:"space_id"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -91,10 +94,19 @@ func (r *SkillsetAbilityResource) Schema(ctx context.Context, req resource.Schem
 			"secret_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the secret to use for authentication",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"space_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the space to use",
 				Optional:            true,
+			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
 			},
 		},
 	}
@@ -137,7 +149,7 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 		Description: data.Description.ValueStringPointer(),
 		FileId: data.FileId.ValueStringPointer(),
 		Instruction: data.Instruction.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SecretId: data.SecretId.ValueStringPointer(),
 		SpaceId: data.SpaceId.ValueStringPointer(),
@@ -170,6 +182,11 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	// Call the ChatBotKit GraphQL API to read skillsetability
 	result, err := r.client.GetSkillsetAbility(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillsetability: %s", err))
 		return
 	}
@@ -191,7 +208,11 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	if result.Instruction != nil {
 		data.Instruction = types.StringPointerValue(result.Instruction)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -200,6 +221,12 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	}
 	if result.SpaceId != nil {
 		data.SpaceId = types.StringPointerValue(result.SpaceId)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -225,7 +252,7 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 		Description: data.Description.ValueStringPointer(),
 		FileId: data.FileId.ValueStringPointer(),
 		Instruction: data.Instruction.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SecretId: data.SecretId.ValueStringPointer(),
 		SpaceId: data.SpaceId.ValueStringPointer(),

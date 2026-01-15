@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -39,6 +40,8 @@ type EmailIntegrationResourceModel struct {
 	Meta types.Map `tfsdk:"meta"`
 	Name types.String `tfsdk:"name"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -91,6 +94,14 @@ func (r *EmailIntegrationResource) Schema(ctx context.Context, req resource.Sche
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -132,7 +143,7 @@ func (r *EmailIntegrationResource) Create(ctx context.Context, req resource.Crea
 		BotId: data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})
@@ -164,6 +175,11 @@ func (r *EmailIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	// Call the ChatBotKit GraphQL API to read emailintegration
 	result, err := r.client.GetEmailIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read emailintegration: %s", err))
 		return
 	}
@@ -185,12 +201,22 @@ func (r *EmailIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -216,7 +242,7 @@ func (r *EmailIntegrationResource) Update(ctx context.Context, req resource.Upda
 		BotId: data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})

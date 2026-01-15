@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -42,6 +43,8 @@ type SitemapIntegrationResourceModel struct {
 	Selectors types.String `tfsdk:"selectors"`
 	SyncSchedule types.String `tfsdk:"sync_schedule"`
 	URL types.String `tfsdk:"url"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -106,6 +109,14 @@ func (r *SitemapIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "The URL of the sitemap to crawl",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -148,7 +159,7 @@ func (r *SitemapIntegrationResource) Create(ctx context.Context, req resource.Cr
 		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
 		Glob: data.Glob.ValueStringPointer(),
 		Javascript: data.Javascript.ValueBoolPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Selectors: data.Selectors.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
@@ -182,6 +193,11 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 	// Call the ChatBotKit GraphQL API to read sitemapintegration
 	result, err := r.client.GetSitemapIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read sitemapintegration: %s", err))
 		return
 	}
@@ -206,7 +222,11 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.Javascript != nil {
 		data.Javascript = types.BoolPointerValue(result.Javascript)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -218,6 +238,12 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 	if result.URL != nil {
 		data.URL = types.StringPointerValue(result.URL)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -244,7 +270,7 @@ func (r *SitemapIntegrationResource) Update(ctx context.Context, req resource.Up
 		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
 		Glob: data.Glob.ValueStringPointer(),
 		Javascript: data.Javascript.ValueBoolPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Selectors: data.Selectors.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),

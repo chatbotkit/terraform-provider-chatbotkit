@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -40,6 +41,8 @@ type SecretResourceModel struct {
 	Type types.String `tfsdk:"type"`
 	Value types.String `tfsdk:"value"`
 	Visibility types.String `tfsdk:"visibility"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -96,6 +99,14 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				MarkdownDescription: "The visibility level of the secret",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -133,10 +144,10 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	result, err := r.client.CreateSecret(ctx, CreateSecretInput{
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		// Config: TODO: convert map type,
+		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
 		Kind: data.Kind.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Type: data.Type.ValueStringPointer(),
 		Value: data.Value.ValueStringPointer(),
@@ -170,6 +181,11 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	// Call the ChatBotKit GraphQL API to read secret
 	result, err := r.client.GetSecret(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read secret: %s", err))
 		return
 	}
@@ -179,14 +195,22 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
-	// Config: TODO: set from response
+	if result.Config != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Config)
+		resp.Diagnostics.Append(diags...)
+		data.Config = mapValue
+	}
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
 	if result.Kind != nil {
 		data.Kind = types.StringPointerValue(result.Kind)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -198,6 +222,12 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -219,10 +249,10 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	_, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), UpdateSecretInput{
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		// Config: TODO: convert map type,
+		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
 		Kind: data.Kind.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Type: data.Type.ValueStringPointer(),
 		Value: data.Value.ValueStringPointer(),

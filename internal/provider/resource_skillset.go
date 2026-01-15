@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -36,6 +37,8 @@ type SkillsetResourceModel struct {
 	Meta types.Map `tfsdk:"meta"`
 	Name types.String `tfsdk:"name"`
 	Visibility types.String `tfsdk:"visibility"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -76,6 +79,14 @@ func (r *SkillsetResource) Schema(ctx context.Context, req resource.SchemaReques
 				MarkdownDescription: "The visibility level of the skillset",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -114,7 +125,7 @@ func (r *SkillsetResource) Create(ctx context.Context, req resource.CreateReques
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Visibility: data.Visibility.ValueStringPointer(),
 	})
@@ -146,6 +157,11 @@ func (r *SkillsetResource) Read(ctx context.Context, req resource.ReadRequest, r
 	// Call the ChatBotKit GraphQL API to read skillset
 	result, err := r.client.GetSkillset(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read skillset: %s", err))
 		return
 	}
@@ -158,12 +174,22 @@ func (r *SkillsetResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -186,7 +212,7 @@ func (r *SkillsetResource) Update(ctx context.Context, req resource.UpdateReques
 
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		Visibility: data.Visibility.ValueStringPointer(),
 	})

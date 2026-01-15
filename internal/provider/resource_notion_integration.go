@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -39,6 +40,8 @@ type NotionIntegrationResourceModel struct {
 	Name types.String `tfsdk:"name"`
 	SyncSchedule types.String `tfsdk:"sync_schedule"`
 	Token types.String `tfsdk:"token"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -91,6 +94,14 @@ func (r *NotionIntegrationResource) Schema(ctx context.Context, req resource.Sch
 				MarkdownDescription: "The Notion integration token",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -131,7 +142,7 @@ func (r *NotionIntegrationResource) Create(ctx context.Context, req resource.Cre
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
 		Token: data.Token.ValueStringPointer(),
@@ -164,6 +175,11 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	// Call the ChatBotKit GraphQL API to read notionintegration
 	result, err := r.client.GetNotionIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read notionintegration: %s", err))
 		return
 	}
@@ -182,7 +198,11 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	if result.ExpiresIn != nil {
 		data.ExpiresIn = types.Int64PointerValue(result.ExpiresIn)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -191,6 +211,12 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	}
 	if result.Token != nil {
 		data.Token = types.StringPointerValue(result.Token)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -215,7 +241,7 @@ func (r *NotionIntegrationResource) Update(ctx context.Context, req resource.Upd
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
 		Token: data.Token.ValueStringPointer(),

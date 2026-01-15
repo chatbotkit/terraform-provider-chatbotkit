@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -39,6 +40,8 @@ type MessengerIntegrationResourceModel struct {
 	Meta types.Map `tfsdk:"meta"`
 	Name types.String `tfsdk:"name"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -62,6 +65,7 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 			"access_token": schema.StringAttribute{
 				MarkdownDescription: "The Facebook Messenger page access token",
 				Optional:            true,
+				Sensitive:           true,
 			},
 			"attachments": schema.BoolAttribute{
 				MarkdownDescription: "Whether to enable file attachments",
@@ -90,6 +94,14 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
+			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
 			},
 		},
 	}
@@ -132,7 +144,7 @@ func (r *MessengerIntegrationResource) Create(ctx context.Context, req resource.
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})
@@ -164,6 +176,11 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 	// Call the ChatBotKit GraphQL API to read messengerintegration
 	result, err := r.client.GetMessengerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read messengerintegration: %s", err))
 		return
 	}
@@ -185,12 +202,22 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -216,7 +243,7 @@ func (r *MessengerIntegrationResource) Update(ctx context.Context, req resource.
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 	})

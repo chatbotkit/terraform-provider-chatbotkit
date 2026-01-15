@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 const defaultBaseURL = "https://api.chatbotkit.com/graphql"
@@ -95,6 +97,16 @@ func (c *Client) doRequest(ctx context.Context, query string, variables map[stri
 	}
 
 	return nil
+}
+
+// convertMapToInterface converts types.Map to map[string]interface{}.
+func convertMapToInterface(ctx context.Context, m types.Map) map[string]interface{} {
+	if m.IsNull() || m.IsUnknown() {
+		return nil
+	}
+	result := make(map[string]interface{})
+	m.ElementsAs(ctx, &result, false)
+	return result
 }
 
 
@@ -212,6 +224,8 @@ type GetBlueprintResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetBlueprint fetches a blueprint by ID.
@@ -227,6 +241,8 @@ func (c *Client) GetBlueprint(ctx context.Context, id string) (*GetBlueprintResp
 						meta
 						name
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -395,6 +411,8 @@ type GetBotResponse struct {
 	Privacy *bool `json:"privacy,omitempty"`
 	SkillsetId *string `json:"skillsetId,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetBot fetches a bot by ID.
@@ -417,6 +435,8 @@ func (c *Client) GetBot(ctx context.Context, id string) (*GetBotResponse, error)
 						privacy
 						skillsetId
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -594,6 +614,8 @@ type GetDatasetResponse struct {
 	Separators *string `json:"separators,omitempty"`
 	Store *string `json:"store,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetDataset fetches a dataset by ID.
@@ -619,6 +641,8 @@ func (c *Client) GetDataset(ctx context.Context, id string) (*GetDatasetResponse
 						separators
 						store
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -787,6 +811,8 @@ type GetDiscordIntegrationResponse struct {
 	Name *string `json:"name,omitempty"`
 	PublicKey *string `json:"publicKey,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetDiscordIntegration fetches a discordintegration by ID.
@@ -809,6 +835,8 @@ func (c *Client) GetDiscordIntegration(ctx context.Context, id string) (*GetDisc
 						name
 						publicKey
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -968,6 +996,8 @@ type GetEmailIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetEmailIntegration fetches a emailintegration by ID.
@@ -987,6 +1017,8 @@ func (c *Client) GetEmailIntegration(ctx context.Context, id string) (*GetEmailI
 						meta
 						name
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -1143,6 +1175,8 @@ type GetExtractIntegrationResponse struct {
 	Name *string `json:"name,omitempty"`
 	Request *string `json:"request,omitempty"`
 	Schema map[string]interface{} `json:"schema,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetExtractIntegration fetches a extractintegration by ID.
@@ -1161,6 +1195,8 @@ func (c *Client) GetExtractIntegration(ctx context.Context, id string) (*GetExtr
 						name
 						request
 						schema
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -1311,6 +1347,8 @@ type GetFileResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetFile fetches a file by ID.
@@ -1327,6 +1365,8 @@ func (c *Client) GetFile(ctx context.Context, id string) (*GetFileResponse, erro
 						meta
 						name
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -1477,6 +1517,8 @@ type GetMcpserverIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SkillsetId *string `json:"skillsetId,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetMcpserverIntegration fetches a mcpserverintegration by ID.
@@ -1493,6 +1535,8 @@ func (c *Client) GetMcpserverIntegration(ctx context.Context, id string) (*GetMc
 						meta
 						name
 						skillsetId
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -1652,6 +1696,8 @@ type GetMessengerIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetMessengerIntegration fetches a messengerintegration by ID.
@@ -1671,6 +1717,8 @@ func (c *Client) GetMessengerIntegration(ctx context.Context, id string) (*GetMe
 						meta
 						name
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -1830,6 +1878,8 @@ type GetNotionIntegrationResponse struct {
 	Name *string `json:"name,omitempty"`
 	SyncSchedule *string `json:"syncSchedule,omitempty"`
 	Token *string `json:"token,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetNotionIntegration fetches a notionintegration by ID.
@@ -1849,6 +1899,8 @@ func (c *Client) GetNotionIntegration(ctx context.Context, id string) (*GetNotio
 						name
 						syncSchedule
 						token
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2002,6 +2054,8 @@ type GetPortalResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Slug *string `json:"slug,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetPortal fetches a portal by ID.
@@ -2019,6 +2073,8 @@ func (c *Client) GetPortal(ctx context.Context, id string) (*GetPortalResponse, 
 						meta
 						name
 						slug
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2181,6 +2237,8 @@ type GetSecretResponse struct {
 	Type *string `json:"type,omitempty"`
 	Value *string `json:"value,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetSecret fetches a secret by ID.
@@ -2201,6 +2259,8 @@ func (c *Client) GetSecret(ctx context.Context, id string) (*GetSecretResponse, 
 						type
 						value
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2369,6 +2429,8 @@ type GetSitemapIntegrationResponse struct {
 	Selectors *string `json:"selectors,omitempty"`
 	SyncSchedule *string `json:"syncSchedule,omitempty"`
 	URL *string `json:"url,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetSitemapIntegration fetches a sitemapintegration by ID.
@@ -2391,6 +2453,8 @@ func (c *Client) GetSitemapIntegration(ctx context.Context, id string) (*GetSite
 						selectors
 						syncSchedule
 						url
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2553,6 +2617,8 @@ type GetSkillsetAbilityResponse struct {
 	Name *string `json:"name,omitempty"`
 	SecretId *string `json:"secretId,omitempty"`
 	SpaceId *string `json:"spaceId,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetSkillsetAbility fetches a skillsetability by ID.
@@ -2573,6 +2639,8 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, id string) (*GetSkillse
 						name
 						secretId
 						spaceId
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2723,6 +2791,8 @@ type GetSkillsetResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	Visibility *string `json:"visibility,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetSkillset fetches a skillset by ID.
@@ -2739,6 +2809,8 @@ func (c *Client) GetSkillset(ctx context.Context, id string) (*GetSkillsetRespon
 						meta
 						name
 						visibility
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -2916,6 +2988,8 @@ type GetSlackIntegrationResponse struct {
 	SigningSecret *string `json:"signingSecret,omitempty"`
 	UserToken *string `json:"userToken,omitempty"`
 	VisibleMessages *int64 `json:"visibleMessages,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetSlackIntegration fetches a slackintegration by ID.
@@ -2941,6 +3015,8 @@ func (c *Client) GetSlackIntegration(ctx context.Context, id string) (*GetSlackI
 						signingSecret
 						userToken
 						visibleMessages
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -3103,6 +3179,8 @@ type GetTelegramIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetTelegramIntegration fetches a telegramintegration by ID.
@@ -3123,6 +3201,8 @@ func (c *Client) GetTelegramIntegration(ctx context.Context, id string) (*GetTel
 						meta
 						name
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -3282,6 +3362,8 @@ type GetTriggerIntegrationResponse struct {
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
 	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetTriggerIntegration fetches a triggerintegration by ID.
@@ -3301,6 +3383,8 @@ func (c *Client) GetTriggerIntegration(ctx context.Context, id string) (*GetTrig
 						name
 						sessionDuration
 						triggerSchedule
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -3457,6 +3541,8 @@ type GetTwilioIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetTwilioIntegration fetches a twiliointegration by ID.
@@ -3475,6 +3561,8 @@ func (c *Client) GetTwilioIntegration(ctx context.Context, id string) (*GetTwili
 						meta
 						name
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}
@@ -3640,6 +3728,8 @@ type GetWhatsAppIntegrationResponse struct {
 	Name *string `json:"name,omitempty"`
 	PhoneNumberId *string `json:"phoneNumberId,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // GetWhatsAppIntegration fetches a whatsappintegration by ID.
@@ -3661,6 +3751,8 @@ func (c *Client) GetWhatsAppIntegration(ctx context.Context, id string) (*GetWha
 						name
 						phoneNumberId
 						sessionDuration
+						createdAt
+						updatedAt
 					}
 				}
 			}

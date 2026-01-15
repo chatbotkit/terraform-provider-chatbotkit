@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -39,6 +40,8 @@ type TriggerIntegrationResourceModel struct {
 	Name types.String `tfsdk:"name"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
 	TriggerSchedule types.String `tfsdk:"trigger_schedule"`
+	CreatedAt types.String `tfsdk:"created_at"`
+	UpdatedAt types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -91,6 +94,14 @@ func (r *TriggerIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "The schedule for automatic trigger execution",
 				Optional:            true,
 			},
+			"created_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was created",
+				Computed:            true,
+			},
+			"updated_at": schema.StringAttribute{
+				MarkdownDescription: "Timestamp when the resource was last updated",
+				Computed:            true,
+			},
 		},
 	}
 }
@@ -131,7 +142,7 @@ func (r *TriggerIntegrationResource) Create(ctx context.Context, req resource.Cr
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 		TriggerSchedule: data.TriggerSchedule.ValueStringPointer(),
@@ -164,6 +175,11 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	// Call the ChatBotKit GraphQL API to read triggerintegration
 	result, err := r.client.GetTriggerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
+		// Check if resource was deleted outside of Terraform
+		if strings.Contains(err.Error(), "not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read triggerintegration: %s", err))
 		return
 	}
@@ -182,7 +198,11 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
-	// Meta: TODO: set from response
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		resp.Diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
@@ -191,6 +211,12 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 	if result.TriggerSchedule != nil {
 		data.TriggerSchedule = types.StringPointerValue(result.TriggerSchedule)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
 	}
 
 	// Save updated data into Terraform state
@@ -215,7 +241,7 @@ func (r *TriggerIntegrationResource) Update(ctx context.Context, req resource.Up
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		// Meta: TODO: convert map type,
+		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
 		TriggerSchedule: data.TriggerSchedule.ValueStringPointer(),
