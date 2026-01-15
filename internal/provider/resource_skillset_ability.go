@@ -202,6 +202,9 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 
 	// Update data model with response values
 
+	if result.SkillsetId != nil {
+		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
