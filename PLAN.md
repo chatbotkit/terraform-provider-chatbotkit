@@ -39,11 +39,12 @@ The provider has a working code generator (`sites/main/scripts/gen-terraform-stu
 
 ---
 
-## Phase 1: Make It Runnable
+## ✅ Phase 1: Make It Runnable (COMPLETE)
 
 **Goal**: Get a working Terraform provider that can be tested locally.  
 **Effort**: ~30 minutes  
-**Priority**: P0 - Required
+**Priority**: P0 - Required  
+**Status**: ✅ Complete
 
 ### Task 1.1: Create `main.go`
 
@@ -130,11 +131,12 @@ resource "chatbotkit_bot" "example" {
 
 ---
 
-## Phase 2: Generator Improvements
+## ✅ Phase 2: Generator Improvements (COMPLETE)
 
 **Goal**: Fix known issues in generated code.  
 **Effort**: ~2 hours  
-**Priority**: P1 - Important for production use
+**Priority**: P1 - Important for production use  
+**Status**: ✅ Complete
 
 ### Task 2.1: Fix Meta/Map Type Handling
 
@@ -285,11 +287,12 @@ Update generator to add common computed fields:
 
 ---
 
-## Phase 3: Data Sources
+## ✅ Phase 3: Data Sources (COMPLETE)
 
 **Goal**: Allow reading existing resources without managing them.  
 **Effort**: ~3 hours  
-**Priority**: P2 - Nice to have
+**Priority**: P2 - Nice to have  
+**Status**: ✅ Complete
 
 ### Task 3.1: Add Data Source Generator
 
@@ -663,38 +666,45 @@ jobs:
 
 ## Summary
 
-| Phase                           | Effort    | Priority | Outcome                            |
-| ------------------------------- | --------- | -------- | ---------------------------------- |
-| Phase 1: Make It Runnable       | 30 min    | P0       | Working provider for local testing |
-| Phase 2: Generator Improvements | 2 hours   | P1       | Production-quality generated code  |
-| Phase 3: Data Sources           | 3 hours   | P2       | Read-only resource access          |
-| Phase 4: Testing                | 4-6 hours | P2       | Confidence in correctness          |
-| Phase 5: Documentation          | 2-3 hours | P3       | Ready for public use               |
-| Phase 6: Release Infrastructure | 2 hours   | P3       | Automated releases                 |
+| Phase                           | Effort    | Priority | Status      | Outcome                            |
+| ------------------------------- | --------- | -------- | ----------- | ---------------------------------- |
+| Phase 1: Make It Runnable       | 30 min    | P0       | ✅ Complete | Working provider for local testing |
+| Phase 2: Generator Improvements | 2 hours   | P1       | ✅ Complete | Production-quality generated code  |
+| Phase 3: Data Sources           | 3 hours   | P2       | ✅ Complete | Read-only resource access          |
+| Phase 4: Testing                | 4-6 hours | P2       | ⬚ Pending   | Confidence in correctness          |
+| Phase 5: Documentation          | 2-3 hours | P3       | ⬚ Pending   | Ready for public use               |
+| Phase 6: Release Infrastructure | 2 hours   | P3       | ⬚ Pending   | Automated releases                 |
 
-**Total estimated effort**: ~14-17 hours for full production release
+**Progress**: 3 of 6 phases complete (~5.5 hours done, ~8-11 hours remaining)
 
-**Minimum viable provider**: Phase 1 only (~30 minutes)
+**Current state**: Provider is buildable and ready for local testing
 
 ---
 
 ## Quick Start
 
-To get started immediately:
+The provider is ready for local testing:
 
 ```bash
-# 1. Create main.go (see Task 1.1)
-
-# 2. Build the provider
+# 1. Build the provider
 cd sdks/terraform
 go build -o terraform-provider-chatbotkit
 
-# 3. Set up dev override in ~/.terraformrc
+# 2. Set up dev override in ~/.terraformrc
+cat >> ~/.terraformrc << 'EOF'
+provider_installation {
+  dev_overrides {
+    "chatbotkit/chatbotkit" = "/path/to/cbk-platform/sdks/terraform"
+  }
+  direct {}
+}
+EOF
 
-# 4. Test with example configuration
+# 3. Test with example configuration
 cd examples/basic
 export CHATBOTKIT_API_KEY="your-api-key"
-terraform init
 terraform plan
 terraform apply
 ```
+
+> **Note**: With dev_overrides, you don't need to run `terraform init`.
