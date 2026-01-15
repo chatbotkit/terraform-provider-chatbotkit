@@ -1,11 +1,12 @@
 # Terraform Provider release workflow
-# Triggered when a new tag is pushed (v*)
+# Triggered when a new tag is pushed (v*) or manually dispatched
 name: Release
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
