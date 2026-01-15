@@ -39,6 +39,16 @@ terraform plan
 terraform apply
 ```
 
+## Running Tests
+
+```bash
+# Run unit tests
+go test -v ./internal/provider/ -run "^Test[^Acc]"
+
+# Run acceptance tests (requires CHATBOTKIT_API_KEY)
+CHATBOTKIT_API_KEY=your-api-key go test -v ./internal/provider/ -run "^TestAcc"
+```
+
 ## Directory Structure
 
 ```
@@ -46,13 +56,22 @@ sdks/terraform/
 ├── main.go                    # Provider entry point
 ├── go.mod                     # Go module definition
 ├── go.sum                     # Go dependencies
+├── .goreleaser.yml            # Release configuration
+├── terraform-registry-manifest.json  # Registry manifest
+├── docs/                      # Terraform Registry documentation
+│   ├── index.md              # Provider documentation
+│   ├── resources/            # Resource documentation
+│   └── data-sources/         # Data source documentation
 ├── types/
 │   └── types.go              # Generated Go types
 ├── internal/
 │   └── provider/
 │       ├── client.go          # GraphQL API client
+│       ├── client_test.go     # Client unit tests
 │       ├── provider.go        # Provider configuration
-│       └── resource_*.go      # Resource implementations
+│       ├── provider_test.go   # Provider tests
+│       ├── resource_*.go      # Resource implementations
+│       └── resource_*_test.go # Resource tests
 └── examples/
     └── basic/
         └── main.tf           # Example Terraform configuration
