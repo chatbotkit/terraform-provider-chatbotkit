@@ -2518,7 +2518,7 @@ func (c *Client) CreateSkillsetAbility(ctx context.Context, skillsetId string, i
 
 	variables := map[string]interface{}{
 		"skillsetId": skillsetId,
-		"input":      input,
+		"input": input,
 	}
 
 	var response struct {
@@ -2611,7 +2611,6 @@ func (c *Client) DeleteSkillsetAbility(ctx context.Context, skillsetId string, a
 // GetSkillsetAbilityResponse represents the response from fetching a skillsetability.
 type GetSkillsetAbilityResponse struct {
 	ID *string `json:"id"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	BotId *string `json:"botId,omitempty"`
 	Description *string `json:"description,omitempty"`
@@ -2626,7 +2625,7 @@ type GetSkillsetAbilityResponse struct {
 }
 
 // GetSkillsetAbility fetches a skillsetability by ID.
-func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, abilityId string) (*GetSkillsetAbilityResponse, error) {
+func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, id string) (*GetSkillsetAbilityResponse, error) {
 	// Query abilities through the skillset connection
 	query := `
 		query GetSkillsetAbility($skillsetIds: [ID!]) {
@@ -2638,29 +2637,17 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, abil
 							edges {
 								node {
 									id
+									blueprintId
+									botId
 									description
+									fileId
 									instruction
+									meta
 									name
+									secretId
+									spaceId
 									createdAt
 									updatedAt
-									skillset {
-										id
-									}
-									blueprint {
-										id
-									}
-									bot {
-										id
-									}
-									file {
-										id
-									}
-									secret {
-										id
-									}
-									space {
-										id
-									}
 								}
 							}
 						}
@@ -2678,35 +2665,10 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, abil
 		Skillsets struct {
 			Edges []struct {
 				Node struct {
-					ID       string `json:"id"`
+					ID        string `json:"id"`
 					Abilities struct {
 						Edges []struct {
-							Node struct {
-								ID          *string `json:"id"`
-								Description *string `json:"description"`
-								Instruction *string `json:"instruction"`
-								Name        *string `json:"name"`
-								CreatedAt   *string `json:"createdAt"`
-								UpdatedAt   *string `json:"updatedAt"`
-								Skillset    *struct {
-									ID *string `json:"id"`
-								} `json:"skillset"`
-								Blueprint *struct {
-									ID *string `json:"id"`
-								} `json:"blueprint"`
-								Bot *struct {
-									ID *string `json:"id"`
-								} `json:"bot"`
-								File *struct {
-									ID *string `json:"id"`
-								} `json:"file"`
-								Secret *struct {
-									ID *string `json:"id"`
-								} `json:"secret"`
-								Space *struct {
-									ID *string `json:"id"`
-								} `json:"space"`
-							} `json:"node"`
+							Node *GetSkillsetAbilityResponse `json:"node"`
 						} `json:"edges"`
 					} `json:"abilities"`
 				} `json:"node"`
@@ -2719,41 +2681,15 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, abil
 	}
 
 	// Find the ability with matching ID
-	for _, skillsetEdge := range response.Skillsets.Edges {
-		for _, abilityEdge := range skillsetEdge.Node.Abilities.Edges {
-			if abilityEdge.Node.ID != nil && *abilityEdge.Node.ID == abilityId {
-				result := &GetSkillsetAbilityResponse{
-					ID:          abilityEdge.Node.ID,
-					Description: abilityEdge.Node.Description,
-					Instruction: abilityEdge.Node.Instruction,
-					Name:        abilityEdge.Node.Name,
-					CreatedAt:   abilityEdge.Node.CreatedAt,
-					UpdatedAt:   abilityEdge.Node.UpdatedAt,
-				}
-				if abilityEdge.Node.Skillset != nil {
-					result.SkillsetId = abilityEdge.Node.Skillset.ID
-				}
-				if abilityEdge.Node.Blueprint != nil {
-					result.BlueprintId = abilityEdge.Node.Blueprint.ID
-				}
-				if abilityEdge.Node.Bot != nil {
-					result.BotId = abilityEdge.Node.Bot.ID
-				}
-				if abilityEdge.Node.File != nil {
-					result.FileId = abilityEdge.Node.File.ID
-				}
-				if abilityEdge.Node.Secret != nil {
-					result.SecretId = abilityEdge.Node.Secret.ID
-				}
-				if abilityEdge.Node.Space != nil {
-					result.SpaceId = abilityEdge.Node.Space.ID
-				}
-				return result, nil
+	for _, parentEdge := range response.Skillsets.Edges {
+		for _, abilityEdge := range parentEdge.Node.Abilities.Edges {
+			if abilityEdge.Node != nil && abilityEdge.Node.ID != nil && *abilityEdge.Node.ID == id {
+				return abilityEdge.Node, nil
 			}
 		}
 	}
 
-	return nil, fmt.Errorf("skillsetability with ID %s not found in skillset %s", abilityId, skillsetId)
+	return nil, fmt.Errorf("skillsetability with ID %s not found in skillset %s", id, skillsetId)
 }
 
 

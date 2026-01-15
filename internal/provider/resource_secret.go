@@ -143,8 +143,8 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to create secret
-	result, err := r.client.CreateSecret(ctx, CreateSecretInput{
 
+	result, err := r.client.CreateSecret(ctx, CreateSecretInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
@@ -181,6 +181,7 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	// Call the ChatBotKit GraphQL API to read secret
+
 	result, err := r.client.GetSecret(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -248,8 +249,8 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to update secret
-	_, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), UpdateSecretInput{
 
+	_, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), UpdateSecretInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
@@ -281,6 +282,7 @@ func (r *SecretResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to delete secret
+
 	_, err := r.client.DeleteSecret(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete secret: %s", err))

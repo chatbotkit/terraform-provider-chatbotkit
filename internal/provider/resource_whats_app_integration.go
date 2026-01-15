@@ -148,8 +148,8 @@ func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.C
 	}
 
 	// Call the ChatBotKit GraphQL API to create whatsappintegration
-	result, err := r.client.CreateWhatsAppIntegration(ctx, CreateWhatsAppIntegrationInput{
 
+	result, err := r.client.CreateWhatsAppIntegration(ctx, CreateWhatsAppIntegrationInput{
 		AccessToken: data.AccessToken.ValueStringPointer(),
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
@@ -187,6 +187,7 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	// Call the ChatBotKit GraphQL API to read whatsappintegration
+
 	result, err := r.client.GetWhatsAppIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -255,8 +256,8 @@ func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.U
 	}
 
 	// Call the ChatBotKit GraphQL API to update whatsappintegration
-	_, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), UpdateWhatsAppIntegrationInput{
 
+	_, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), UpdateWhatsAppIntegrationInput{
 		AccessToken: data.AccessToken.ValueStringPointer(),
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
@@ -289,6 +290,7 @@ func (r *WhatsAppIntegrationResource) Delete(ctx context.Context, req resource.D
 	}
 
 	// Call the ChatBotKit GraphQL API to delete whatsappintegration
+
 	_, err := r.client.DeleteWhatsAppIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete whatsappintegration: %s", err))

@@ -122,8 +122,8 @@ func (r *SkillsetResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Call the ChatBotKit GraphQL API to create skillset
-	result, err := r.client.CreateSkillset(ctx, CreateSkillsetInput{
 
+	result, err := r.client.CreateSkillset(ctx, CreateSkillsetInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -156,6 +156,7 @@ func (r *SkillsetResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	// Call the ChatBotKit GraphQL API to read skillset
+
 	result, err := r.client.GetSkillset(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -209,8 +210,8 @@ func (r *SkillsetResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	// Call the ChatBotKit GraphQL API to update skillset
-	_, err := r.client.UpdateSkillset(ctx, data.ID.ValueString(), UpdateSkillsetInput{
 
+	_, err := r.client.UpdateSkillset(ctx, data.ID.ValueString(), UpdateSkillsetInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -238,6 +239,7 @@ func (r *SkillsetResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Call the ChatBotKit GraphQL API to delete skillset
+
 	_, err := r.client.DeleteSkillset(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillset: %s", err))

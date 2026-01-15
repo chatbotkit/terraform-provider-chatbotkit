@@ -137,8 +137,8 @@ func (r *NotionIntegrationResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	// Call the ChatBotKit GraphQL API to create notionintegration
-	result, err := r.client.CreateNotionIntegration(ctx, CreateNotionIntegrationInput{
 
+	result, err := r.client.CreateNotionIntegration(ctx, CreateNotionIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -174,6 +174,7 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	// Call the ChatBotKit GraphQL API to read notionintegration
+
 	result, err := r.client.GetNotionIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -236,8 +237,8 @@ func (r *NotionIntegrationResource) Update(ctx context.Context, req resource.Upd
 	}
 
 	// Call the ChatBotKit GraphQL API to update notionintegration
-	_, err := r.client.UpdateNotionIntegration(ctx, data.ID.ValueString(), UpdateNotionIntegrationInput{
 
+	_, err := r.client.UpdateNotionIntegration(ctx, data.ID.ValueString(), UpdateNotionIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -268,6 +269,7 @@ func (r *NotionIntegrationResource) Delete(ctx context.Context, req resource.Del
 	}
 
 	// Call the ChatBotKit GraphQL API to delete notionintegration
+
 	_, err := r.client.DeleteNotionIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete notionintegration: %s", err))

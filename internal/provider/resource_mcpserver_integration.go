@@ -122,8 +122,8 @@ func (r *McpserverIntegrationResource) Create(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to create mcpserverintegration
-	result, err := r.client.CreateMcpserverIntegration(ctx, CreateMcpserverIntegrationInput{
 
+	result, err := r.client.CreateMcpserverIntegration(ctx, CreateMcpserverIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -156,6 +156,7 @@ func (r *McpserverIntegrationResource) Read(ctx context.Context, req resource.Re
 	}
 
 	// Call the ChatBotKit GraphQL API to read mcpserverintegration
+
 	result, err := r.client.GetMcpserverIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -209,8 +210,8 @@ func (r *McpserverIntegrationResource) Update(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to update mcpserverintegration
-	_, err := r.client.UpdateMcpserverIntegration(ctx, data.ID.ValueString(), UpdateMcpserverIntegrationInput{
 
+	_, err := r.client.UpdateMcpserverIntegration(ctx, data.ID.ValueString(), UpdateMcpserverIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -238,6 +239,7 @@ func (r *McpserverIntegrationResource) Delete(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to delete mcpserverintegration
+
 	_, err := r.client.DeleteMcpserverIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete mcpserverintegration: %s", err))

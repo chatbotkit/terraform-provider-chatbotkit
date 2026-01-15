@@ -143,8 +143,8 @@ func (r *TelegramIntegrationResource) Create(ctx context.Context, req resource.C
 	}
 
 	// Call the ChatBotKit GraphQL API to create telegramintegration
-	result, err := r.client.CreateTelegramIntegration(ctx, CreateTelegramIntegrationInput{
 
+	result, err := r.client.CreateTelegramIntegration(ctx, CreateTelegramIntegrationInput{
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -181,6 +181,7 @@ func (r *TelegramIntegrationResource) Read(ctx context.Context, req resource.Rea
 	}
 
 	// Call the ChatBotKit GraphQL API to read telegramintegration
+
 	result, err := r.client.GetTelegramIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -246,8 +247,8 @@ func (r *TelegramIntegrationResource) Update(ctx context.Context, req resource.U
 	}
 
 	// Call the ChatBotKit GraphQL API to update telegramintegration
-	_, err := r.client.UpdateTelegramIntegration(ctx, data.ID.ValueString(), UpdateTelegramIntegrationInput{
 
+	_, err := r.client.UpdateTelegramIntegration(ctx, data.ID.ValueString(), UpdateTelegramIntegrationInput{
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -279,6 +280,7 @@ func (r *TelegramIntegrationResource) Delete(ctx context.Context, req resource.D
 	}
 
 	// Call the ChatBotKit GraphQL API to delete telegramintegration
+
 	_, err := r.client.DeleteTelegramIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete telegramintegration: %s", err))

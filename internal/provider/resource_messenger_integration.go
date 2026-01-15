@@ -138,8 +138,8 @@ func (r *MessengerIntegrationResource) Create(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to create messengerintegration
-	result, err := r.client.CreateMessengerIntegration(ctx, CreateMessengerIntegrationInput{
 
+	result, err := r.client.CreateMessengerIntegration(ctx, CreateMessengerIntegrationInput{
 		AccessToken: data.AccessToken.ValueStringPointer(),
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
@@ -175,6 +175,7 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 	}
 
 	// Call the ChatBotKit GraphQL API to read messengerintegration
+
 	result, err := r.client.GetMessengerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -237,8 +238,8 @@ func (r *MessengerIntegrationResource) Update(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to update messengerintegration
-	_, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), UpdateMessengerIntegrationInput{
 
+	_, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), UpdateMessengerIntegrationInput{
 		AccessToken: data.AccessToken.ValueStringPointer(),
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
@@ -269,6 +270,7 @@ func (r *MessengerIntegrationResource) Delete(ctx context.Context, req resource.
 	}
 
 	// Call the ChatBotKit GraphQL API to delete messengerintegration
+
 	_, err := r.client.DeleteMessengerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete messengerintegration: %s", err))

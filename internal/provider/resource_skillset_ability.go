@@ -151,8 +151,8 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 	}
 
 	// Call the ChatBotKit GraphQL API to create skillsetability
-	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), CreateSkillsetAbilityInput{
 
+	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), CreateSkillsetAbilityInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -189,6 +189,7 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	}
 
 	// Call the ChatBotKit GraphQL API to read skillsetability
+
 	result, err := r.client.GetSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -202,9 +203,6 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 
 	// Update data model with response values
 
-	if result.SkillsetId != nil {
-		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
-	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -257,8 +255,8 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 	}
 
 	// Call the ChatBotKit GraphQL API to update skillsetability
-	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), UpdateSkillsetAbilityInput{
 
+	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), UpdateSkillsetAbilityInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -290,6 +288,7 @@ func (r *SkillsetAbilityResource) Delete(ctx context.Context, req resource.Delet
 	}
 
 	// Call the ChatBotKit GraphQL API to delete skillsetability
+
 	_, err := r.client.DeleteSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete skillsetability: %s", err))

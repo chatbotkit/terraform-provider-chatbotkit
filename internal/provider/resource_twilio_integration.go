@@ -132,8 +132,8 @@ func (r *TwilioIntegrationResource) Create(ctx context.Context, req resource.Cre
 	}
 
 	// Call the ChatBotKit GraphQL API to create twiliointegration
-	result, err := r.client.CreateTwilioIntegration(ctx, CreateTwilioIntegrationInput{
 
+	result, err := r.client.CreateTwilioIntegration(ctx, CreateTwilioIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
@@ -168,6 +168,7 @@ func (r *TwilioIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	}
 
 	// Call the ChatBotKit GraphQL API to read twiliointegration
+
 	result, err := r.client.GetTwilioIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -227,8 +228,8 @@ func (r *TwilioIntegrationResource) Update(ctx context.Context, req resource.Upd
 	}
 
 	// Call the ChatBotKit GraphQL API to update twiliointegration
-	_, err := r.client.UpdateTwilioIntegration(ctx, data.ID.ValueString(), UpdateTwilioIntegrationInput{
 
+	_, err := r.client.UpdateTwilioIntegration(ctx, data.ID.ValueString(), UpdateTwilioIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
@@ -258,6 +259,7 @@ func (r *TwilioIntegrationResource) Delete(ctx context.Context, req resource.Del
 	}
 
 	// Call the ChatBotKit GraphQL API to delete twiliointegration
+
 	_, err := r.client.DeleteTwilioIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete twiliointegration: %s", err))

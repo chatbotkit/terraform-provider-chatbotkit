@@ -137,8 +137,8 @@ func (r *TriggerIntegrationResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Call the ChatBotKit GraphQL API to create triggerintegration
-	result, err := r.client.CreateTriggerIntegration(ctx, CreateTriggerIntegrationInput{
 
+	result, err := r.client.CreateTriggerIntegration(ctx, CreateTriggerIntegrationInput{
 		Authenticate: data.Authenticate.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -174,6 +174,7 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 
 	// Call the ChatBotKit GraphQL API to read triggerintegration
+
 	result, err := r.client.GetTriggerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -236,8 +237,8 @@ func (r *TriggerIntegrationResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Call the ChatBotKit GraphQL API to update triggerintegration
-	_, err := r.client.UpdateTriggerIntegration(ctx, data.ID.ValueString(), UpdateTriggerIntegrationInput{
 
+	_, err := r.client.UpdateTriggerIntegration(ctx, data.ID.ValueString(), UpdateTriggerIntegrationInput{
 		Authenticate: data.Authenticate.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -268,6 +269,7 @@ func (r *TriggerIntegrationResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Call the ChatBotKit GraphQL API to delete triggerintegration
+
 	_, err := r.client.DeleteTriggerIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete triggerintegration: %s", err))

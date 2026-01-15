@@ -128,8 +128,8 @@ func (r *PortalResource) Create(ctx context.Context, req resource.CreateRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to create portal
-	result, err := r.client.CreatePortal(ctx, CreatePortalInput{
 
+	result, err := r.client.CreatePortal(ctx, CreatePortalInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
@@ -163,6 +163,7 @@ func (r *PortalResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	// Call the ChatBotKit GraphQL API to read portal
+
 	result, err := r.client.GetPortal(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -221,8 +222,8 @@ func (r *PortalResource) Update(ctx context.Context, req resource.UpdateRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to update portal
-	_, err := r.client.UpdatePortal(ctx, data.ID.ValueString(), UpdatePortalInput{
 
+	_, err := r.client.UpdatePortal(ctx, data.ID.ValueString(), UpdatePortalInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Config: convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
@@ -251,6 +252,7 @@ func (r *PortalResource) Delete(ctx context.Context, req resource.DeleteRequest,
 	}
 
 	// Call the ChatBotKit GraphQL API to delete portal
+
 	_, err := r.client.DeletePortal(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete portal: %s", err))

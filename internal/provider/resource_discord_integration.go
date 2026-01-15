@@ -153,8 +153,8 @@ func (r *DiscordIntegrationResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Call the ChatBotKit GraphQL API to create discordintegration
-	result, err := r.client.CreateDiscordIntegration(ctx, CreateDiscordIntegrationInput{
 
+	result, err := r.client.CreateDiscordIntegration(ctx, CreateDiscordIntegrationInput{
 		AppId: data.AppId.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -193,6 +193,7 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 
 	// Call the ChatBotKit GraphQL API to read discordintegration
+
 	result, err := r.client.GetDiscordIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -264,8 +265,8 @@ func (r *DiscordIntegrationResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Call the ChatBotKit GraphQL API to update discordintegration
-	_, err := r.client.UpdateDiscordIntegration(ctx, data.ID.ValueString(), UpdateDiscordIntegrationInput{
 
+	_, err := r.client.UpdateDiscordIntegration(ctx, data.ID.ValueString(), UpdateDiscordIntegrationInput{
 		AppId: data.AppId.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -299,6 +300,7 @@ func (r *DiscordIntegrationResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Call the ChatBotKit GraphQL API to delete discordintegration
+
 	_, err := r.client.DeleteDiscordIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete discordintegration: %s", err))

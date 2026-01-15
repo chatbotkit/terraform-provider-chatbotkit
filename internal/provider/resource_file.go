@@ -122,8 +122,8 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 
 	// Call the ChatBotKit GraphQL API to create file
-	result, err := r.client.CreateFile(ctx, CreateFileInput{
 
+	result, err := r.client.CreateFile(ctx, CreateFileInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -156,6 +156,7 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	}
 
 	// Call the ChatBotKit GraphQL API to read file
+
 	result, err := r.client.GetFile(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -209,8 +210,8 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	}
 
 	// Call the ChatBotKit GraphQL API to update file
-	_, err := r.client.UpdateFile(ctx, data.ID.ValueString(), UpdateFileInput{
 
+	_, err := r.client.UpdateFile(ctx, data.ID.ValueString(), UpdateFileInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
@@ -238,6 +239,7 @@ func (r *FileResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 	}
 
 	// Call the ChatBotKit GraphQL API to delete file
+
 	_, err := r.client.DeleteFile(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete file: %s", err))

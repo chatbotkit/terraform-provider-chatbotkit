@@ -152,8 +152,8 @@ func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 
 	// Call the ChatBotKit GraphQL API to create bot
-	result, err := r.client.CreateBot(ctx, CreateBotInput{
 
+	result, err := r.client.CreateBot(ctx, CreateBotInput{
 		Backstory: data.Backstory.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
@@ -192,6 +192,7 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	}
 
 	// Call the ChatBotKit GraphQL API to read bot
+
 	result, err := r.client.GetBot(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -263,8 +264,8 @@ func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	}
 
 	// Call the ChatBotKit GraphQL API to update bot
-	_, err := r.client.UpdateBot(ctx, data.ID.ValueString(), UpdateBotInput{
 
+	_, err := r.client.UpdateBot(ctx, data.ID.ValueString(), UpdateBotInput{
 		Backstory: data.Backstory.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
@@ -298,6 +299,7 @@ func (r *BotResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 	}
 
 	// Call the ChatBotKit GraphQL API to delete bot
+
 	_, err := r.client.DeleteBot(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete bot: %s", err))

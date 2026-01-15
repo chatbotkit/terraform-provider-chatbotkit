@@ -133,8 +133,8 @@ func (r *ExtractIntegrationResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Call the ChatBotKit GraphQL API to create extractintegration
-	result, err := r.client.CreateExtractIntegration(ctx, CreateExtractIntegrationInput{
 
+	result, err := r.client.CreateExtractIntegration(ctx, CreateExtractIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -169,6 +169,7 @@ func (r *ExtractIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 
 	// Call the ChatBotKit GraphQL API to read extractintegration
+
 	result, err := r.client.GetExtractIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -230,8 +231,8 @@ func (r *ExtractIntegrationResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Call the ChatBotKit GraphQL API to update extractintegration
-	_, err := r.client.UpdateExtractIntegration(ctx, data.ID.ValueString(), UpdateExtractIntegrationInput{
 
+	_, err := r.client.UpdateExtractIntegration(ctx, data.ID.ValueString(), UpdateExtractIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -261,6 +262,7 @@ func (r *ExtractIntegrationResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Call the ChatBotKit GraphQL API to delete extractintegration
+
 	_, err := r.client.DeleteExtractIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete extractintegration: %s", err))

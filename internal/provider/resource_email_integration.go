@@ -137,8 +137,8 @@ func (r *EmailIntegrationResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	// Call the ChatBotKit GraphQL API to create emailintegration
-	result, err := r.client.CreateEmailIntegration(ctx, CreateEmailIntegrationInput{
 
+	result, err := r.client.CreateEmailIntegration(ctx, CreateEmailIntegrationInput{
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -174,6 +174,7 @@ func (r *EmailIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Call the ChatBotKit GraphQL API to read emailintegration
+
 	result, err := r.client.GetEmailIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -236,8 +237,8 @@ func (r *EmailIntegrationResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Call the ChatBotKit GraphQL API to update emailintegration
-	_, err := r.client.UpdateEmailIntegration(ctx, data.ID.ValueString(), UpdateEmailIntegrationInput{
 
+	_, err := r.client.UpdateEmailIntegration(ctx, data.ID.ValueString(), UpdateEmailIntegrationInput{
 		Attachments: data.Attachments.ValueBoolPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -268,6 +269,7 @@ func (r *EmailIntegrationResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Call the ChatBotKit GraphQL API to delete emailintegration
+
 	_, err := r.client.DeleteEmailIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete emailintegration: %s", err))

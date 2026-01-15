@@ -167,8 +167,8 @@ func (r *DatasetResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	// Call the ChatBotKit GraphQL API to create dataset
-	result, err := r.client.CreateDataset(ctx, CreateDatasetInput{
 
+	result, err := r.client.CreateDataset(ctx, CreateDatasetInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
@@ -210,6 +210,7 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	// Call the ChatBotKit GraphQL API to read dataset
+
 	result, err := r.client.GetDataset(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -290,8 +291,8 @@ func (r *DatasetResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	// Call the ChatBotKit GraphQL API to update dataset
-	_, err := r.client.UpdateDataset(ctx, data.ID.ValueString(), UpdateDatasetInput{
 
+	_, err := r.client.UpdateDataset(ctx, data.ID.ValueString(), UpdateDatasetInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
@@ -328,6 +329,7 @@ func (r *DatasetResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	// Call the ChatBotKit GraphQL API to delete dataset
+
 	_, err := r.client.DeleteDataset(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete dataset: %s", err))

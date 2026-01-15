@@ -117,8 +117,8 @@ func (r *BlueprintResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Call the ChatBotKit GraphQL API to create blueprint
-	result, err := r.client.CreateBlueprint(ctx, CreateBlueprintInput{
 
+	result, err := r.client.CreateBlueprint(ctx, CreateBlueprintInput{
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
@@ -150,6 +150,7 @@ func (r *BlueprintResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	// Call the ChatBotKit GraphQL API to read blueprint
+
 	result, err := r.client.GetBlueprint(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -200,8 +201,8 @@ func (r *BlueprintResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Call the ChatBotKit GraphQL API to update blueprint
-	_, err := r.client.UpdateBlueprint(ctx, data.ID.ValueString(), UpdateBlueprintInput{
 
+	_, err := r.client.UpdateBlueprint(ctx, data.ID.ValueString(), UpdateBlueprintInput{
 		Description: data.Description.ValueStringPointer(),
 		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
@@ -228,6 +229,7 @@ func (r *BlueprintResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	// Call the ChatBotKit GraphQL API to delete blueprint
+
 	_, err := r.client.DeleteBlueprint(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete blueprint: %s", err))

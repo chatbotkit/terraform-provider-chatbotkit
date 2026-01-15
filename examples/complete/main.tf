@@ -1,8 +1,8 @@
 # Complete ChatBotKit Terraform Example
 #
 # This example demonstrates a complete setup with:
-# - A dataset for storing knowledge
-# - A skillset with an ability
+# - A dataset for storing knowledge (automatically adds search functions)
+# - A skillset with web search and fetch abilities
 # - A bot linked to both the dataset and skillset
 # - A trigger integration linked to the bot
 #
@@ -24,7 +24,8 @@ provider "chatbotkit" {
 # ============================================================================
 # Dataset
 # ============================================================================
-# A dataset stores knowledge that the bot can search and reference
+# A dataset stores knowledge that the bot can search and reference.
+# Note: Linking a dataset to a bot automatically adds search functions.
 
 resource "chatbotkit_dataset" "knowledge_base" {
   name        = "Knowledge Base"
@@ -42,17 +43,32 @@ resource "chatbotkit_skillset" "bot_skills" {
 }
 
 # ============================================================================
-# Ability
+# Abilities
 # ============================================================================
-# An ability defines a specific action or capability the bot can use
+# Abilities define specific actions or capabilities the bot can use.
+# Here we add web search and fetch abilities for internet access.
 
-resource "chatbotkit_skillset_ability" "search_ability" {
+# Ability to search the web for information
+resource "chatbotkit_skillset_ability" "web_search" {
   skillset_id = chatbotkit_skillset.bot_skills.id
-  name        = "Search Knowledge"
-  description = "Search the knowledge base for relevant information"
+  name        = "Search Web"
+  description = "Search the web for information"
   instruction = <<-EOT
-    Use this ability to search for information in the knowledge base.
-    When the user asks a question, use this to find relevant answers.
+    ```search
+    query: $[query! ys|the search query to find information on the web]
+    ```
+  EOT
+}
+
+# Ability to fetch and read web pages
+resource "chatbotkit_skillset_ability" "web_fetch" {
+  skillset_id = chatbotkit_skillset.bot_skills.id
+  name        = "Fetch Web Page"
+  description = "Fetch and read the content of a web page"
+  instruction = <<-EOT
+    ```fetch
+    url: $[url! ys|the URL of the web page to fetch and read]
+    ```
   EOT
 }
 
@@ -65,15 +81,19 @@ resource "chatbotkit_bot" "assistant" {
   name        = "AI Assistant"
   description = "An intelligent assistant powered by ChatBotKit"
   backstory   = <<-EOT
-    You are a helpful AI assistant. You have access to a knowledge base
-    that you can search to answer questions. Always be polite and helpful.
-    If you don't know something, say so honestly.
+    You are a helpful AI assistant. You have access to:
+    - A knowledge base that you can search to answer questions
+    - Web search capabilities to find current information online
+    - The ability to fetch and read web pages
+
+    Always be polite and helpful. If you don't know something, try searching
+    the knowledge base first, then the web if needed.
   EOT
 
-  # Link the bot to the dataset
+  # Link the bot to the dataset (automatically adds search functions)
   dataset_id = chatbotkit_dataset.knowledge_base.id
 
-  # Link the bot to the skillset
+  # Link the bot to the skillset (includes web search and fetch abilities)
   skillset_id = chatbotkit_skillset.bot_skills.id
 }
 
@@ -108,9 +128,14 @@ output "skillset_id" {
   value       = chatbotkit_skillset.bot_skills.id
 }
 
-output "ability_id" {
-  description = "The ID of the created ability"
-  value       = chatbotkit_skillset_ability.search_ability.id
+output "web_search_ability_id" {
+  description = "The ID of the web search ability"
+  value       = chatbotkit_skillset_ability.web_search.id
+}
+
+output "web_fetch_ability_id" {
+  description = "The ID of the web fetch ability"
+  value       = chatbotkit_skillset_ability.web_fetch.id
 }
 
 output "bot_id" {

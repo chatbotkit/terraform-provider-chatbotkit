@@ -169,8 +169,8 @@ func (r *SlackIntegrationResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	// Call the ChatBotKit GraphQL API to create slackintegration
-	result, err := r.client.CreateSlackIntegration(ctx, CreateSlackIntegrationInput{
 
+	result, err := r.client.CreateSlackIntegration(ctx, CreateSlackIntegrationInput{
 		AutoRespond: data.AutoRespond.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -212,6 +212,7 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Call the ChatBotKit GraphQL API to read slackintegration
+
 	result, err := r.client.GetSlackIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -292,8 +293,8 @@ func (r *SlackIntegrationResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Call the ChatBotKit GraphQL API to update slackintegration
-	_, err := r.client.UpdateSlackIntegration(ctx, data.ID.ValueString(), UpdateSlackIntegrationInput{
 
+	_, err := r.client.UpdateSlackIntegration(ctx, data.ID.ValueString(), UpdateSlackIntegrationInput{
 		AutoRespond: data.AutoRespond.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId: data.BotId.ValueStringPointer(),
@@ -330,6 +331,7 @@ func (r *SlackIntegrationResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Call the ChatBotKit GraphQL API to delete slackintegration
+
 	_, err := r.client.DeleteSlackIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete slackintegration: %s", err))

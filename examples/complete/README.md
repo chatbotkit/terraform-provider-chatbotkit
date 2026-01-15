@@ -2,43 +2,47 @@
 
 This example demonstrates a complete ChatBotKit setup using Terraform, including:
 
-- **Dataset**: A knowledge base that stores information the bot can search
+- **Dataset**: A knowledge base that stores information the bot can search (automatically adds search functions when linked to a bot)
 - **Skillset**: A container for abilities that extend bot capabilities
-- **Ability**: A specific skill attached to the skillset
+- **Abilities**: Web search and fetch capabilities for internet access
 - **Bot**: The main AI assistant linked to both the dataset and skillset
 - **Trigger Integration**: Allows the bot to be invoked via webhooks or schedules
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                         Bot                                  │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │ Name: AI Assistant                                      ││
-│  │ Backstory: Helpful AI assistant with knowledge access   ││
-│  └─────────────────────────────────────────────────────────┘│
-│                    │                    │                    │
-│         ┌─────────┴─────────┐   ┌──────┴──────┐             │
-│         ▼                   ▼   │              │             │
-│  ┌──────────────┐    ┌─────────────────┐      │             │
-│  │   Dataset    │    │    Skillset     │      │             │
-│  │──────────────│    │─────────────────│      │             │
-│  │ Knowledge    │    │   Bot Skills    │      │             │
-│  │ Base         │    │─────────────────│      │             │
-│  └──────────────┘    │ ┌─────────────┐ │      │             │
-│                      │ │   Ability   │ │      │             │
-│                      │ │─────────────│ │      │             │
-│                      │ │ Search      │ │      │             │
-│                      │ │ Knowledge   │ │      │             │
-│                      │ └─────────────┘ │      │             │
-│                      └─────────────────┘      │             │
-│                                               │             │
-│                                    ┌──────────┴──────────┐  │
-│                                    │ Trigger Integration │  │
-│                                    │────────────────────│  │
-│                                    │ Bot Trigger        │  │
-│                                    └─────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                              Bot                                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │ Name: AI Assistant                                          ││
+│  │ Backstory: Helpful AI with knowledge + web access           ││
+│  └─────────────────────────────────────────────────────────────┘│
+│                    │                    │                        │
+│         ┌─────────┴─────────┐   ┌──────┴───────┐                │
+│         ▼                   ▼   │              │                │
+│  ┌──────────────┐    ┌─────────────────────┐   │                │
+│  │   Dataset    │    │      Skillset       │   │                │
+│  │──────────────│    │─────────────────────│   │                │
+│  │ Knowledge    │    │     Bot Skills      │   │                │
+│  │ Base         │    │─────────────────────│   │                │
+│  │ (auto-adds   │    │ ┌─────────────────┐ │   │                │
+│  │  search)     │    │ │ Web Search      │ │   │                │
+│  └──────────────┘    │ │─────────────────│ │   │                │
+│                      │ │ Search the web  │ │   │                │
+│                      │ └─────────────────┘ │   │                │
+│                      │ ┌─────────────────┐ │   │                │
+│                      │ │ Web Fetch       │ │   │                │
+│                      │ │─────────────────│ │   │                │
+│                      │ │ Fetch web pages │ │   │                │
+│                      │ └─────────────────┘ │   │                │
+│                      └─────────────────────┘   │                │
+│                                                │                │
+│                                    ┌───────────┴───────────┐    │
+│                                    │ Trigger Integration   │    │
+│                                    │───────────────────────│    │
+│                                    │ Bot Trigger           │    │
+│                                    └───────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Prerequisites
@@ -92,11 +96,27 @@ The resources in this example have the following dependencies:
 
 1. **Dataset** - No dependencies
 2. **Skillset** - No dependencies
-3. **Ability** - Depends on Skillset
-4. **Bot** - Depends on Dataset and Skillset
-5. **Trigger Integration** - Depends on Bot
+3. **Web Search Ability** - Depends on Skillset
+4. **Web Fetch Ability** - Depends on Skillset
+5. **Bot** - Depends on Dataset and Skillset
+6. **Trigger Integration** - Depends on Bot
 
 Terraform automatically handles the creation order based on these dependencies.
+
+## Key Concepts
+
+### Dataset Search Functions
+
+When you link a dataset to a bot, the bot automatically gets the ability to search that dataset. You don't need to create a separate ability for dataset search - it's built-in.
+
+### Web Abilities
+
+This example includes two web-related abilities:
+
+- **Web Search**: Allows the bot to search the internet for information
+- **Web Fetch**: Allows the bot to fetch and read the content of specific web pages
+
+These use the ChatBotKit action syntax with the `search` and `fetch` commands.
 
 ## Customization
 
@@ -115,14 +135,20 @@ resource "chatbotkit_dataset_record" "faq_1" {
 
 ### Adding More Abilities
 
-You can add multiple abilities to the skillset:
+You can add additional abilities to the skillset:
 
 ```hcl
 resource "chatbotkit_skillset_ability" "email_ability" {
   skillset_id = chatbotkit_skillset.bot_skills.id
   name        = "Send Email"
   description = "Send an email notification"
-  instruction = "Use this ability to send email notifications to users."
+  instruction = <<-EOT
+    ```email
+    to: $[recipient! ys|the email address to send to]
+    subject: $[subject! ys|the email subject]
+    body: $[body! ys|the email body content]
+    ```
+  EOT
 }
 ```
 
@@ -145,7 +171,8 @@ After applying, you'll receive the IDs of all created resources:
 
 - `dataset_id` - The ID of the knowledge base dataset
 - `skillset_id` - The ID of the bot skills skillset
-- `ability_id` - The ID of the search ability
+- `web_search_ability_id` - The ID of the web search ability
+- `web_fetch_ability_id` - The ID of the web fetch ability
 - `bot_id` - The ID of the AI assistant bot
 - `trigger_integration_id` - The ID of the trigger integration
 

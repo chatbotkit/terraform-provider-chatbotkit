@@ -152,8 +152,8 @@ func (r *SitemapIntegrationResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Call the ChatBotKit GraphQL API to create sitemapintegration
-	result, err := r.client.CreateSitemapIntegration(ctx, CreateSitemapIntegrationInput{
 
+	result, err := r.client.CreateSitemapIntegration(ctx, CreateSitemapIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -192,6 +192,7 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 	}
 
 	// Call the ChatBotKit GraphQL API to read sitemapintegration
+
 	result, err := r.client.GetSitemapIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
@@ -263,8 +264,8 @@ func (r *SitemapIntegrationResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Call the ChatBotKit GraphQL API to update sitemapintegration
-	_, err := r.client.UpdateSitemapIntegration(ctx, data.ID.ValueString(), UpdateSitemapIntegrationInput{
 
+	_, err := r.client.UpdateSitemapIntegration(ctx, data.ID.ValueString(), UpdateSitemapIntegrationInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		DatasetId: data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
@@ -298,6 +299,7 @@ func (r *SitemapIntegrationResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Call the ChatBotKit GraphQL API to delete sitemapintegration
+
 	_, err := r.client.DeleteSitemapIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete sitemapintegration: %s", err))
