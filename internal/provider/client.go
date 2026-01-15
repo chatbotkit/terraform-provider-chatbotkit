@@ -87,7 +87,7 @@ func (c *Client) doRequest(ctx context.Context, query string, variables map[stri
 	}
 
 	if len(gqlResp.Errors) > 0 {
-		return fmt.Errorf("GraphQL error: %s", gqlResp.Errors[0].Message)
+		return fmt.Errorf("GraphQL error: %v", gqlResp.Errors[0].Message)
 	}
 
 	if result != nil {

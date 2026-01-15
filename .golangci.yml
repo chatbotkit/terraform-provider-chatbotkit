@@ -1,0 +1,28 @@
+# golangci-lint configuration
+# https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+linters-settings:
+  errcheck:
+    # Check for ignored error returns in tests too
+    check-blank: false
+  gosimple:
+    # S1039: unnecessary use of fmt.Sprintf
+    checks: ["all"]
+
+issues:
+  # Don't limit the number of issues
+  max-issues-per-linter: 0
+  max-same-issues: 0

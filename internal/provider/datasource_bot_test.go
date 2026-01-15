@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -71,7 +70,7 @@ data "chatbotkit_bot" "test" {
 }
 
 func testAccBotDataSourceConfigWithBackstory() string {
-	return fmt.Sprintf(`
+	return `
 resource "chatbotkit_bot" "test" {
   name        = "test-bot-datasource-backstory"
   description = "Test bot with backstory"
@@ -81,5 +80,5 @@ resource "chatbotkit_bot" "test" {
 data "chatbotkit_bot" "test" {
   id = chatbotkit_bot.test.id
 }
-`)
+`
 }
