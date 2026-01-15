@@ -14,28 +14,28 @@ The provider has a working code generator (`sites/main/scripts/gen-terraform-stu
 
 ### Generated Resources
 
-| Resource | File |
-|----------|------|
-| Blueprint | `resource_blueprint.go` |
-| Bot | `resource_bot.go` |
-| Dataset | `resource_dataset.go` |
-| Discord Integration | `resource_discord_integration.go` |
-| Email Integration | `resource_email_integration.go` |
-| Extract Integration | `resource_extract_integration.go` |
-| File | `resource_file.go` |
+| Resource               | File                                |
+| ---------------------- | ----------------------------------- |
+| Blueprint              | `resource_blueprint.go`             |
+| Bot                    | `resource_bot.go`                   |
+| Dataset                | `resource_dataset.go`               |
+| Discord Integration    | `resource_discord_integration.go`   |
+| Email Integration      | `resource_email_integration.go`     |
+| Extract Integration    | `resource_extract_integration.go`   |
+| File                   | `resource_file.go`                  |
 | MCP Server Integration | `resource_mcpserver_integration.go` |
-| Messenger Integration | `resource_messenger_integration.go` |
-| Notion Integration | `resource_notion_integration.go` |
-| Portal | `resource_portal.go` |
-| Secret | `resource_secret.go` |
-| Sitemap Integration | `resource_sitemap_integration.go` |
-| Skillset | `resource_skillset.go` |
-| Skillset Ability | `resource_skillset_ability.go` |
-| Slack Integration | `resource_slack_integration.go` |
-| Telegram Integration | `resource_telegram_integration.go` |
-| Trigger Integration | `resource_trigger_integration.go` |
-| Twilio Integration | `resource_twilio_integration.go` |
-| WhatsApp Integration | `resource_whats_app_integration.go` |
+| Messenger Integration  | `resource_messenger_integration.go` |
+| Notion Integration     | `resource_notion_integration.go`    |
+| Portal                 | `resource_portal.go`                |
+| Secret                 | `resource_secret.go`                |
+| Sitemap Integration    | `resource_sitemap_integration.go`   |
+| Skillset               | `resource_skillset.go`              |
+| Skillset Ability       | `resource_skillset_ability.go`      |
+| Slack Integration      | `resource_slack_integration.go`     |
+| Telegram Integration   | `resource_telegram_integration.go`  |
+| Trigger Integration    | `resource_trigger_integration.go`   |
+| Twilio Integration     | `resource_twilio_integration.go`    |
+| WhatsApp Integration   | `resource_whats_app_integration.go` |
 
 ---
 
@@ -147,6 +147,7 @@ resource "chatbotkit_bot" "example" {
 Changes needed:
 
 1. In `generateStringPtrHelper()`:
+
 ```javascript
 } else if (field.goType === 'map[string]interface{}') {
   return `${field.goName}: convertMapToInterface(data.${field.goName})`
@@ -154,6 +155,7 @@ Changes needed:
 ```
 
 2. Add helper function to generated `client.go`:
+
 ```go
 // convertMapToInterface converts types.Map to map[string]interface{}
 func convertMapToInterface(ctx context.Context, m types.Map) map[string]interface{} {
@@ -167,6 +169,7 @@ func convertMapToInterface(ctx context.Context, m types.Map) map[string]interfac
 ```
 
 3. In `generateSetFromResponse()`:
+
 ```javascript
 } else if (field.goType === 'map[string]interface{}') {
   return `if ${responseName}.${field.goName} != nil {
@@ -188,8 +191,17 @@ func convertMapToInterface(ctx context.Context, m types.Map) map[string]interfac
 Add to `generateResourceStub()` schema generation:
 
 ```javascript
-const sensitivePatterns = ['token', 'secret', 'key', 'password', 'credential', 'access_token']
-const isSensitive = sensitivePatterns.some(p => field.name.toLowerCase().includes(p))
+const sensitivePatterns = [
+  'token',
+  'secret',
+  'key',
+  'password',
+  'credential',
+  'access_token',
+]
+const isSensitive = sensitivePatterns.some((p) =>
+  field.name.toLowerCase().includes(p)
+)
 
 // In schema attribute generation:
 if (isSensitive) {
@@ -204,6 +216,7 @@ if (isSensitive) {
 **Solution**: Use the GraphQL `node` query for direct ID lookup.
 
 **Current approach** (inefficient):
+
 ```go
 query Get${resource.name}($cursor: ID) {
     ${camelName}s(first: 1, after: $cursor) {
@@ -214,6 +227,7 @@ query Get${resource.name}($cursor: ID) {
 ```
 
 **Better approach**:
+
 ```go
 query Get${resource.name}($id: ID!) {
     node(id: $id) {
@@ -304,7 +318,7 @@ type BotDataSourceModel struct {
 func (d *BotDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
     var data BotDataSourceModel
     resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-    
+
     result, err := d.client.GetBot(ctx, data.ID.ValueString())
     // ... populate data from result
 }
@@ -346,12 +360,12 @@ func TestCreateBot(t *testing.T) {
         // Return mock response
     }))
     defer server.Close()
-    
+
     client := NewClient("test-key", server.URL)
     result, err := client.CreateBot(context.Background(), CreateBotInput{
         Name: ptr("Test Bot"),
     })
-    
+
     assert.NoError(t, err)
     assert.NotNil(t, result.ID)
 }
@@ -441,16 +455,16 @@ The ChatBotKit provider allows you to manage ChatBotKit resources using Terrafor
 
 \`\`\`hcl
 terraform {
-  required_providers {
-    chatbotkit = {
-      source  = "chatbotkit/chatbotkit"
-      version = "~> 1.0"
-    }
-  }
+required_providers {
+chatbotkit = {
+source = "chatbotkit/chatbotkit"
+version = "~> 1.0"
+}
+}
 }
 
 provider "chatbotkit" {
-  api_key = var.chatbotkit_api_key
+api_key = var.chatbotkit_api_key
 }
 \`\`\`
 
@@ -484,13 +498,13 @@ Manages a ChatBotKit Bot.
 
 \`\`\`hcl
 resource "chatbotkit_bot" "assistant" {
-  name        = "Customer Support Bot"
-  description = "Handles customer inquiries"
-  backstory   = "You are a helpful customer support agent..."
-  model       = "gpt-4"
-  
-  dataset_id  = chatbotkit_dataset.knowledge.id
-  skillset_id = chatbotkit_skillset.tools.id
+name = "Customer Support Bot"
+description = "Handles customer inquiries"
+backstory = "You are a helpful customer support agent..."
+model = "gpt-4"
+
+dataset_id = chatbotkit_dataset.knowledge.id
+skillset_id = chatbotkit_skillset.tools.id
 }
 \`\`\`
 
@@ -576,13 +590,13 @@ checksum:
 signs:
   - artifacts: checksum
     args:
-      - "--batch"
-      - "--local-user"
-      - "{{ .Env.GPG_FINGERPRINT }}"
-      - "--output"
-      - "${signature}"
-      - "--detach-sign"
-      - "${artifact}"
+      - '--batch'
+      - '--local-user'
+      - '{{ .Env.GPG_FINGERPRINT }}'
+      - '--output'
+      - '${signature}'
+      - '--detach-sign'
+      - '${artifact}'
 
 release:
   draft: true
@@ -610,18 +624,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-      
+
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
@@ -649,14 +663,14 @@ jobs:
 
 ## Summary
 
-| Phase | Effort | Priority | Outcome |
-|-------|--------|----------|---------|
-| Phase 1: Make It Runnable | 30 min | P0 | Working provider for local testing |
-| Phase 2: Generator Improvements | 2 hours | P1 | Production-quality generated code |
-| Phase 3: Data Sources | 3 hours | P2 | Read-only resource access |
-| Phase 4: Testing | 4-6 hours | P2 | Confidence in correctness |
-| Phase 5: Documentation | 2-3 hours | P3 | Ready for public use |
-| Phase 6: Release Infrastructure | 2 hours | P3 | Automated releases |
+| Phase                           | Effort    | Priority | Outcome                            |
+| ------------------------------- | --------- | -------- | ---------------------------------- |
+| Phase 1: Make It Runnable       | 30 min    | P0       | Working provider for local testing |
+| Phase 2: Generator Improvements | 2 hours   | P1       | Production-quality generated code  |
+| Phase 3: Data Sources           | 3 hours   | P2       | Read-only resource access          |
+| Phase 4: Testing                | 4-6 hours | P2       | Confidence in correctness          |
+| Phase 5: Documentation          | 2-3 hours | P3       | Ready for public use               |
+| Phase 6: Release Infrastructure | 2 hours   | P3       | Automated releases                 |
 
 **Total estimated effort**: ~14-17 hours for full production release
 
