@@ -1,6 +1,10 @@
 # ChatBotKit Terraform Provider
 
+[![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple.svg)](https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest)
+
 This directory contains the ChatBotKit Terraform Provider, which allows you to manage ChatBotKit resources using Terraform.
+
+**Terraform Registry:** https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest
 
 ## Building
 
@@ -52,43 +56,29 @@ CHATBOTKIT_API_KEY=your-api-key go test -v ./internal/provider/ -run "^TestAcc"
 ## Directory Structure
 
 ```
-sdks/terraform/
-├── main.go                    # Provider entry point
-├── go.mod                     # Go module definition
-├── go.sum                     # Go dependencies
-├── .goreleaser.yml            # Release configuration
-├── terraform-registry-manifest.json  # Registry manifest
-├── docs/                      # Terraform Registry documentation
-│   ├── index.md              # Provider documentation
-│   ├── resources/            # Resource documentation
-│   └── data-sources/         # Data source documentation
+terraform-provider-chatbotkit/
+├── main.go                          # Provider entry point
+├── go.mod                           # Go module definition
+├── go.sum                           # Go dependencies
+├── .goreleaser.yml                  # Release configuration
+├── terraform-registry-manifest.json # Registry manifest
+├── docs/                            # Terraform Registry documentation
+│   ├── index.md                     # Provider documentation
+│   ├── resources/                   # Resource documentation
+│   └── data-sources/                # Data source documentation
 ├── types/
-│   └── types.go              # Generated Go types
+│   └── types.go                     # Generated Go types
 ├── internal/
 │   └── provider/
-│       ├── client.go          # GraphQL API client
-│       ├── client_test.go     # Client unit tests
-│       ├── provider.go        # Provider configuration
-│       ├── provider_test.go   # Provider tests
-│       ├── resource_*.go      # Resource implementations
-│       └── resource_*_test.go # Resource tests
+│       ├── client.go                # GraphQL API client
+│       ├── client_test.go           # Client unit tests
+│       ├── provider.go              # Provider configuration
+│       ├── provider_test.go         # Provider tests
+│       ├── resource_*.go            # Resource implementations
+│       └── resource_*_test.go       # Resource tests
 └── examples/
     └── basic/
-        └── main.tf           # Example Terraform configuration
-```
-
-## Regenerating Code
-
-The provider code is generated from the GraphQL schema:
-
-```bash
-cd sites/main
-
-# Generate Go types
-pnpm script:sync-api-spec-to-terraform
-
-# Generate provider resources and client
-pnpm script:gen-terraform-stubs
+        └── main.tf                  # Example Terraform configuration
 ```
 
 ## Resources
@@ -122,12 +112,12 @@ The provider supports the following resources:
 
 The provider supports the following data sources for reading existing resources:
 
-| Data Source          | Description                         |
-| -------------------- | ----------------------------------- |
-| `chatbotkit_bot`     | Read information about an existing bot |
-| `chatbotkit_dataset` | Read information about an existing dataset |
+| Data Source            | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `chatbotkit_bot`       | Read information about an existing bot       |
+| `chatbotkit_dataset`   | Read information about an existing dataset   |
 | `chatbotkit_blueprint` | Read information about an existing blueprint |
-| `chatbotkit_skillset` | Read information about an existing skillset |
+| `chatbotkit_skillset`  | Read information about an existing skillset  |
 
 ## Example Usage
 
