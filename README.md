@@ -1,6 +1,10 @@
 # ChatBotKit Terraform Provider
 
+[![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple.svg)](https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest)
+
 This directory contains the ChatBotKit Terraform Provider, which allows you to manage ChatBotKit resources using Terraform.
+
+**Terraform Registry:** https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest
 
 ## Building
 
