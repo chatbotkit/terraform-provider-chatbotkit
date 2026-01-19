@@ -19,7 +19,9 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 |---------|-------------|--------------|
 | [skillset-based-dynamic-skill](./skillset-based-dynamic-skill/) | Agent that dynamically discovers and loads skills | Dynamic skill loading, Modular architecture, List & Install abilities |
 | [ai-employee](./ai-employee/) | Comprehensive AI Employee for professional environments | Workspace/Space, Shell execution, Gmail integration, Notion integration, Dynamic skillsets |
-| [matillion-operations](./matillion-operations/) | AI-powered operations center for Matillion Data Productivity Cloud | 4 specialized skillsets, Pipeline management, Schedule management, Monitoring, Scheduled health checks |
+| [simple-self-improving-agent](./simple-self-improving-agent/) | Self-improving agent that learns from interactions | Backstory file management, Read/Write abilities, Continuous learning |
+| [mcp-factory](./mcp-factory/) | Factory-style architecture with multiple MCP server integrations | 4 service skillsets, Modular MCP servers, Clear separation of concerns |
+| [dynamic-mcp-search-and-install](./dynamic-mcp-search-and-install/) | Agent that dynamically discovers and installs MCP servers | MCP registry search, On-demand installation, Self-extending capabilities |
 
 ## Getting Started
 
@@ -111,6 +113,39 @@ Demonstrates a sophisticated AI employee with workspace and multiple integration
 - Complex multi-skillset architecture
 
 **Use when:** Building autonomous digital team members with access to tools and services.
+
+### Simple Self-improving Agent Example
+Demonstrates a self-improving AI agent that learns from interactions.
+
+**What you'll learn:**
+- File resource management for backstory storage
+- Read and write abilities for file manipulation
+- Self-improvement patterns
+- Continuous learning architectures
+
+**Use when:** Building agents that need to adapt and improve based on real-world usage.
+
+### MCP Factory Example
+Factory-style architecture with multiple independent MCP server integrations.
+
+**What you'll learn:**
+- Modular MCP server organization
+- Multiple skillset patterns
+- Service isolation and boundaries
+- MCP server integration setup
+
+**Use when:** Providing a suite of distinct AI functionalities to multiple clients or users.
+
+### Dynamic MCP Search and Install Example
+Agent that discovers and installs MCP servers on-demand from a registry.
+
+**What you'll learn:**
+- MCP registry search capabilities
+- Dynamic MCP installation patterns
+- Self-extending agent architectures
+- On-demand capability loading
+
+**Use when:** Building adaptable agents that discover and integrate tools as needed.
 
 ### Matillion Operations Example
 AI-powered operations center for data pipeline management.
