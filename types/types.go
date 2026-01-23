@@ -959,6 +959,8 @@ type ExtractIntegration struct {
 	ID *string `json:"id,omitempty"`
 	// The metadata associated with the extract integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The LLM model to use for the extract integration
+	Model *string `json:"model,omitempty"`
 	// The name of the extract integration
 	Name *string `json:"name,omitempty"`
 	// The date and time when the extract integration was last updated
@@ -975,6 +977,8 @@ type ExtractIntegrationCreateRequest struct {
 	Description *string `json:"description,omitempty"`
 	// Additional metadata for the integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The LLM model to use for the extract integration
+	Model *string `json:"model,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
 	// The webhook URL to send extracted data to
@@ -1005,6 +1009,8 @@ type ExtractIntegrationUpdateRequest struct {
 	Description *string `json:"description,omitempty"`
 	// Additional metadata for the integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The LLM model to use for the extract integration
+	Model *string `json:"model,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
 	// The webhook URL to send extracted data to
@@ -1126,6 +1132,87 @@ type IncludeOwnSkillsetsInput struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// Visibility of the own skillsets to include
 	Visibility []SkillsetVisibility `json:"visibility,omitempty"`
+}
+
+type InstagramIntegration struct {
+	// The blueprint associated with the instagram integration
+	Blueprint *Blueprint `json:"blueprint,omitempty"`
+	// The bot associated with the instagram integration
+	Bot *Bot `json:"bot,omitempty"`
+	// The date and time when the instagram integration was created
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The description of the instagram integration
+	Description *string `json:"description,omitempty"`
+	// The unique identifier of the instagram integration
+	ID *string `json:"id,omitempty"`
+	// The metadata associated with the instagram integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the instagram integration
+	Name *string `json:"name,omitempty"`
+	// The date and time when the instagram integration was last updated
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// InstagramIntegrationCreateRequest Input parameters for creating a new Instagram integration
+type InstagramIntegrationCreateRequest struct {
+	// The Instagram access token
+	AccessToken *string `json:"accessToken,omitempty"`
+	// Whether to enable file attachments
+	Attachments *bool `json:"attachments,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description of the integration
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the integration
+	Name *string `json:"name,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+}
+
+// InstagramIntegrationCreateResponse Response containing the ID of a newly created Instagram integration
+type InstagramIntegrationCreateResponse struct {
+	// The unique identifier of the created Instagram integration
+	ID *string `json:"id,omitempty"`
+}
+
+// InstagramIntegrationDeleteResponse Response containing the ID of a deleted Instagram integration
+type InstagramIntegrationDeleteResponse struct {
+	// The unique identifier of the deleted Instagram integration
+	ID *string `json:"id,omitempty"`
+}
+
+// InstagramIntegrationUpdateRequest Input parameters for updating an existing Instagram integration
+type InstagramIntegrationUpdateRequest struct {
+	// The Instagram access token
+	AccessToken *string `json:"accessToken,omitempty"`
+	// Whether to enable file attachments
+	Attachments *bool `json:"attachments,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description of the integration
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the integration
+	Name *string `json:"name,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+}
+
+// InstagramIntegrationUpdateResponse Response containing the ID of an updated Instagram integration
+type InstagramIntegrationUpdateResponse struct {
+	// The unique identifier of the updated Instagram integration
+	ID *string `json:"id,omitempty"`
 }
 
 type McpserverIntegration struct {
@@ -1321,6 +1408,7 @@ type Mutation struct {
 	CreateEmailIntegration *EmailIntegrationCreateResponse `json:"createEmailIntegration,omitempty"`
 	CreateExtractIntegration *ExtractIntegrationCreateResponse `json:"createExtractIntegration,omitempty"`
 	CreateFile *FileCreateResponse `json:"createFile,omitempty"`
+	CreateInstagramIntegration *InstagramIntegrationCreateResponse `json:"createInstagramIntegration,omitempty"`
 	CreateMcpserverIntegration *McpserverIntegrationCreateResponse `json:"createMcpserverIntegration,omitempty"`
 	CreateMessengerIntegration *MessengerIntegrationCreateResponse `json:"createMessengerIntegration,omitempty"`
 	CreateNotionIntegration *NotionIntegrationCreateResponse `json:"createNotionIntegration,omitempty"`
@@ -1341,6 +1429,7 @@ type Mutation struct {
 	DeleteEmailIntegration *EmailIntegrationDeleteResponse `json:"deleteEmailIntegration,omitempty"`
 	DeleteExtractIntegration *ExtractIntegrationDeleteResponse `json:"deleteExtractIntegration,omitempty"`
 	DeleteFile *FileDeleteResponse `json:"deleteFile,omitempty"`
+	DeleteInstagramIntegration *InstagramIntegrationDeleteResponse `json:"deleteInstagramIntegration,omitempty"`
 	DeleteMcpserverIntegration *McpserverIntegrationDeleteResponse `json:"deleteMcpserverIntegration,omitempty"`
 	DeleteMessengerIntegration *MessengerIntegrationDeleteResponse `json:"deleteMessengerIntegration,omitempty"`
 	DeleteNotionIntegration *NotionIntegrationDeleteResponse `json:"deleteNotionIntegration,omitempty"`
@@ -1362,6 +1451,7 @@ type Mutation struct {
 	UpdateEmailIntegration *EmailIntegrationUpdateResponse `json:"updateEmailIntegration,omitempty"`
 	UpdateExtractIntegration *ExtractIntegrationUpdateResponse `json:"updateExtractIntegration,omitempty"`
 	UpdateFile *FileUpdateResponse `json:"updateFile,omitempty"`
+	UpdateInstagramIntegration *InstagramIntegrationUpdateResponse `json:"updateInstagramIntegration,omitempty"`
 	UpdateMcpserverIntegration *McpserverIntegrationUpdateResponse `json:"updateMcpserverIntegration,omitempty"`
 	UpdateMessengerIntegration *MessengerIntegrationUpdateResponse `json:"updateMessengerIntegration,omitempty"`
 	UpdateNotionIntegration *NotionIntegrationUpdateResponse `json:"updateNotionIntegration,omitempty"`

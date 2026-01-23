@@ -17,6 +17,10 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 
 | Example | Description | Key Features |
 |---------|-------------|--------------|
+| [dual-agent-programmable-workflows](./dual-agent-programmable-workflows/) | Two-agent architecture for workflow programming and execution | Multi-agent collaboration, Shared resources, Asymmetric access patterns, Scheduled triggers |
+| [system-diagnostics-agent](./system-diagnostics-agent/) | Self-monitoring agent that reports on its own capabilities | Self-introspection, Blueprint resource discovery, Scheduled diagnostics, Automated reporting |
+| [second-brain](./second-brain/) | Personal knowledge management system with Notion and Calendar | Persistent workspace, Notion integration, Google Calendar, Telegram bot, Dynamic skillsets |
+| [workflow-orchestrator](./workflow-orchestrator/) | Multi-step workflow execution with comprehensive tracing | Dynamic skillset loading, Multiple specialized skillsets, State persistence, Execution tracing |
 | [skillset-based-dynamic-skill](./skillset-based-dynamic-skill/) | Agent that dynamically discovers and loads skills | Dynamic skill loading, Modular architecture, List & Install abilities |
 | [ai-employee](./ai-employee/) | Comprehensive AI Employee for professional environments | Workspace/Space, Shell execution, Gmail integration, Notion integration, Dynamic skillsets |
 | [simple-self-improving-agent](./simple-self-improving-agent/) | Self-improving agent that learns from interactions | Backstory file management, Read/Write abilities, Continuous learning |
@@ -90,6 +94,56 @@ Demonstrates a full-featured AI assistant with knowledge base and web capabiliti
 - Resource dependencies
 
 **Use when:** You need a comprehensive reference or want to build a feature-rich assistant.
+
+### Dual-Agent Programmable Workflows Example
+Two-agent architecture where a Workflow Architect programs custom scripts and a Task Runner executes them.
+
+**What you'll learn:**
+- Multi-agent collaboration patterns
+- Shared file and space resources
+- Asymmetric access control (architect writes, runner reads)
+- Scheduled workflow execution
+- Separation of concerns in agent design
+
+**Use when:** Building systems where design and execution should be separate, or when you need maintainable automation frameworks.
+
+### System Diagnostics Agent Example
+Self-monitoring agent that introspects its own capabilities and produces diagnostic reports.
+
+**What you'll learn:**
+- Self-introspection using blueprint resource discovery
+- Scheduled automated diagnostics
+- Persistent diagnostic log storage
+- Health monitoring patterns
+- Agent self-documentation
+
+**Use when:** Building production AI systems that need continuous monitoring and health checks.
+
+### Second Brain Example
+Personal knowledge management system integrating Notion, Google Calendar, and Telegram.
+
+**What you'll learn:**
+- Personal knowledge management architecture
+- Notion integration for notes and databases
+- Google Calendar integration for time awareness
+- Telegram bot for mobile access
+- Template-based OAuth2 secrets
+- Multi-skillset organization
+
+**Use when:** Building personal productivity assistants or knowledge management systems.
+
+### Workflow Orchestrator Example
+Multi-step workflow execution engine with dynamic skillset loading and comprehensive tracing.
+
+**What you'll learn:**
+- Complex multi-step workflow patterns
+- Dynamic skillset loading for modular capabilities
+- Workflow state persistence
+- Comprehensive execution tracing
+- Multiple specialized skillsets (Data, Control, Reporting)
+- Audit trail generation
+
+**Use when:** Building sophisticated automation workflows that require state management and full traceability.
 
 ### Skillset-based Dynamic Skill Example
 Shows how to build agents that can discover and activate skills on-demand.
