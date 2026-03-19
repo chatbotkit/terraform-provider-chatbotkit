@@ -228,7 +228,7 @@ resource "chatbotkit_bot" "second_brain" {
   model       = "claude-4.5-sonnet"
   
   backstory = <<-EOT
-    You are a Second Brain—an AI-powered personal knowledge management
+    You are a Second Brain-an AI-powered personal knowledge management
     system designed to help your user capture, organize, and surface
     knowledge effectively. Your role is to function as an external
     cognitive extension that enhances thinking, memory, and productivity.

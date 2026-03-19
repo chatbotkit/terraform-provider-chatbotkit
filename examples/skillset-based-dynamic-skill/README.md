@@ -4,33 +4,33 @@ This example demonstrates a reference architecture for an AI agent that can dyna
 
 ## Overview
 
-Skills are specialized instructions that teach AI agents how to perform specific tasks. This architecture takes the concept further by packaging skills as installable skillsets—self-contained units that can be activated on demand to extend an agent's capabilities.
+Skills are specialized instructions that teach AI agents how to perform specific tasks. This architecture takes the concept further by packaging skills as installable skillsets - self-contained units that can be activated on demand to extend an agent's capabilities.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Dynamic Skills Agent                  │
-│                                                          │
+│                    Dynamic Skills Agent                 │
+│                                                         │
 │  ┌────────────────────────────────────────────────────┐ │
 │  │              Core Skillset                         │ │
-│  │  ┌──────────────────┐  ┌──────────────────┐       │ │
-│  │  │   List Skills    │  │   Install Skill  │       │ │
-│  │  │   (Discover)     │  │   (Activate)     │       │ │
-│  │  └──────────────────┘  └──────────────────┘       │ │
+│  │  ┌──────────────────┐  ┌──────────────────┐        │ │
+│  │  │   List Skills    │  │   Install Skill  │        │ │
+│  │  │   (Discover)     │  │   (Activate)     │        │ │
+│  │  └──────────────────┘  └──────────────────┘        │ │
 │  └────────────────────────────────────────────────────┘ │
-│                                                          │
+│                                                         │
 │              ┌───────────────┐                          │
 │              │ Skill Library │                          │
 │              └───────┬───────┘                          │
-│       ┌──────────────┼──────────────┬──────────────┐   │
-│       │              │              │              │   │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐  │
-│  │  Data   │  │ Content │  │Research │  │ Problem │  │
-│  │Analysis │  │ Writing │  │  Skill  │  │ Solving │  │
-│  │  Skill  │  │  Skill  │  │         │  │  Skill  │  │
-│  └─────────┘  └─────────┘  └─────────┘  └─────────┘  │
-│                                                          │
+│       ┌──────────────┼──────────────┬──────────────┐    │
+│       │              │              │              │    │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐     │
+│  │  Data   │  │ Content │  │Research │  │ Problem │     │
+│  │Analysis │  │ Writing │  │  Skill  │  │ Solving │     │
+│  │  Skill  │  │  Skill  │  │         │  │  Skill  │     │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘     │
+│                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -44,14 +44,17 @@ Skills are specialized instructions that teach AI agents how to perform specific
 ## Core Abilities
 
 ### List Skills
+
 Uses the `blueprint/resource/list` template configured for skillsets to enumerate all available skills. The agent sees each skill's name and description, enabling it to identify which skills are relevant to the current task.
 
 ### Install Skill
+
 Uses the `conversation/skillset/install[by-id]` template to activate a skill by bringing its skillset into the conversation context. Once installed, the skill's instructions become part of the agent's system prompt.
 
 ## Skill Format
 
 Each skill skillset follows a structured description format:
+
 ```
 Short description
 ---
@@ -59,27 +62,32 @@ Longer instructions how to use the skill
 ```
 
 This convention allows the agent to:
+
 - Quickly scan available skills (short description)
 - Access comprehensive guidance when needed (detailed instructions)
 
 ## Usage
 
 1. Set your ChatBotKit API key:
+
 ```bash
 export CHATBOTKIT_API_KEY="your-api-key"
 ```
 
 2. Initialize Terraform:
+
 ```bash
 terraform init
 ```
 
 3. Review the planned changes:
+
 ```bash
 terraform plan
 ```
 
 4. Apply the configuration:
+
 ```bash
 terraform apply
 ```
@@ -114,7 +122,7 @@ resource "chatbotkit_skillset" "skill_5" {
 
 Skills can include their own abilities. For example, a "Research Skill" might include web search and fetch abilities:
 
-```hcl
+````hcl
 resource "chatbotkit_skillset_ability" "research_search" {
   skillset_id = chatbotkit_skillset.skill_3.id
   name        = "Web Search"
@@ -125,11 +133,12 @@ resource "chatbotkit_skillset_ability" "research_search" {
     ```
   EOT
 }
-```
+````
 
 ## When to Use This Pattern
 
 This pattern is ideal when:
+
 - Your agent needs diverse, specialized capabilities
 - Skills should be loaded on-demand to avoid context bloat
 - Skills include not just instructions but also abilities, secrets, or configurations
@@ -140,6 +149,7 @@ Compare with the file-based variant: files are ideal for purely instructional co
 ## Cleanup
 
 To destroy all created resources:
+
 ```bash
 terraform destroy
 ```
