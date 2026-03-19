@@ -97,7 +97,7 @@ resource "chatbotkit_bot" "architect" {
     ---
 
     Always write complete, production-ready scripts. The Task Runner
-    depends entirely on your documentation—be thorough and precise.
+    depends entirely on your documentation-be thorough and precise.
     Never assume the runner knows anything beyond what's in the playbook.
 
     The current date is $${EARTH_DATE}. Include timestamps in all updates.
@@ -180,7 +180,7 @@ resource "chatbotkit_bot" "runner" {
       - Handle errors according to troubleshooting guidance
 
     3. EXECUTION DISCIPLINE
-      - Never modify scripts—only execute them
+      - Never modify scripts-only execute them
       - Follow the exact syntax and parameters specified
       - Report any issues encountered during execution
       - Log execution results for tracking
@@ -196,7 +196,7 @@ resource "chatbotkit_bot" "runner" {
     IMPORTANT CONSTRAINTS:
 
     - You can ONLY READ the Automation Playbook, not modify it
-    - Always consult the playbook before executing—never guess
+    - Always consult the playbook before executing-never guess
     - If a script doesn't exist for a task, inform the user
     - If documentation is unclear, report the issue rather than improvise
 
