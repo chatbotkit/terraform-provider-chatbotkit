@@ -3264,7 +3264,7 @@ type CreateTriggerIntegrationInput struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 }
 
 // CreateTriggerIntegrationResponse represents the response from creating a triggerintegration.
@@ -3306,7 +3306,7 @@ type UpdateTriggerIntegrationInput struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 }
 
 // UpdateTriggerIntegrationResponse represents the response from updating a triggerintegration.
@@ -3380,7 +3380,7 @@ type GetTriggerIntegrationResponse struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	Name *string `json:"name,omitempty"`
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 	CreatedAt *string `json:"createdAt,omitempty"`
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
@@ -3401,7 +3401,7 @@ func (c *Client) GetTriggerIntegration(ctx context.Context, id string) (*GetTrig
 						meta
 						name
 						sessionDuration
-						triggerSchedule
+						schedule
 						createdAt
 						updatedAt
 					}

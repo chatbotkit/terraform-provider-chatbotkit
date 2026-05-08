@@ -2823,7 +2823,7 @@ type TriggerIntegration struct {
 	// The session duration for the trigger integration
 	SessionDuration *float64 `json:"sessionDuration,omitempty"`
 	// The schedule for the trigger integration
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 	// The date and time when the trigger integration was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
@@ -2849,7 +2849,7 @@ type TriggerIntegrationCreateRequest struct {
 	// The duration of the session in milliseconds
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
 	// The schedule for automatic trigger execution
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 }
 
 // TriggerIntegrationCreateResponse Response containing the ID of a newly created Trigger integration
@@ -2885,7 +2885,7 @@ type TriggerIntegrationUpdateRequest struct {
 	// The duration of the session in milliseconds
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
 	// The schedule for automatic trigger execution
-	TriggerSchedule *string `json:"triggerSchedule,omitempty"`
+	Schedule *string `json:"schedule,omitempty"`
 }
 
 // TriggerIntegrationUpdateResponse Response containing the ID of an updated Trigger integration

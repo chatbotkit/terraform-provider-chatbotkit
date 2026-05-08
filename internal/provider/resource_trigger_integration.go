@@ -39,7 +39,7 @@ type TriggerIntegrationResourceModel struct {
 	Meta types.Map `tfsdk:"meta"`
 	Name types.String `tfsdk:"name"`
 	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	TriggerSchedule types.String `tfsdk:"trigger_schedule"`
+	Schedule types.String `tfsdk:"schedule"`
 	CreatedAt types.String `tfsdk:"created_at"`
 	UpdatedAt types.String `tfsdk:"updated_at"`
 }
@@ -91,7 +91,7 @@ func (r *TriggerIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
 			},
-			"trigger_schedule": schema.StringAttribute{
+			"schedule": schema.StringAttribute{
 				MarkdownDescription: "The schedule for automatic trigger execution",
 				Optional:            true,
 			},
@@ -146,7 +146,7 @@ func (r *TriggerIntegrationResource) Create(ctx context.Context, req resource.Cr
 		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		TriggerSchedule: data.TriggerSchedule.ValueStringPointer(),
+		Schedule: data.Schedule.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create triggerintegration: %s", err))
@@ -211,8 +211,8 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
 	}
-	if result.TriggerSchedule != nil {
-		data.TriggerSchedule = types.StringPointerValue(result.TriggerSchedule)
+	if result.Schedule != nil {
+		data.Schedule = types.StringPointerValue(result.Schedule)
 	}
 	if result.CreatedAt != nil {
 		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
@@ -246,7 +246,7 @@ func (r *TriggerIntegrationResource) Update(ctx context.Context, req resource.Up
 		Meta: convertMapToInterface(ctx, data.Meta),
 		Name: data.Name.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		TriggerSchedule: data.TriggerSchedule.ValueStringPointer(),
+		Schedule: data.Schedule.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update triggerintegration: %s", err))

@@ -161,7 +161,7 @@ resource "chatbotkit_trigger_integration" "scheduled_trigger" {
   name             = "Daily Report Trigger"
   description      = "Runs daily to generate reports"
   bot_id           = chatbotkit_bot.assistant.id
-  trigger_schedule = "daily"
+  schedule = "daily"
 }
 ```
 

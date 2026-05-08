@@ -276,7 +276,7 @@ resource "chatbotkit_trigger_integration" "workflow_trigger" {
   description       = "Manual or scheduled trigger for workflow execution"
   authenticate      = true
   session_duration  = 3600000
-  trigger_schedule  = "never"
+  schedule  = "never"
 }
 
 # ============================================================================
