@@ -110,7 +110,7 @@ resource "chatbotkit_trigger_integration" "bot_trigger" {
   bot_id = chatbotkit_bot.assistant.id
 
   # Optional: Set a schedule (e.g., "hourly", "daily", "weekly")
-  # trigger_schedule = "never"
+  # schedule = "never"
 }
 
 # ============================================================================

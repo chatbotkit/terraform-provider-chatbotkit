@@ -35,7 +35,7 @@ resource "chatbotkit_trigger_integration" "scheduled" {
   description = "Run bot check every hour"
   bot_id      = chatbotkit_bot.assistant.id
   
-  trigger_schedule = "0 * * * *"  # Every hour
+  schedule = "0 * * * *"  # Every hour
   session_duration = 300000       # 5 minutes
 }
 ```
@@ -64,7 +64,7 @@ resource "chatbotkit_trigger_integration" "from_template" {
   description      = "Created from template"
   blueprint_id     = chatbotkit_blueprint.trigger_template.id
   bot_id           = chatbotkit_bot.assistant.id
-  trigger_schedule = "*/30 * * * *"  # Every 30 minutes
+  schedule = "*/30 * * * *"  # Every 30 minutes
 }
 ```
 
@@ -76,7 +76,7 @@ resource "chatbotkit_trigger_integration" "full" {
   description = "Complete trigger setup"
   bot_id      = chatbotkit_bot.assistant.id
   
-  trigger_schedule = "0 9 * * 1-5"  # 9 AM on weekdays
+  schedule = "0 9 * * 1-5"  # 9 AM on weekdays
   session_duration = 600000         # 10 minutes
   authenticate     = true
   
@@ -94,7 +94,7 @@ The following arguments are supported:
 - `name` - (Optional) The name of the integration. This is displayed in the ChatBotKit dashboard.
 - `description` - (Optional) A description of the integration's purpose.
 - `bot_id` - (Optional) The ID of the ChatBotKit bot to connect.
-- `trigger_schedule` - (Optional) A cron expression for scheduled trigger execution.
+- `schedule` - (Optional) A cron expression for scheduled trigger execution.
 - `session_duration` - (Optional) The duration of a trigger session in milliseconds.
 - `authenticate` - (Optional) Whether to require authentication for webhook triggers.
 - `blueprint_id` - (Optional) The ID of a blueprint to associate with this integration.

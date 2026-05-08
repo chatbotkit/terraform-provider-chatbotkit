@@ -146,7 +146,7 @@ resource "chatbotkit_trigger_integration" "diagnostic_schedule" {
   description       = "Automated trigger for periodic system diagnostics and health checks"
   authenticate      = true
   session_duration  = 1800000
-  trigger_schedule  = "daily"
+  schedule  = "daily"
 }
 
 # ============================================================================

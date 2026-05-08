@@ -249,7 +249,7 @@ resource "chatbotkit_trigger_integration" "scheduled_trigger" {
   description       = "Automated trigger for scheduled workflow execution by the Task Runner"
   authenticate      = true
   session_duration  = 1800000
-  trigger_schedule  = "hourly"
+  schedule  = "hourly"
 }
 
 # ============================================================================
