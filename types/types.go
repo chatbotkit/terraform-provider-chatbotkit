@@ -1547,6 +1547,103 @@ type MessengerIntegrationUpdateResponse struct {
 	ID *string `json:"id,omitempty"`
 }
 
+type MicrosoftteamsIntegration struct {
+	// The allowed senders for the teams integration
+	AllowFrom *string `json:"allowFrom,omitempty"`
+	// Whether attachments are enabled
+	Attachments *bool `json:"attachments,omitempty"`
+	// The blueprint associated with the teams integration
+	Blueprint *Blueprint `json:"blueprint,omitempty"`
+	// The bot associated with the teams integration
+	Bot *Bot `json:"bot,omitempty"`
+	// Whether contact collection is enabled
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The date and time when the teams integration was created
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The description of the teams integration
+	Description *string `json:"description,omitempty"`
+	// The unique identifier of the teams integration
+	ID *string `json:"id,omitempty"`
+	// The metadata associated with the teams integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the teams integration
+	Name *string `json:"name,omitempty"`
+	// The session duration for the teams integration
+	SessionDuration *float64 `json:"sessionDuration,omitempty"`
+	// The date and time when the teams integration was last updated
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// MicrosoftteamsIntegrationCreateRequest Input parameters for creating a new Teams integration
+type MicrosoftteamsIntegrationCreateRequest struct {
+	// The allowed senders for this integration
+	AllowFrom *string `json:"allowFrom,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The Microsoft Bot Framework application ID
+	BotFrameworkAppId *string `json:"botFrameworkAppId,omitempty"`
+	// The Microsoft Bot Framework application secret
+	BotFrameworkAppSecret *string `json:"botFrameworkAppSecret,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description of the integration
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the integration
+	Name *string `json:"name,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The Azure AD tenant ID
+	TenantId *string `json:"tenantId,omitempty"`
+}
+
+// MicrosoftteamsIntegrationCreateResponse Response containing the ID of a newly created Teams integration
+type MicrosoftteamsIntegrationCreateResponse struct {
+	// The unique identifier of the created Teams integration
+	ID *string `json:"id,omitempty"`
+}
+
+// MicrosoftteamsIntegrationDeleteResponse Response containing the ID of a deleted Teams integration
+type MicrosoftteamsIntegrationDeleteResponse struct {
+	// The unique identifier of the deleted Teams integration
+	ID *string `json:"id,omitempty"`
+}
+
+// MicrosoftteamsIntegrationUpdateRequest Input parameters for updating an existing Teams integration
+type MicrosoftteamsIntegrationUpdateRequest struct {
+	// The allowed senders for this integration
+	AllowFrom *string `json:"allowFrom,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The Microsoft Bot Framework application ID
+	BotFrameworkAppId *string `json:"botFrameworkAppId,omitempty"`
+	// The Microsoft Bot Framework application secret
+	BotFrameworkAppSecret *string `json:"botFrameworkAppSecret,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description of the integration
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the integration
+	Name *string `json:"name,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The Azure AD tenant ID
+	TenantId *string `json:"tenantId,omitempty"`
+}
+
+// MicrosoftteamsIntegrationUpdateResponse Response containing the ID of an updated Teams integration
+type MicrosoftteamsIntegrationUpdateResponse struct {
+	// The unique identifier of the updated Teams integration
+	ID *string `json:"id,omitempty"`
+}
+
 type Mutation struct {
 	ClonePlatformExample *ClonePlatformExampleResult `json:"clonePlatformExample,omitempty"`
 	CreateBlueprint *BlueprintCreateResponse `json:"createBlueprint,omitempty"`
@@ -1567,7 +1664,7 @@ type Mutation struct {
 	CreateSkillset *SkillsetCreateResponse `json:"createSkillset,omitempty"`
 	CreateSkillsetAbility *SkillsetAbilityCreateResponse `json:"createSkillsetAbility,omitempty"`
 	CreateSlackIntegration *SlackIntegrationCreateResponse `json:"createSlackIntegration,omitempty"`
-	CreateTeamsIntegration *TeamsIntegrationCreateResponse `json:"createTeamsIntegration,omitempty"`
+	CreateMicrosoftteamsIntegration *MicrosoftteamsIntegrationCreateResponse `json:"createMicrosoftteamsIntegration,omitempty"`
 	CreateTelegramIntegration *TelegramIntegrationCreateResponse `json:"createTelegramIntegration,omitempty"`
 	CreateTriggerIntegration *TriggerIntegrationCreateResponse `json:"createTriggerIntegration,omitempty"`
 	CreateTwilioIntegration *TwilioIntegrationCreateResponse `json:"createTwilioIntegration,omitempty"`
@@ -1590,7 +1687,7 @@ type Mutation struct {
 	DeleteSkillset *SkillsetDeleteResponse `json:"deleteSkillset,omitempty"`
 	DeleteSkillsetAbility *SkillsetAbilityDeleteResponse `json:"deleteSkillsetAbility,omitempty"`
 	DeleteSlackIntegration *SlackIntegrationDeleteResponse `json:"deleteSlackIntegration,omitempty"`
-	DeleteTeamsIntegration *TeamsIntegrationDeleteResponse `json:"deleteTeamsIntegration,omitempty"`
+	DeleteMicrosoftteamsIntegration *MicrosoftteamsIntegrationDeleteResponse `json:"deleteMicrosoftteamsIntegration,omitempty"`
 	DeleteTelegramIntegration *TelegramIntegrationDeleteResponse `json:"deleteTelegramIntegration,omitempty"`
 	DeleteTriggerIntegration *TriggerIntegrationDeleteResponse `json:"deleteTriggerIntegration,omitempty"`
 	DeleteTwilioIntegration *TwilioIntegrationDeleteResponse `json:"deleteTwilioIntegration,omitempty"`
@@ -1614,7 +1711,7 @@ type Mutation struct {
 	UpdateSkillset *SkillsetUpdateResponse `json:"updateSkillset,omitempty"`
 	UpdateSkillsetAbility *SkillsetAbilityUpdateResponse `json:"updateSkillsetAbility,omitempty"`
 	UpdateSlackIntegration *SlackIntegrationUpdateResponse `json:"updateSlackIntegration,omitempty"`
-	UpdateTeamsIntegration *TeamsIntegrationUpdateResponse `json:"updateTeamsIntegration,omitempty"`
+	UpdateMicrosoftteamsIntegration *MicrosoftteamsIntegrationUpdateResponse `json:"updateMicrosoftteamsIntegration,omitempty"`
 	UpdateTelegramIntegration *TelegramIntegrationUpdateResponse `json:"updateTelegramIntegration,omitempty"`
 	UpdateTriggerIntegration *TriggerIntegrationUpdateResponse `json:"updateTriggerIntegration,omitempty"`
 	UpdateTwilioIntegration *TwilioIntegrationUpdateResponse `json:"updateTwilioIntegration,omitempty"`
@@ -2609,103 +2706,6 @@ type Task struct {
 	Status *TaskStatus `json:"status,omitempty"`
 	// The date and time when the task was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
-}
-
-type TeamsIntegration struct {
-	// The allowed senders for the teams integration
-	AllowFrom *string `json:"allowFrom,omitempty"`
-	// Whether attachments are enabled
-	Attachments *bool `json:"attachments,omitempty"`
-	// The blueprint associated with the teams integration
-	Blueprint *Blueprint `json:"blueprint,omitempty"`
-	// The bot associated with the teams integration
-	Bot *Bot `json:"bot,omitempty"`
-	// Whether contact collection is enabled
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	// The date and time when the teams integration was created
-	CreatedAt *string `json:"createdAt,omitempty"`
-	// The description of the teams integration
-	Description *string `json:"description,omitempty"`
-	// The unique identifier of the teams integration
-	ID *string `json:"id,omitempty"`
-	// The metadata associated with the teams integration
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	// The name of the teams integration
-	Name *string `json:"name,omitempty"`
-	// The session duration for the teams integration
-	SessionDuration *float64 `json:"sessionDuration,omitempty"`
-	// The date and time when the teams integration was last updated
-	UpdatedAt *string `json:"updatedAt,omitempty"`
-}
-
-// TeamsIntegrationCreateRequest Input parameters for creating a new Teams integration
-type TeamsIntegrationCreateRequest struct {
-	// The allowed senders for this integration
-	AllowFrom *string `json:"allowFrom,omitempty"`
-	// The ID of the blueprint to use
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	// The Microsoft Bot Framework application ID
-	BotFrameworkAppId *string `json:"botFrameworkAppId,omitempty"`
-	// The Microsoft Bot Framework application secret
-	BotFrameworkAppSecret *string `json:"botFrameworkAppSecret,omitempty"`
-	// The ID of the bot to connect
-	BotId *string `json:"botId,omitempty"`
-	// Whether to collect contact information
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	// The description of the integration
-	Description *string `json:"description,omitempty"`
-	// Additional metadata for the integration
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	// The name of the integration
-	Name *string `json:"name,omitempty"`
-	// The duration of the session in milliseconds
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	// The Azure AD tenant ID
-	TenantId *string `json:"tenantId,omitempty"`
-}
-
-// TeamsIntegrationCreateResponse Response containing the ID of a newly created Teams integration
-type TeamsIntegrationCreateResponse struct {
-	// The unique identifier of the created Teams integration
-	ID *string `json:"id,omitempty"`
-}
-
-// TeamsIntegrationDeleteResponse Response containing the ID of a deleted Teams integration
-type TeamsIntegrationDeleteResponse struct {
-	// The unique identifier of the deleted Teams integration
-	ID *string `json:"id,omitempty"`
-}
-
-// TeamsIntegrationUpdateRequest Input parameters for updating an existing Teams integration
-type TeamsIntegrationUpdateRequest struct {
-	// The allowed senders for this integration
-	AllowFrom *string `json:"allowFrom,omitempty"`
-	// The ID of the blueprint to use
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	// The Microsoft Bot Framework application ID
-	BotFrameworkAppId *string `json:"botFrameworkAppId,omitempty"`
-	// The Microsoft Bot Framework application secret
-	BotFrameworkAppSecret *string `json:"botFrameworkAppSecret,omitempty"`
-	// The ID of the bot to connect
-	BotId *string `json:"botId,omitempty"`
-	// Whether to collect contact information
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	// The description of the integration
-	Description *string `json:"description,omitempty"`
-	// Additional metadata for the integration
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	// The name of the integration
-	Name *string `json:"name,omitempty"`
-	// The duration of the session in milliseconds
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	// The Azure AD tenant ID
-	TenantId *string `json:"tenantId,omitempty"`
-}
-
-// TeamsIntegrationUpdateResponse Response containing the ID of an updated Teams integration
-type TeamsIntegrationUpdateResponse struct {
-	// The unique identifier of the updated Teams integration
-	ID *string `json:"id,omitempty"`
 }
 
 type TelegramIntegration struct {
