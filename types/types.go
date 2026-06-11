@@ -1548,33 +1548,33 @@ type MessengerIntegrationUpdateResponse struct {
 }
 
 type MicrosoftteamsIntegration struct {
-	// The allowed senders for the teams integration
+	// The allowed senders for the Microsoft Teams integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether attachments are enabled
 	Attachments *bool `json:"attachments,omitempty"`
-	// The blueprint associated with the teams integration
+	// The blueprint associated with the Microsoft Teams integration
 	Blueprint *Blueprint `json:"blueprint,omitempty"`
-	// The bot associated with the teams integration
+	// The bot associated with the Microsoft Teams integration
 	Bot *Bot `json:"bot,omitempty"`
 	// Whether contact collection is enabled
 	ContactCollection *bool `json:"contactCollection,omitempty"`
-	// The date and time when the teams integration was created
+	// The date and time when the Microsoft Teams integration was created
 	CreatedAt *string `json:"createdAt,omitempty"`
-	// The description of the teams integration
+	// The description of the Microsoft Teams integration
 	Description *string `json:"description,omitempty"`
-	// The unique identifier of the teams integration
+	// The unique identifier of the Microsoft Teams integration
 	ID *string `json:"id,omitempty"`
-	// The metadata associated with the teams integration
+	// The metadata associated with the Microsoft Teams integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
-	// The name of the teams integration
+	// The name of the Microsoft Teams integration
 	Name *string `json:"name,omitempty"`
-	// The session duration for the teams integration
+	// The session duration for the Microsoft Teams integration
 	SessionDuration *float64 `json:"sessionDuration,omitempty"`
-	// The date and time when the teams integration was last updated
+	// The date and time when the Microsoft Teams integration was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
-// MicrosoftteamsIntegrationCreateRequest Input parameters for creating a new Teams integration
+// MicrosoftteamsIntegrationCreateRequest Input parameters for creating a new Microsoft Teams integration
 type MicrosoftteamsIntegrationCreateRequest struct {
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
@@ -1600,19 +1600,19 @@ type MicrosoftteamsIntegrationCreateRequest struct {
 	TenantId *string `json:"tenantId,omitempty"`
 }
 
-// MicrosoftteamsIntegrationCreateResponse Response containing the ID of a newly created Teams integration
+// MicrosoftteamsIntegrationCreateResponse Response containing the ID of a newly created Microsoft Teams integration
 type MicrosoftteamsIntegrationCreateResponse struct {
-	// The unique identifier of the created Teams integration
+	// The unique identifier of the created Microsoft Teams integration
 	ID *string `json:"id,omitempty"`
 }
 
-// MicrosoftteamsIntegrationDeleteResponse Response containing the ID of a deleted Teams integration
+// MicrosoftteamsIntegrationDeleteResponse Response containing the ID of a deleted Microsoft Teams integration
 type MicrosoftteamsIntegrationDeleteResponse struct {
-	// The unique identifier of the deleted Teams integration
+	// The unique identifier of the deleted Microsoft Teams integration
 	ID *string `json:"id,omitempty"`
 }
 
-// MicrosoftteamsIntegrationUpdateRequest Input parameters for updating an existing Teams integration
+// MicrosoftteamsIntegrationUpdateRequest Input parameters for updating an existing Microsoft Teams integration
 type MicrosoftteamsIntegrationUpdateRequest struct {
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
@@ -1638,9 +1638,9 @@ type MicrosoftteamsIntegrationUpdateRequest struct {
 	TenantId *string `json:"tenantId,omitempty"`
 }
 
-// MicrosoftteamsIntegrationUpdateResponse Response containing the ID of an updated Teams integration
+// MicrosoftteamsIntegrationUpdateResponse Response containing the ID of an updated Microsoft Teams integration
 type MicrosoftteamsIntegrationUpdateResponse struct {
-	// The unique identifier of the updated Teams integration
+	// The unique identifier of the updated Microsoft Teams integration
 	ID *string `json:"id,omitempty"`
 }
 

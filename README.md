@@ -1,10 +1,55 @@
+[![ChatBotKit](https://img.shields.io/badge/credits-ChatBotKit-blue.svg)](https://chatbotkit.com)
+[![CBK.AI](https://img.shields.io/badge/credits-CBK.AI-blue.svg)](https://cbk.ai)
+[![Email](https://img.shields.io/badge/Email-Support-blue?logo=mail.ru)](mailto:support@chatbotkit.com)
+[![Discord](https://img.shields.io/badge/Discord-Support-blue?logo=discord)](https://go.cbk.ai/discord)
+[![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple.svg)](https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest)
+[![Follow on Twitter](https://img.shields.io/twitter/follow/chatbotkit.svg?logo=twitter)](https://twitter.com/chatbotkit)
+
+```text
+ .d8888b.  888888b.   888    d8P
+d88P  Y88b 888  "88b  888   d8P
+888    888 888  .88P  888  d8P
+888        8888888K.  888d88K
+888        888  "Y88b 8888888b
+888    888 888    888 888  Y88b
+Y88b  d88P 888   d88P 888   Y88b
+ "Y8888P"  8888888P"  888    Y88b .ai
+```
+
 # ChatBotKit Terraform Provider
 
-[![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple.svg)](https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest)
-
-This directory contains the ChatBotKit Terraform Provider, which allows you to manage ChatBotKit resources using Terraform.
+The official Terraform provider for [ChatBotKit](https://chatbotkit.com) - a
+platform for building and deploying conversational AI applications. Use it to
+create and manage ChatBotKit bots, datasets, skillsets, integrations, and other
+resources as infrastructure as code.
 
 **Terraform Registry:** https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest
+
+## Why ChatBotKit?
+
+**Build lighter, future-proof AI agents.** When you build with ChatBotKit, the heavy lifting happens on our servers, not in your application. This architectural advantage delivers:
+
+- 🪶 **Lightweight Agents**: Your agents stay lean because complex AI processing, model orchestration, and tool execution happen server-side. Less code in your app means faster load times and simpler maintenance.
+
+- 🛡️ **Robust & Streamlined**: Server-side processing provides a more reliable experience with built-in error handling, automatic retries, and consistent behavior across all platforms.
+
+- 🔄 **Backward & Forward Compatible**: As AI technology evolves with new models, new capabilities, and new paradigms, your agents automatically benefit. No code changes required on your end.
+
+- 🔮 **Future-Proof**: Agents you build today will remain capable tomorrow. When we add support for new AI models or capabilities, your existing agents gain those powers without any updates to your codebase.
+
+This means you can focus on building great user experiences while ChatBotKit handles the complexity of the ever-changing AI landscape.
+
+## Installation
+
+```hcl
+terraform {
+  required_providers {
+    chatbotkit = {
+      source = "chatbotkit/chatbotkit"
+    }
+  }
+}
+```
 
 ## Building
 
