@@ -32,17 +32,18 @@ type SecretResource struct {
 type SecretResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	Config types.Map `tfsdk:"config"`
+	Config      types.Map    `tfsdk:"config"`
 	Description types.String `tfsdk:"description"`
-	Kind types.String `tfsdk:"kind"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Type types.String `tfsdk:"type"`
-	Value types.String `tfsdk:"value"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Kind        types.String `tfsdk:"kind"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Type        types.String `tfsdk:"type"`
+	Value       types.String `tfsdk:"value"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -63,6 +64,10 @@ func (r *SecretResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the secret",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -145,15 +150,16 @@ func (r *SecretResource) Create(ctx context.Context, req resource.CreateRequest,
 	// Call the ChatBotKit GraphQL API to create secret
 
 	result, err := r.client.CreateSecret(ctx, CreateSecretInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Config: convertMapToInterface(ctx, data.Config),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
-		Kind: data.Kind.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Type: data.Type.ValueStringPointer(),
-		Value: data.Value.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Kind:        data.Kind.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Type:        data.Type.ValueStringPointer(),
+		Value:       data.Value.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create secret: %s", err))
@@ -195,6 +201,9 @@ func (r *SecretResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -251,15 +260,16 @@ func (r *SecretResource) Update(ctx context.Context, req resource.UpdateRequest,
 	// Call the ChatBotKit GraphQL API to update secret
 
 	_, err := r.client.UpdateSecret(ctx, data.ID.ValueString(), UpdateSecretInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Config: convertMapToInterface(ctx, data.Config),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
-		Kind: data.Kind.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Type: data.Type.ValueStringPointer(),
-		Value: data.Value.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Kind:        data.Kind.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Type:        data.Type.ValueStringPointer(),
+		Value:       data.Value.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update secret: %s", err))

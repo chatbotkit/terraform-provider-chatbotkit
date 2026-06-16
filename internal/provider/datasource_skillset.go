@@ -25,13 +25,14 @@ type SkillsetDataSource struct {
 type SkillsetDataSourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the data source type name.
@@ -49,6 +50,10 @@ func (d *SkillsetDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 				MarkdownDescription: "The unique identifier of the skillset to look up",
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the skillset",
+				Computed:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Computed:            true,
@@ -120,6 +125,9 @@ func (d *SkillsetDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}

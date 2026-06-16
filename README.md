@@ -130,28 +130,35 @@ terraform-provider-chatbotkit/
 
 The provider supports the following resources:
 
-| Resource                           | Description                    |
-| ---------------------------------- | ------------------------------ |
-| `chatbotkit_bot`                   | Manages a ChatBotKit bot       |
-| `chatbotkit_dataset`               | Manages a dataset              |
-| `chatbotkit_blueprint`             | Manages a blueprint            |
-| `chatbotkit_skillset`              | Manages a skillset             |
-| `chatbotkit_skillset_ability`      | Manages a skillset ability     |
-| `chatbotkit_secret`                | Manages a secret               |
-| `chatbotkit_file`                  | Manages a file                 |
-| `chatbotkit_portal`                | Manages a portal               |
-| `chatbotkit_discord_integration`   | Manages Discord integration    |
-| `chatbotkit_email_integration`     | Manages Email integration      |
-| `chatbotkit_extract_integration`   | Manages Extract integration    |
-| `chatbotkit_mcpserver_integration` | Manages MCP Server integration |
-| `chatbotkit_messenger_integration` | Manages Messenger integration  |
-| `chatbotkit_notion_integration`    | Manages Notion integration     |
-| `chatbotkit_sitemap_integration`   | Manages Sitemap integration    |
-| `chatbotkit_slack_integration`     | Manages Slack integration      |
-| `chatbotkit_telegram_integration`  | Manages Telegram integration   |
-| `chatbotkit_trigger_integration`   | Manages Trigger integration    |
-| `chatbotkit_twilio_integration`    | Manages Twilio integration     |
-| `chatbotkit_whatsapp_integration`  | Manages WhatsApp integration   |
+| Resource                                | Description                         |
+| --------------------------------------- | ----------------------------------- |
+| `chatbotkit_bot`                        | Manages a ChatBotKit bot            |
+| `chatbotkit_dataset`                    | Manages a dataset                   |
+| `chatbotkit_blueprint`                  | Manages a blueprint                 |
+| `chatbotkit_skillset`                   | Manages a skillset                  |
+| `chatbotkit_skillset_ability`           | Manages a skillset ability          |
+| `chatbotkit_secret`                     | Manages a secret                    |
+| `chatbotkit_file`                       | Manages a file                      |
+| `chatbotkit_portal`                     | Manages a portal                    |
+| `chatbotkit_policy`                      | Manages a policy                    |
+| `chatbotkit_space`                      | Manages a space                     |
+| `chatbotkit_discord_integration`        | Manages Discord integration         |
+| `chatbotkit_email_integration`          | Manages Email integration           |
+| `chatbotkit_extract_integration`        | Manages Extract integration         |
+| `chatbotkit_googlechat_integration`     | Manages Google Chat integration     |
+| `chatbotkit_instagram_integration`      | Manages Instagram integration       |
+| `chatbotkit_mcpserver_integration`      | Manages MCP Server integration      |
+| `chatbotkit_messenger_integration`      | Manages Messenger integration       |
+| `chatbotkit_microsoftteams_integration` | Manages Microsoft Teams integration |
+| `chatbotkit_notion_integration`         | Manages Notion integration          |
+| `chatbotkit_sitemap_integration`        | Manages Sitemap integration         |
+| `chatbotkit_slack_integration`          | Manages Slack integration           |
+| `chatbotkit_support_integration`        | Manages Support integration         |
+| `chatbotkit_telegram_integration`       | Manages Telegram integration        |
+| `chatbotkit_trigger_integration`        | Manages Trigger integration         |
+| `chatbotkit_twilio_integration`         | Manages Twilio integration          |
+| `chatbotkit_whatsapp_integration`       | Manages WhatsApp integration        |
+| `chatbotkit_widget_integration`         | Manages Widget integration          |
 
 ## Data Sources
 

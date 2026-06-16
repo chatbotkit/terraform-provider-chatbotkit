@@ -109,13 +109,13 @@ func convertMapToInterface(ctx context.Context, m types.Map) map[string]interfac
 	return result
 }
 
-
 // CreateBlueprintInput represents the input for creating a blueprint.
 type CreateBlueprintInput struct {
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // CreateBlueprintResponse represents the response from creating a blueprint.
@@ -150,10 +150,11 @@ func (c *Client) CreateBlueprint(ctx context.Context, input CreateBlueprintInput
 
 // UpdateBlueprintInput represents the input for updating a blueprint.
 type UpdateBlueprintInput struct {
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // UpdateBlueprintResponse represents the response from updating a blueprint.
@@ -173,7 +174,7 @@ func (c *Client) UpdateBlueprint(ctx context.Context, id string, input UpdateBlu
 
 	variables := map[string]interface{}{
 		"blueprintId": id,
-		"input":              input,
+		"input":       input,
 	}
 
 	var response struct {
@@ -219,13 +220,14 @@ func (c *Client) DeleteBlueprint(ctx context.Context, id string) (*DeleteBluepri
 
 // GetBlueprintResponse represents the response from fetching a blueprint.
 type GetBlueprintResponse struct {
-	ID *string `json:"id"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetBlueprint fetches a blueprint by ID.
@@ -237,6 +239,7 @@ func (c *Client) GetBlueprint(ctx context.Context, id string) (*GetBlueprintResp
 				edges {
 					node {
 						id
+						alias
 						description
 						meta
 						name
@@ -275,20 +278,20 @@ func (c *Client) GetBlueprint(ctx context.Context, id string) (*GetBlueprintResp
 	return nil, fmt.Errorf("blueprint with ID %s not found", id)
 }
 
-
 // CreateBotInput represents the input for creating a bot.
 type CreateBotInput struct {
-	Backstory *string `json:"backstory,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Model *string `json:"model,omitempty"`
-	Moderation *bool `json:"moderation,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Privacy *bool `json:"privacy,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	Backstory   *string                `json:"backstory,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Moderation  *bool                  `json:"moderation,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Privacy     *bool                  `json:"privacy,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // CreateBotResponse represents the response from creating a bot.
@@ -323,17 +326,18 @@ func (c *Client) CreateBot(ctx context.Context, input CreateBotInput) (*CreateBo
 
 // UpdateBotInput represents the input for updating a bot.
 type UpdateBotInput struct {
-	Backstory *string `json:"backstory,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Model *string `json:"model,omitempty"`
-	Moderation *bool `json:"moderation,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Privacy *bool `json:"privacy,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	Backstory   *string                `json:"backstory,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Moderation  *bool                  `json:"moderation,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Privacy     *bool                  `json:"privacy,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // UpdateBotResponse represents the response from updating a bot.
@@ -353,7 +357,7 @@ func (c *Client) UpdateBot(ctx context.Context, id string, input UpdateBotInput)
 
 	variables := map[string]interface{}{
 		"botId": id,
-		"input":              input,
+		"input": input,
 	}
 
 	var response struct {
@@ -399,20 +403,21 @@ func (c *Client) DeleteBot(ctx context.Context, id string) (*DeleteBotResponse, 
 
 // GetBotResponse represents the response from fetching a bot.
 type GetBotResponse struct {
-	ID *string `json:"id"`
-	Backstory *string `json:"backstory,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Model *string `json:"model,omitempty"`
-	Moderation *bool `json:"moderation,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Privacy *bool `json:"privacy,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	Backstory   *string                `json:"backstory,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Moderation  *bool                  `json:"moderation,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Privacy     *bool                  `json:"privacy,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetBot fetches a bot by ID.
@@ -424,6 +429,7 @@ func (c *Client) GetBot(ctx context.Context, id string) (*GetBotResponse, error)
 				edges {
 					node {
 						id
+						alias
 						backstory
 						blueprintId
 						datasetId
@@ -469,23 +475,23 @@ func (c *Client) GetBot(ctx context.Context, id string) (*GetBotResponse, error)
 	return nil, fmt.Errorf("bot with ID %s not found", id)
 }
 
-
 // CreateDatasetInput represents the input for creating a dataset.
 type CreateDatasetInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	MatchInstruction *string `json:"matchInstruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	MismatchInstruction *string `json:"mismatchInstruction,omitempty"`
-	Name *string `json:"name,omitempty"`
-	RecordMaxTokens *int64 `json:"recordMaxTokens,omitempty"`
-	Reranker *string `json:"reranker,omitempty"`
-	SearchMaxRecords *int64 `json:"searchMaxRecords,omitempty"`
-	SearchMaxTokens *int64 `json:"searchMaxTokens,omitempty"`
-	SearchMinScore *float64 `json:"searchMinScore,omitempty"`
-	Separators *string `json:"separators,omitempty"`
-	Store *string `json:"store,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias               *string                `json:"alias,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	MatchInstruction    *string                `json:"matchInstruction,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	MismatchInstruction *string                `json:"mismatchInstruction,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	RecordMaxTokens     *int64                 `json:"recordMaxTokens,omitempty"`
+	Reranker            *string                `json:"reranker,omitempty"`
+	SearchMaxRecords    *int64                 `json:"searchMaxRecords,omitempty"`
+	SearchMaxTokens     *int64                 `json:"searchMaxTokens,omitempty"`
+	SearchMinScore      *float64               `json:"searchMinScore,omitempty"`
+	Separators          *string                `json:"separators,omitempty"`
+	Store               *string                `json:"store,omitempty"`
+	Visibility          *string                `json:"visibility,omitempty"`
 }
 
 // CreateDatasetResponse represents the response from creating a dataset.
@@ -520,20 +526,21 @@ func (c *Client) CreateDataset(ctx context.Context, input CreateDatasetInput) (*
 
 // UpdateDatasetInput represents the input for updating a dataset.
 type UpdateDatasetInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	MatchInstruction *string `json:"matchInstruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	MismatchInstruction *string `json:"mismatchInstruction,omitempty"`
-	Name *string `json:"name,omitempty"`
-	RecordMaxTokens *int64 `json:"recordMaxTokens,omitempty"`
-	Reranker *string `json:"reranker,omitempty"`
-	SearchMaxRecords *int64 `json:"searchMaxRecords,omitempty"`
-	SearchMaxTokens *int64 `json:"searchMaxTokens,omitempty"`
-	SearchMinScore *float64 `json:"searchMinScore,omitempty"`
-	Separators *string `json:"separators,omitempty"`
-	Store *string `json:"store,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias               *string                `json:"alias,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	MatchInstruction    *string                `json:"matchInstruction,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	MismatchInstruction *string                `json:"mismatchInstruction,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	RecordMaxTokens     *int64                 `json:"recordMaxTokens,omitempty"`
+	Reranker            *string                `json:"reranker,omitempty"`
+	SearchMaxRecords    *int64                 `json:"searchMaxRecords,omitempty"`
+	SearchMaxTokens     *int64                 `json:"searchMaxTokens,omitempty"`
+	SearchMinScore      *float64               `json:"searchMinScore,omitempty"`
+	Separators          *string                `json:"separators,omitempty"`
+	Store               *string                `json:"store,omitempty"`
+	Visibility          *string                `json:"visibility,omitempty"`
 }
 
 // UpdateDatasetResponse represents the response from updating a dataset.
@@ -553,7 +560,7 @@ func (c *Client) UpdateDataset(ctx context.Context, id string, input UpdateDatas
 
 	variables := map[string]interface{}{
 		"datasetId": id,
-		"input":              input,
+		"input":     input,
 	}
 
 	var response struct {
@@ -599,23 +606,24 @@ func (c *Client) DeleteDataset(ctx context.Context, id string) (*DeleteDatasetRe
 
 // GetDatasetResponse represents the response from fetching a dataset.
 type GetDatasetResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	MatchInstruction *string `json:"matchInstruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	MismatchInstruction *string `json:"mismatchInstruction,omitempty"`
-	Name *string `json:"name,omitempty"`
-	RecordMaxTokens *int64 `json:"recordMaxTokens,omitempty"`
-	Reranker *string `json:"reranker,omitempty"`
-	SearchMaxRecords *int64 `json:"searchMaxRecords,omitempty"`
-	SearchMaxTokens *int64 `json:"searchMaxTokens,omitempty"`
-	SearchMinScore *float64 `json:"searchMinScore,omitempty"`
-	Separators *string `json:"separators,omitempty"`
-	Store *string `json:"store,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                  *string                `json:"id"`
+	Alias               *string                `json:"alias,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	MatchInstruction    *string                `json:"matchInstruction,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	MismatchInstruction *string                `json:"mismatchInstruction,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	RecordMaxTokens     *int64                 `json:"recordMaxTokens,omitempty"`
+	Reranker            *string                `json:"reranker,omitempty"`
+	SearchMaxRecords    *int64                 `json:"searchMaxRecords,omitempty"`
+	SearchMaxTokens     *int64                 `json:"searchMaxTokens,omitempty"`
+	SearchMinScore      *float64               `json:"searchMinScore,omitempty"`
+	Separators          *string                `json:"separators,omitempty"`
+	Store               *string                `json:"store,omitempty"`
+	Visibility          *string                `json:"visibility,omitempty"`
+	CreatedAt           *string                `json:"createdAt,omitempty"`
+	UpdatedAt           *string                `json:"updatedAt,omitempty"`
 }
 
 // GetDataset fetches a dataset by ID.
@@ -627,6 +635,7 @@ func (c *Client) GetDataset(ctx context.Context, id string) (*GetDatasetResponse
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						description
 						matchInstruction
@@ -675,20 +684,21 @@ func (c *Client) GetDataset(ctx context.Context, id string) (*GetDatasetResponse
 	return nil, fmt.Errorf("dataset with ID %s not found", id)
 }
 
-
 // CreateDiscordIntegrationInput represents the input for creating a discordintegration.
 type CreateDiscordIntegrationInput struct {
-	AppId *string `json:"appId,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Handle *string `json:"handle,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PublicKey *string `json:"publicKey,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AppId             *string                `json:"appId,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Handle            *string                `json:"handle,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PublicKey         *string                `json:"publicKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // CreateDiscordIntegrationResponse represents the response from creating a discordintegration.
@@ -723,17 +733,19 @@ func (c *Client) CreateDiscordIntegration(ctx context.Context, input CreateDisco
 
 // UpdateDiscordIntegrationInput represents the input for updating a discordintegration.
 type UpdateDiscordIntegrationInput struct {
-	AppId *string `json:"appId,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Handle *string `json:"handle,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PublicKey *string `json:"publicKey,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AppId             *string                `json:"appId,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Handle            *string                `json:"handle,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PublicKey         *string                `json:"publicKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // UpdateDiscordIntegrationResponse represents the response from updating a discordintegration.
@@ -753,7 +765,7 @@ func (c *Client) UpdateDiscordIntegration(ctx context.Context, id string, input 
 
 	variables := map[string]interface{}{
 		"discordIntegrationId": id,
-		"input":              input,
+		"input":                input,
 	}
 
 	var response struct {
@@ -799,20 +811,22 @@ func (c *Client) DeleteDiscordIntegration(ctx context.Context, id string) (*Dele
 
 // GetDiscordIntegrationResponse represents the response from fetching a discordintegration.
 type GetDiscordIntegrationResponse struct {
-	ID *string `json:"id"`
-	AppId *string `json:"appId,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Handle *string `json:"handle,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PublicKey *string `json:"publicKey,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AppId             *string                `json:"appId,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Handle            *string                `json:"handle,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PublicKey         *string                `json:"publicKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetDiscordIntegration fetches a discordintegration by ID.
@@ -824,6 +838,8 @@ func (c *Client) GetDiscordIntegration(ctx context.Context, id string) (*GetDisc
 				edges {
 					node {
 						id
+						alias
+						allowFrom
 						appId
 						blueprintId
 						botId
@@ -869,17 +885,18 @@ func (c *Client) GetDiscordIntegration(ctx context.Context, id string) (*GetDisc
 	return nil, fmt.Errorf("discordintegration with ID %s not found", id)
 }
 
-
 // CreateEmailIntegrationInput represents the input for creating a emailintegration.
 type CreateEmailIntegrationInput struct {
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // CreateEmailIntegrationResponse represents the response from creating a emailintegration.
@@ -914,14 +931,16 @@ func (c *Client) CreateEmailIntegration(ctx context.Context, input CreateEmailIn
 
 // UpdateEmailIntegrationInput represents the input for updating a emailintegration.
 type UpdateEmailIntegrationInput struct {
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // UpdateEmailIntegrationResponse represents the response from updating a emailintegration.
@@ -987,17 +1006,19 @@ func (c *Client) DeleteEmailIntegration(ctx context.Context, id string) (*Delete
 
 // GetEmailIntegrationResponse represents the response from fetching a emailintegration.
 type GetEmailIntegrationResponse struct {
-	ID *string `json:"id"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetEmailIntegration fetches a emailintegration by ID.
@@ -1009,6 +1030,8 @@ func (c *Client) GetEmailIntegration(ctx context.Context, id string) (*GetEmailI
 				edges {
 					node {
 						id
+						alias
+						allowFrom
 						attachments
 						blueprintId
 						botId
@@ -1051,16 +1074,17 @@ func (c *Client) GetEmailIntegration(ctx context.Context, id string) (*GetEmailI
 	return nil, fmt.Errorf("emailintegration with ID %s not found", id)
 }
 
-
 // CreateExtractIntegrationInput represents the input for creating a extractintegration.
 type CreateExtractIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Request *string `json:"request,omitempty"`
-	Schema map[string]interface{} `json:"schema,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Request     *string                `json:"request,omitempty"`
+	Schema      map[string]interface{} `json:"schema,omitempty"`
 }
 
 // CreateExtractIntegrationResponse represents the response from creating a extractintegration.
@@ -1095,13 +1119,15 @@ func (c *Client) CreateExtractIntegration(ctx context.Context, input CreateExtra
 
 // UpdateExtractIntegrationInput represents the input for updating a extractintegration.
 type UpdateExtractIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Request *string `json:"request,omitempty"`
-	Schema map[string]interface{} `json:"schema,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Request     *string                `json:"request,omitempty"`
+	Schema      map[string]interface{} `json:"schema,omitempty"`
 }
 
 // UpdateExtractIntegrationResponse represents the response from updating a extractintegration.
@@ -1121,7 +1147,7 @@ func (c *Client) UpdateExtractIntegration(ctx context.Context, id string, input 
 
 	variables := map[string]interface{}{
 		"extractIntegrationId": id,
-		"input":              input,
+		"input":                input,
 	}
 
 	var response struct {
@@ -1167,16 +1193,18 @@ func (c *Client) DeleteExtractIntegration(ctx context.Context, id string) (*Dele
 
 // GetExtractIntegrationResponse represents the response from fetching a extractintegration.
 type GetExtractIntegrationResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Request *string `json:"request,omitempty"`
-	Schema map[string]interface{} `json:"schema,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Model       *string                `json:"model,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Request     *string                `json:"request,omitempty"`
+	Schema      map[string]interface{} `json:"schema,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetExtractIntegration fetches a extractintegration by ID.
@@ -1188,10 +1216,12 @@ func (c *Client) GetExtractIntegration(ctx context.Context, id string) (*GetExtr
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						botId
 						description
 						meta
+						model
 						name
 						request
 						schema
@@ -1229,14 +1259,14 @@ func (c *Client) GetExtractIntegration(ctx context.Context, id string) (*GetExtr
 	return nil, fmt.Errorf("extractintegration with ID %s not found", id)
 }
 
-
 // CreateFileInput represents the input for creating a file.
 type CreateFileInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // CreateFileResponse represents the response from creating a file.
@@ -1271,11 +1301,12 @@ func (c *Client) CreateFile(ctx context.Context, input CreateFileInput) (*Create
 
 // UpdateFileInput represents the input for updating a file.
 type UpdateFileInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // UpdateFileResponse represents the response from updating a file.
@@ -1295,7 +1326,7 @@ func (c *Client) UpdateFile(ctx context.Context, id string, input UpdateFileInpu
 
 	variables := map[string]interface{}{
 		"fileId": id,
-		"input":              input,
+		"input":  input,
 	}
 
 	var response struct {
@@ -1341,14 +1372,15 @@ func (c *Client) DeleteFile(ctx context.Context, id string) (*DeleteFileResponse
 
 // GetFileResponse represents the response from fetching a file.
 type GetFileResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetFile fetches a file by ID.
@@ -1360,6 +1392,7 @@ func (c *Client) GetFile(ctx context.Context, id string) (*GetFileResponse, erro
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						description
 						meta
@@ -1399,14 +1432,405 @@ func (c *Client) GetFile(ctx context.Context, id string) (*GetFileResponse, erro
 	return nil, fmt.Errorf("file with ID %s not found", id)
 }
 
+// CreateGooglechatIntegrationInput represents the input for creating a googlechatintegration.
+type CreateGooglechatIntegrationInput struct {
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	ProjectNumber     *string                `json:"projectNumber,omitempty"`
+	ServiceAccountKey *string                `json:"serviceAccountKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+}
+
+// CreateGooglechatIntegrationResponse represents the response from creating a googlechatintegration.
+type CreateGooglechatIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateGooglechatIntegration creates a new googlechatintegration.
+func (c *Client) CreateGooglechatIntegration(ctx context.Context, input CreateGooglechatIntegrationInput) (*CreateGooglechatIntegrationResponse, error) {
+	query := `
+		mutation CreateGooglechatIntegration($input: GooglechatIntegrationCreateRequest!) {
+			createGooglechatIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateGooglechatIntegration *CreateGooglechatIntegrationResponse `json:"createGooglechatIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateGooglechatIntegration, nil
+}
+
+// UpdateGooglechatIntegrationInput represents the input for updating a googlechatintegration.
+type UpdateGooglechatIntegrationInput struct {
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	ProjectNumber     *string                `json:"projectNumber,omitempty"`
+	ServiceAccountKey *string                `json:"serviceAccountKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+}
+
+// UpdateGooglechatIntegrationResponse represents the response from updating a googlechatintegration.
+type UpdateGooglechatIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateGooglechatIntegration updates an existing googlechatintegration.
+func (c *Client) UpdateGooglechatIntegration(ctx context.Context, id string, input UpdateGooglechatIntegrationInput) (*UpdateGooglechatIntegrationResponse, error) {
+	query := `
+		mutation UpdateGooglechatIntegration($googlechatIntegrationId: ID!, $input: GooglechatIntegrationUpdateRequest!) {
+			updateGooglechatIntegration(googlechatIntegrationId: $googlechatIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"googlechatIntegrationId": id,
+		"input":                   input,
+	}
+
+	var response struct {
+		UpdateGooglechatIntegration *UpdateGooglechatIntegrationResponse `json:"updateGooglechatIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateGooglechatIntegration, nil
+}
+
+// DeleteGooglechatIntegrationResponse represents the response from deleting a googlechatintegration.
+type DeleteGooglechatIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteGooglechatIntegration deletes a googlechatintegration.
+func (c *Client) DeleteGooglechatIntegration(ctx context.Context, id string) (*DeleteGooglechatIntegrationResponse, error) {
+	query := `
+		mutation DeleteGooglechatIntegration($googlechatIntegrationId: ID!) {
+			deleteGooglechatIntegration(googlechatIntegrationId: $googlechatIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"googlechatIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteGooglechatIntegration *DeleteGooglechatIntegrationResponse `json:"deleteGooglechatIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteGooglechatIntegration, nil
+}
+
+// GetGooglechatIntegrationResponse represents the response from fetching a googlechatintegration.
+type GetGooglechatIntegrationResponse struct {
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	ProjectNumber     *string                `json:"projectNumber,omitempty"`
+	ServiceAccountKey *string                `json:"serviceAccountKey,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
+}
+
+// GetGooglechatIntegration fetches a googlechatintegration by ID.
+func (c *Client) GetGooglechatIntegration(ctx context.Context, id string) (*GetGooglechatIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetGooglechatIntegration($cursor: ID) {
+			googlechatIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						allowFrom
+						attachments
+						autoRespond
+						blueprintId
+						botId
+						contactCollection
+						description
+						meta
+						name
+						projectNumber
+						serviceAccountKey
+						sessionDuration
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		GooglechatIntegrations struct {
+			Edges []struct {
+				Node *GetGooglechatIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"googlechatIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.GooglechatIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("googlechatintegration with ID %s not found", id)
+}
+
+// CreateInstagramIntegrationInput represents the input for creating a instagramintegration.
+type CreateInstagramIntegrationInput struct {
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+}
+
+// CreateInstagramIntegrationResponse represents the response from creating a instagramintegration.
+type CreateInstagramIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateInstagramIntegration creates a new instagramintegration.
+func (c *Client) CreateInstagramIntegration(ctx context.Context, input CreateInstagramIntegrationInput) (*CreateInstagramIntegrationResponse, error) {
+	query := `
+		mutation CreateInstagramIntegration($input: InstagramIntegrationCreateRequest!) {
+			createInstagramIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateInstagramIntegration *CreateInstagramIntegrationResponse `json:"createInstagramIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateInstagramIntegration, nil
+}
+
+// UpdateInstagramIntegrationInput represents the input for updating a instagramintegration.
+type UpdateInstagramIntegrationInput struct {
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+}
+
+// UpdateInstagramIntegrationResponse represents the response from updating a instagramintegration.
+type UpdateInstagramIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateInstagramIntegration updates an existing instagramintegration.
+func (c *Client) UpdateInstagramIntegration(ctx context.Context, id string, input UpdateInstagramIntegrationInput) (*UpdateInstagramIntegrationResponse, error) {
+	query := `
+		mutation UpdateInstagramIntegration($instagramIntegrationId: ID!, $input: InstagramIntegrationUpdateRequest!) {
+			updateInstagramIntegration(instagramIntegrationId: $instagramIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"instagramIntegrationId": id,
+		"input":                  input,
+	}
+
+	var response struct {
+		UpdateInstagramIntegration *UpdateInstagramIntegrationResponse `json:"updateInstagramIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateInstagramIntegration, nil
+}
+
+// DeleteInstagramIntegrationResponse represents the response from deleting a instagramintegration.
+type DeleteInstagramIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteInstagramIntegration deletes a instagramintegration.
+func (c *Client) DeleteInstagramIntegration(ctx context.Context, id string) (*DeleteInstagramIntegrationResponse, error) {
+	query := `
+		mutation DeleteInstagramIntegration($instagramIntegrationId: ID!) {
+			deleteInstagramIntegration(instagramIntegrationId: $instagramIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"instagramIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteInstagramIntegration *DeleteInstagramIntegrationResponse `json:"deleteInstagramIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteInstagramIntegration, nil
+}
+
+// GetInstagramIntegrationResponse represents the response from fetching a instagramintegration.
+type GetInstagramIntegrationResponse struct {
+	ID                *string                `json:"id"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
+}
+
+// GetInstagramIntegration fetches a instagramintegration by ID.
+func (c *Client) GetInstagramIntegration(ctx context.Context, id string) (*GetInstagramIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetInstagramIntegration($cursor: ID) {
+			instagramIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						accessToken
+						alias
+						attachments
+						blueprintId
+						botId
+						contactCollection
+						description
+						meta
+						name
+						sessionDuration
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		InstagramIntegrations struct {
+			Edges []struct {
+				Node *GetInstagramIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"instagramIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.InstagramIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("instagramintegration with ID %s not found", id)
+}
 
 // CreateMcpserverIntegrationInput represents the input for creating a mcpserverintegration.
 type CreateMcpserverIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	OAuthConnectionId *string                `json:"oAuthConnectionId,omitempty"`
+	SkillsetId        *string                `json:"skillsetId,omitempty"`
 }
 
 // CreateMcpserverIntegrationResponse represents the response from creating a mcpserverintegration.
@@ -1441,11 +1865,13 @@ func (c *Client) CreateMcpserverIntegration(ctx context.Context, input CreateMcp
 
 // UpdateMcpserverIntegrationInput represents the input for updating a mcpserverintegration.
 type UpdateMcpserverIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	OAuthConnectionId *string                `json:"oAuthConnectionId,omitempty"`
+	SkillsetId        *string                `json:"skillsetId,omitempty"`
 }
 
 // UpdateMcpserverIntegrationResponse represents the response from updating a mcpserverintegration.
@@ -1465,7 +1891,7 @@ func (c *Client) UpdateMcpserverIntegration(ctx context.Context, id string, inpu
 
 	variables := map[string]interface{}{
 		"mcpserverIntegrationId": id,
-		"input":              input,
+		"input":                  input,
 	}
 
 	var response struct {
@@ -1511,14 +1937,16 @@ func (c *Client) DeleteMcpserverIntegration(ctx context.Context, id string) (*De
 
 // GetMcpserverIntegrationResponse represents the response from fetching a mcpserverintegration.
 type GetMcpserverIntegrationResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SkillsetId *string `json:"skillsetId,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	OAuthConnectionId *string                `json:"oAuthConnectionId,omitempty"`
+	SkillsetId        *string                `json:"skillsetId,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetMcpserverIntegration fetches a mcpserverintegration by ID.
@@ -1530,10 +1958,12 @@ func (c *Client) GetMcpserverIntegration(ctx context.Context, id string) (*GetMc
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						description
 						meta
 						name
+						oAuthConnectionId
 						skillsetId
 						createdAt
 						updatedAt
@@ -1569,17 +1999,18 @@ func (c *Client) GetMcpserverIntegration(ctx context.Context, id string) (*GetMc
 	return nil, fmt.Errorf("mcpserverintegration with ID %s not found", id)
 }
 
-
 // CreateMessengerIntegrationInput represents the input for creating a messengerintegration.
 type CreateMessengerIntegrationInput struct {
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // CreateMessengerIntegrationResponse represents the response from creating a messengerintegration.
@@ -1614,14 +2045,16 @@ func (c *Client) CreateMessengerIntegration(ctx context.Context, input CreateMes
 
 // UpdateMessengerIntegrationInput represents the input for updating a messengerintegration.
 type UpdateMessengerIntegrationInput struct {
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // UpdateMessengerIntegrationResponse represents the response from updating a messengerintegration.
@@ -1641,7 +2074,7 @@ func (c *Client) UpdateMessengerIntegration(ctx context.Context, id string, inpu
 
 	variables := map[string]interface{}{
 		"messengerIntegrationId": id,
-		"input":              input,
+		"input":                  input,
 	}
 
 	var response struct {
@@ -1687,17 +2120,19 @@ func (c *Client) DeleteMessengerIntegration(ctx context.Context, id string) (*De
 
 // GetMessengerIntegrationResponse represents the response from fetching a messengerintegration.
 type GetMessengerIntegrationResponse struct {
-	ID *string `json:"id"`
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetMessengerIntegration fetches a messengerintegration by ID.
@@ -1710,9 +2145,11 @@ func (c *Client) GetMessengerIntegration(ctx context.Context, id string) (*GetMe
 					node {
 						id
 						accessToken
+						alias
 						attachments
 						blueprintId
 						botId
+						contactCollection
 						description
 						meta
 						name
@@ -1751,17 +2188,214 @@ func (c *Client) GetMessengerIntegration(ctx context.Context, id string) (*GetMe
 	return nil, fmt.Errorf("messengerintegration with ID %s not found", id)
 }
 
+// CreateMicrosoftteamsIntegrationInput represents the input for creating a microsoftteamsintegration.
+type CreateMicrosoftteamsIntegrationInput struct {
+	Alias                 *string                `json:"alias,omitempty"`
+	AllowFrom             *string                `json:"allowFrom,omitempty"`
+	BlueprintId           *string                `json:"blueprintId,omitempty"`
+	BotFrameworkAppId     *string                `json:"botFrameworkAppId,omitempty"`
+	BotFrameworkAppSecret *string                `json:"botFrameworkAppSecret,omitempty"`
+	BotId                 *string                `json:"botId,omitempty"`
+	ContactCollection     *bool                  `json:"contactCollection,omitempty"`
+	Description           *string                `json:"description,omitempty"`
+	Meta                  map[string]interface{} `json:"meta,omitempty"`
+	Name                  *string                `json:"name,omitempty"`
+	SessionDuration       *int64                 `json:"sessionDuration,omitempty"`
+	TenantId              *string                `json:"tenantId,omitempty"`
+}
+
+// CreateMicrosoftteamsIntegrationResponse represents the response from creating a microsoftteamsintegration.
+type CreateMicrosoftteamsIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateMicrosoftteamsIntegration creates a new microsoftteamsintegration.
+func (c *Client) CreateMicrosoftteamsIntegration(ctx context.Context, input CreateMicrosoftteamsIntegrationInput) (*CreateMicrosoftteamsIntegrationResponse, error) {
+	query := `
+		mutation CreateMicrosoftteamsIntegration($input: MicrosoftteamsIntegrationCreateRequest!) {
+			createMicrosoftteamsIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateMicrosoftteamsIntegration *CreateMicrosoftteamsIntegrationResponse `json:"createMicrosoftteamsIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateMicrosoftteamsIntegration, nil
+}
+
+// UpdateMicrosoftteamsIntegrationInput represents the input for updating a microsoftteamsintegration.
+type UpdateMicrosoftteamsIntegrationInput struct {
+	Alias                 *string                `json:"alias,omitempty"`
+	AllowFrom             *string                `json:"allowFrom,omitempty"`
+	BlueprintId           *string                `json:"blueprintId,omitempty"`
+	BotFrameworkAppId     *string                `json:"botFrameworkAppId,omitempty"`
+	BotFrameworkAppSecret *string                `json:"botFrameworkAppSecret,omitempty"`
+	BotId                 *string                `json:"botId,omitempty"`
+	ContactCollection     *bool                  `json:"contactCollection,omitempty"`
+	Description           *string                `json:"description,omitempty"`
+	Meta                  map[string]interface{} `json:"meta,omitempty"`
+	Name                  *string                `json:"name,omitempty"`
+	SessionDuration       *int64                 `json:"sessionDuration,omitempty"`
+	TenantId              *string                `json:"tenantId,omitempty"`
+}
+
+// UpdateMicrosoftteamsIntegrationResponse represents the response from updating a microsoftteamsintegration.
+type UpdateMicrosoftteamsIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateMicrosoftteamsIntegration updates an existing microsoftteamsintegration.
+func (c *Client) UpdateMicrosoftteamsIntegration(ctx context.Context, id string, input UpdateMicrosoftteamsIntegrationInput) (*UpdateMicrosoftteamsIntegrationResponse, error) {
+	query := `
+		mutation UpdateMicrosoftteamsIntegration($microsoftteamsIntegrationId: ID!, $input: MicrosoftteamsIntegrationUpdateRequest!) {
+			updateMicrosoftteamsIntegration(microsoftteamsIntegrationId: $microsoftteamsIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"microsoftteamsIntegrationId": id,
+		"input":                       input,
+	}
+
+	var response struct {
+		UpdateMicrosoftteamsIntegration *UpdateMicrosoftteamsIntegrationResponse `json:"updateMicrosoftteamsIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateMicrosoftteamsIntegration, nil
+}
+
+// DeleteMicrosoftteamsIntegrationResponse represents the response from deleting a microsoftteamsintegration.
+type DeleteMicrosoftteamsIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteMicrosoftteamsIntegration deletes a microsoftteamsintegration.
+func (c *Client) DeleteMicrosoftteamsIntegration(ctx context.Context, id string) (*DeleteMicrosoftteamsIntegrationResponse, error) {
+	query := `
+		mutation DeleteMicrosoftteamsIntegration($microsoftteamsIntegrationId: ID!) {
+			deleteMicrosoftteamsIntegration(microsoftteamsIntegrationId: $microsoftteamsIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"microsoftteamsIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteMicrosoftteamsIntegration *DeleteMicrosoftteamsIntegrationResponse `json:"deleteMicrosoftteamsIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteMicrosoftteamsIntegration, nil
+}
+
+// GetMicrosoftteamsIntegrationResponse represents the response from fetching a microsoftteamsintegration.
+type GetMicrosoftteamsIntegrationResponse struct {
+	ID                    *string                `json:"id"`
+	Alias                 *string                `json:"alias,omitempty"`
+	AllowFrom             *string                `json:"allowFrom,omitempty"`
+	BlueprintId           *string                `json:"blueprintId,omitempty"`
+	BotFrameworkAppId     *string                `json:"botFrameworkAppId,omitempty"`
+	BotFrameworkAppSecret *string                `json:"botFrameworkAppSecret,omitempty"`
+	BotId                 *string                `json:"botId,omitempty"`
+	ContactCollection     *bool                  `json:"contactCollection,omitempty"`
+	Description           *string                `json:"description,omitempty"`
+	Meta                  map[string]interface{} `json:"meta,omitempty"`
+	Name                  *string                `json:"name,omitempty"`
+	SessionDuration       *int64                 `json:"sessionDuration,omitempty"`
+	TenantId              *string                `json:"tenantId,omitempty"`
+	CreatedAt             *string                `json:"createdAt,omitempty"`
+	UpdatedAt             *string                `json:"updatedAt,omitempty"`
+}
+
+// GetMicrosoftteamsIntegration fetches a microsoftteamsintegration by ID.
+func (c *Client) GetMicrosoftteamsIntegration(ctx context.Context, id string) (*GetMicrosoftteamsIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetMicrosoftteamsIntegration($cursor: ID) {
+			microsoftteamsIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						allowFrom
+						blueprintId
+						botFrameworkAppId
+						botFrameworkAppSecret
+						botId
+						contactCollection
+						description
+						meta
+						name
+						sessionDuration
+						tenantId
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		MicrosoftteamsIntegrations struct {
+			Edges []struct {
+				Node *GetMicrosoftteamsIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"microsoftteamsIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.MicrosoftteamsIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("microsoftteamsintegration with ID %s not found", id)
+}
 
 // CreateNotionIntegrationInput represents the input for creating a notionintegration.
 type CreateNotionIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	Token *string `json:"token,omitempty"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	Token        *string                `json:"token,omitempty"`
 }
 
 // CreateNotionIntegrationResponse represents the response from creating a notionintegration.
@@ -1796,14 +2430,15 @@ func (c *Client) CreateNotionIntegration(ctx context.Context, input CreateNotion
 
 // UpdateNotionIntegrationInput represents the input for updating a notionintegration.
 type UpdateNotionIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	Token *string `json:"token,omitempty"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	Token        *string                `json:"token,omitempty"`
 }
 
 // UpdateNotionIntegrationResponse represents the response from updating a notionintegration.
@@ -1823,7 +2458,7 @@ func (c *Client) UpdateNotionIntegration(ctx context.Context, id string, input U
 
 	variables := map[string]interface{}{
 		"notionIntegrationId": id,
-		"input":              input,
+		"input":               input,
 	}
 
 	var response struct {
@@ -1869,17 +2504,18 @@ func (c *Client) DeleteNotionIntegration(ctx context.Context, id string) (*Delet
 
 // GetNotionIntegrationResponse represents the response from fetching a notionintegration.
 type GetNotionIntegrationResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	Token *string `json:"token,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID           *string                `json:"id"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	Token        *string                `json:"token,omitempty"`
+	CreatedAt    *string                `json:"createdAt,omitempty"`
+	UpdatedAt    *string                `json:"updatedAt,omitempty"`
 }
 
 // GetNotionIntegration fetches a notionintegration by ID.
@@ -1891,6 +2527,7 @@ func (c *Client) GetNotionIntegration(ctx context.Context, id string) (*GetNotio
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						datasetId
 						description
@@ -1933,15 +2570,196 @@ func (c *Client) GetNotionIntegration(ctx context.Context, id string) (*GetNotio
 	return nil, fmt.Errorf("notionintegration with ID %s not found", id)
 }
 
+// CreatePolicyInput represents the input for creating a policy.
+type CreatePolicyInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        string                 `json:"type,omitempty"`
+}
+
+// CreatePolicyResponse represents the response from creating a policy.
+type CreatePolicyResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreatePolicy creates a new policy.
+func (c *Client) CreatePolicy(ctx context.Context, input CreatePolicyInput) (*CreatePolicyResponse, error) {
+	query := `
+		mutation CreatePolicy($input: PolicyCreateRequest!) {
+			createPolicy(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreatePolicy *CreatePolicyResponse `json:"createPolicy"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreatePolicy, nil
+}
+
+// UpdatePolicyInput represents the input for updating a policy.
+type UpdatePolicyInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        string                 `json:"type,omitempty"`
+}
+
+// UpdatePolicyResponse represents the response from updating a policy.
+type UpdatePolicyResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdatePolicy updates an existing policy.
+func (c *Client) UpdatePolicy(ctx context.Context, id string, input UpdatePolicyInput) (*UpdatePolicyResponse, error) {
+	query := `
+		mutation UpdatePolicy($policyId: ID!, $input: PolicyUpdateRequest!) {
+			updatePolicy(policyId: $policyId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"policyId": id,
+		"input":    input,
+	}
+
+	var response struct {
+		UpdatePolicy *UpdatePolicyResponse `json:"updatePolicy"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdatePolicy, nil
+}
+
+// DeletePolicyResponse represents the response from deleting a policy.
+type DeletePolicyResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeletePolicy deletes a policy.
+func (c *Client) DeletePolicy(ctx context.Context, id string) (*DeletePolicyResponse, error) {
+	query := `
+		mutation DeletePolicy($policyId: ID!) {
+			deletePolicy(policyId: $policyId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"policyId": id,
+	}
+
+	var response struct {
+		DeletePolicy *DeletePolicyResponse `json:"deletePolicy"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeletePolicy, nil
+}
+
+// GetPolicyResponse represents the response from fetching a policy.
+type GetPolicyResponse struct {
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        string                 `json:"type,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetPolicy fetches a policy by ID.
+func (c *Client) GetPolicy(ctx context.Context, id string) (*GetPolicyResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetPolicy($cursor: ID) {
+			policies(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						blueprintId
+						botId
+						config
+						description
+						meta
+						name
+						type
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		Policys struct {
+			Edges []struct {
+				Node *GetPolicyResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"policies"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.Policys.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("policy with ID %s not found", id)
+}
 
 // CreatePortalInput represents the input for creating a portal.
 type CreatePortalInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Slug *string `json:"slug,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Slug        *string                `json:"slug,omitempty"`
 }
 
 // CreatePortalResponse represents the response from creating a portal.
@@ -1976,12 +2794,13 @@ func (c *Client) CreatePortal(ctx context.Context, input CreatePortalInput) (*Cr
 
 // UpdatePortalInput represents the input for updating a portal.
 type UpdatePortalInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Slug *string `json:"slug,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Slug        *string                `json:"slug,omitempty"`
 }
 
 // UpdatePortalResponse represents the response from updating a portal.
@@ -2001,7 +2820,7 @@ func (c *Client) UpdatePortal(ctx context.Context, id string, input UpdatePortal
 
 	variables := map[string]interface{}{
 		"portalId": id,
-		"input":              input,
+		"input":    input,
 	}
 
 	var response struct {
@@ -2047,15 +2866,16 @@ func (c *Client) DeletePortal(ctx context.Context, id string) (*DeletePortalResp
 
 // GetPortalResponse represents the response from fetching a portal.
 type GetPortalResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Slug *string `json:"slug,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Slug        *string                `json:"slug,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetPortal fetches a portal by ID.
@@ -2067,6 +2887,7 @@ func (c *Client) GetPortal(ctx context.Context, id string) (*GetPortalResponse, 
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						config
 						description
@@ -2107,18 +2928,18 @@ func (c *Client) GetPortal(ctx context.Context, id string) (*GetPortalResponse, 
 	return nil, fmt.Errorf("portal with ID %s not found", id)
 }
 
-
 // CreateSecretInput represents the input for creating a secret.
 type CreateSecretInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Kind *string `json:"kind,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Type *string `json:"type,omitempty"`
-	Value *string `json:"value,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Kind        *string                `json:"kind,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        *string                `json:"type,omitempty"`
+	Value       *string                `json:"value,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // CreateSecretResponse represents the response from creating a secret.
@@ -2153,15 +2974,16 @@ func (c *Client) CreateSecret(ctx context.Context, input CreateSecretInput) (*Cr
 
 // UpdateSecretInput represents the input for updating a secret.
 type UpdateSecretInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Kind *string `json:"kind,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Type *string `json:"type,omitempty"`
-	Value *string `json:"value,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Kind        *string                `json:"kind,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        *string                `json:"type,omitempty"`
+	Value       *string                `json:"value,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // UpdateSecretResponse represents the response from updating a secret.
@@ -2181,7 +3003,7 @@ func (c *Client) UpdateSecret(ctx context.Context, id string, input UpdateSecret
 
 	variables := map[string]interface{}{
 		"secretId": id,
-		"input":              input,
+		"input":    input,
 	}
 
 	var response struct {
@@ -2227,18 +3049,19 @@ func (c *Client) DeleteSecret(ctx context.Context, id string) (*DeleteSecretResp
 
 // GetSecretResponse represents the response from fetching a secret.
 type GetSecretResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Kind *string `json:"kind,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Type *string `json:"type,omitempty"`
-	Value *string `json:"value,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Config      map[string]interface{} `json:"config,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Kind        *string                `json:"kind,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Type        *string                `json:"type,omitempty"`
+	Value       *string                `json:"value,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetSecret fetches a secret by ID.
@@ -2250,6 +3073,7 @@ func (c *Client) GetSecret(ctx context.Context, id string) (*GetSecretResponse, 
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						config
 						description
@@ -2293,20 +3117,20 @@ func (c *Client) GetSecret(ctx context.Context, id string) (*GetSecretResponse, 
 	return nil, fmt.Errorf("secret with ID %s not found", id)
 }
 
-
 // CreateSitemapIntegrationInput represents the input for creating a sitemapintegration.
 type CreateSitemapIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Glob *string `json:"glob,omitempty"`
-	Javascript *bool `json:"javascript,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Selectors *string `json:"selectors,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	URL *string `json:"url,omitempty"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Glob         *string                `json:"glob,omitempty"`
+	Javascript   *bool                  `json:"javascript,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	Selectors    *string                `json:"selectors,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	URL          *string                `json:"url,omitempty"`
 }
 
 // CreateSitemapIntegrationResponse represents the response from creating a sitemapintegration.
@@ -2341,17 +3165,18 @@ func (c *Client) CreateSitemapIntegration(ctx context.Context, input CreateSitem
 
 // UpdateSitemapIntegrationInput represents the input for updating a sitemapintegration.
 type UpdateSitemapIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Glob *string `json:"glob,omitempty"`
-	Javascript *bool `json:"javascript,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Selectors *string `json:"selectors,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	URL *string `json:"url,omitempty"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Glob         *string                `json:"glob,omitempty"`
+	Javascript   *bool                  `json:"javascript,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	Selectors    *string                `json:"selectors,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	URL          *string                `json:"url,omitempty"`
 }
 
 // UpdateSitemapIntegrationResponse represents the response from updating a sitemapintegration.
@@ -2371,7 +3196,7 @@ func (c *Client) UpdateSitemapIntegration(ctx context.Context, id string, input 
 
 	variables := map[string]interface{}{
 		"sitemapIntegrationId": id,
-		"input":              input,
+		"input":                input,
 	}
 
 	var response struct {
@@ -2417,20 +3242,21 @@ func (c *Client) DeleteSitemapIntegration(ctx context.Context, id string) (*Dele
 
 // GetSitemapIntegrationResponse represents the response from fetching a sitemapintegration.
 type GetSitemapIntegrationResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	DatasetId *string `json:"datasetId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	ExpiresIn *int64 `json:"expiresIn,omitempty"`
-	Glob *string `json:"glob,omitempty"`
-	Javascript *bool `json:"javascript,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Selectors *string `json:"selectors,omitempty"`
-	SyncSchedule *string `json:"syncSchedule,omitempty"`
-	URL *string `json:"url,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID           *string                `json:"id"`
+	Alias        *string                `json:"alias,omitempty"`
+	BlueprintId  *string                `json:"blueprintId,omitempty"`
+	DatasetId    *string                `json:"datasetId,omitempty"`
+	Description  *string                `json:"description,omitempty"`
+	ExpiresIn    *int64                 `json:"expiresIn,omitempty"`
+	Glob         *string                `json:"glob,omitempty"`
+	Javascript   *bool                  `json:"javascript,omitempty"`
+	Meta         map[string]interface{} `json:"meta,omitempty"`
+	Name         *string                `json:"name,omitempty"`
+	Selectors    *string                `json:"selectors,omitempty"`
+	SyncSchedule *string                `json:"syncSchedule,omitempty"`
+	URL          *string                `json:"url,omitempty"`
+	CreatedAt    *string                `json:"createdAt,omitempty"`
+	UpdatedAt    *string                `json:"updatedAt,omitempty"`
 }
 
 // GetSitemapIntegration fetches a sitemapintegration by ID.
@@ -2442,6 +3268,7 @@ func (c *Client) GetSitemapIntegration(ctx context.Context, id string) (*GetSite
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						datasetId
 						description
@@ -2487,18 +3314,17 @@ func (c *Client) GetSitemapIntegration(ctx context.Context, id string) (*GetSite
 	return nil, fmt.Errorf("sitemapintegration with ID %s not found", id)
 }
 
-
 // CreateSkillsetAbilityInput represents the input for creating a skillsetability.
 type CreateSkillsetAbilityInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	FileId *string `json:"fileId,omitempty"`
-	Instruction *string `json:"instruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SecretId *string `json:"secretId,omitempty"`
-	SpaceId *string `json:"spaceId,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	FileId      *string                `json:"fileId,omitempty"`
+	Instruction *string                `json:"instruction,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SecretId    *string                `json:"secretId,omitempty"`
+	SpaceId     *string                `json:"spaceId,omitempty"`
 }
 
 // CreateSkillsetAbilityResponse represents the response from creating a skillsetability.
@@ -2518,7 +3344,7 @@ func (c *Client) CreateSkillsetAbility(ctx context.Context, skillsetId string, i
 
 	variables := map[string]interface{}{
 		"skillsetId": skillsetId,
-		"input": input,
+		"input":      input,
 	}
 
 	var response struct {
@@ -2534,15 +3360,15 @@ func (c *Client) CreateSkillsetAbility(ctx context.Context, skillsetId string, i
 
 // UpdateSkillsetAbilityInput represents the input for updating a skillsetability.
 type UpdateSkillsetAbilityInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	FileId *string `json:"fileId,omitempty"`
-	Instruction *string `json:"instruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SecretId *string `json:"secretId,omitempty"`
-	SpaceId *string `json:"spaceId,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	FileId      *string                `json:"fileId,omitempty"`
+	Instruction *string                `json:"instruction,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SecretId    *string                `json:"secretId,omitempty"`
+	SpaceId     *string                `json:"spaceId,omitempty"`
 }
 
 // UpdateSkillsetAbilityResponse represents the response from updating a skillsetability.
@@ -2610,18 +3436,18 @@ func (c *Client) DeleteSkillsetAbility(ctx context.Context, skillsetId string, a
 
 // GetSkillsetAbilityResponse represents the response from fetching a skillsetability.
 type GetSkillsetAbilityResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	FileId *string `json:"fileId,omitempty"`
-	Instruction *string `json:"instruction,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SecretId *string `json:"secretId,omitempty"`
-	SpaceId *string `json:"spaceId,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	FileId      *string                `json:"fileId,omitempty"`
+	Instruction *string                `json:"instruction,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SecretId    *string                `json:"secretId,omitempty"`
+	SpaceId     *string                `json:"spaceId,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetSkillsetAbility fetches a skillsetability by ID.
@@ -2692,14 +3518,14 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, id s
 	return nil, fmt.Errorf("skillsetability with ID %s not found in skillset %s", id, skillsetId)
 }
 
-
 // CreateSkillsetInput represents the input for creating a skillset.
 type CreateSkillsetInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // CreateSkillsetResponse represents the response from creating a skillset.
@@ -2734,11 +3560,12 @@ func (c *Client) CreateSkillset(ctx context.Context, input CreateSkillsetInput) 
 
 // UpdateSkillsetInput represents the input for updating a skillset.
 type UpdateSkillsetInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
 }
 
 // UpdateSkillsetResponse represents the response from updating a skillset.
@@ -2758,7 +3585,7 @@ func (c *Client) UpdateSkillset(ctx context.Context, id string, input UpdateSkil
 
 	variables := map[string]interface{}{
 		"skillsetId": id,
-		"input":              input,
+		"input":      input,
 	}
 
 	var response struct {
@@ -2804,14 +3631,15 @@ func (c *Client) DeleteSkillset(ctx context.Context, id string) (*DeleteSkillset
 
 // GetSkillsetResponse represents the response from fetching a skillset.
 type GetSkillsetResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Visibility *string `json:"visibility,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Visibility  *string                `json:"visibility,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
 
 // GetSkillset fetches a skillset by ID.
@@ -2823,6 +3651,7 @@ func (c *Client) GetSkillset(ctx context.Context, id string) (*GetSkillsetRespon
 				edges {
 					node {
 						id
+						alias
 						blueprintId
 						description
 						meta
@@ -2862,23 +3691,24 @@ func (c *Client) GetSkillset(ctx context.Context, id string) (*GetSkillsetRespon
 	return nil, fmt.Errorf("skillset with ID %s not found", id)
 }
 
-
 // CreateSlackIntegrationInput represents the input for creating a slackintegration.
 type CreateSlackIntegrationInput struct {
-	AutoRespond *string `json:"autoRespond,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Ratings *bool `json:"ratings,omitempty"`
-	References *bool `json:"references,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	SigningSecret *string `json:"signingSecret,omitempty"`
-	UserToken *string `json:"userToken,omitempty"`
-	VisibleMessages *int64 `json:"visibleMessages,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	Ratings           *bool                  `json:"ratings,omitempty"`
+	References        *bool                  `json:"references,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	SigningSecret     *string                `json:"signingSecret,omitempty"`
+	UserToken         *string                `json:"userToken,omitempty"`
+	VisibleMessages   *int64                 `json:"visibleMessages,omitempty"`
 }
 
 // CreateSlackIntegrationResponse represents the response from creating a slackintegration.
@@ -2913,20 +3743,22 @@ func (c *Client) CreateSlackIntegration(ctx context.Context, input CreateSlackIn
 
 // UpdateSlackIntegrationInput represents the input for updating a slackintegration.
 type UpdateSlackIntegrationInput struct {
-	AutoRespond *string `json:"autoRespond,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Ratings *bool `json:"ratings,omitempty"`
-	References *bool `json:"references,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	SigningSecret *string `json:"signingSecret,omitempty"`
-	UserToken *string `json:"userToken,omitempty"`
-	VisibleMessages *int64 `json:"visibleMessages,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	Ratings           *bool                  `json:"ratings,omitempty"`
+	References        *bool                  `json:"references,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	SigningSecret     *string                `json:"signingSecret,omitempty"`
+	UserToken         *string                `json:"userToken,omitempty"`
+	VisibleMessages   *int64                 `json:"visibleMessages,omitempty"`
 }
 
 // UpdateSlackIntegrationResponse represents the response from updating a slackintegration.
@@ -2992,23 +3824,25 @@ func (c *Client) DeleteSlackIntegration(ctx context.Context, id string) (*Delete
 
 // GetSlackIntegrationResponse represents the response from fetching a slackintegration.
 type GetSlackIntegrationResponse struct {
-	ID *string `json:"id"`
-	AutoRespond *string `json:"autoRespond,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	Ratings *bool `json:"ratings,omitempty"`
-	References *bool `json:"references,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	SigningSecret *string `json:"signingSecret,omitempty"`
-	UserToken *string `json:"userToken,omitempty"`
-	VisibleMessages *int64 `json:"visibleMessages,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AutoRespond       *string                `json:"autoRespond,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	Ratings           *bool                  `json:"ratings,omitempty"`
+	References        *bool                  `json:"references,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	SigningSecret     *string                `json:"signingSecret,omitempty"`
+	UserToken         *string                `json:"userToken,omitempty"`
+	VisibleMessages   *int64                 `json:"visibleMessages,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetSlackIntegration fetches a slackintegration by ID.
@@ -3020,6 +3854,8 @@ func (c *Client) GetSlackIntegration(ctx context.Context, id string) (*GetSlackI
 				edges {
 					node {
 						id
+						alias
+						allowFrom
 						autoRespond
 						blueprintId
 						botId
@@ -3068,18 +3904,369 @@ func (c *Client) GetSlackIntegration(ctx context.Context, id string) (*GetSlackI
 	return nil, fmt.Errorf("slackintegration with ID %s not found", id)
 }
 
+// CreateSpaceInput represents the input for creating a space.
+type CreateSpaceInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+}
+
+// CreateSpaceResponse represents the response from creating a space.
+type CreateSpaceResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateSpace creates a new space.
+func (c *Client) CreateSpace(ctx context.Context, input CreateSpaceInput) (*CreateSpaceResponse, error) {
+	query := `
+		mutation CreateSpace($input: SpaceCreateRequest!) {
+			createSpace(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateSpace *CreateSpaceResponse `json:"createSpace"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateSpace, nil
+}
+
+// UpdateSpaceInput represents the input for updating a space.
+type UpdateSpaceInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+}
+
+// UpdateSpaceResponse represents the response from updating a space.
+type UpdateSpaceResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateSpace updates an existing space.
+func (c *Client) UpdateSpace(ctx context.Context, id string, input UpdateSpaceInput) (*UpdateSpaceResponse, error) {
+	query := `
+		mutation UpdateSpace($spaceId: ID!, $input: SpaceUpdateRequest!) {
+			updateSpace(spaceId: $spaceId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceId": id,
+		"input":   input,
+	}
+
+	var response struct {
+		UpdateSpace *UpdateSpaceResponse `json:"updateSpace"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateSpace, nil
+}
+
+// DeleteSpaceResponse represents the response from deleting a space.
+type DeleteSpaceResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteSpace deletes a space.
+func (c *Client) DeleteSpace(ctx context.Context, id string) (*DeleteSpaceResponse, error) {
+	query := `
+		mutation DeleteSpace($spaceId: ID!) {
+			deleteSpace(spaceId: $spaceId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceId": id,
+	}
+
+	var response struct {
+		DeleteSpace *DeleteSpaceResponse `json:"deleteSpace"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteSpace, nil
+}
+
+// GetSpaceResponse represents the response from fetching a space.
+type GetSpaceResponse struct {
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetSpace fetches a space by ID.
+func (c *Client) GetSpace(ctx context.Context, id string) (*GetSpaceResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetSpace($cursor: ID) {
+			spaces(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						blueprintId
+						contactId
+						description
+						meta
+						name
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		Spaces struct {
+			Edges []struct {
+				Node *GetSpaceResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"spaces"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.Spaces.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("space with ID %s not found", id)
+}
+
+// CreateSupportIntegrationInput represents the input for creating a supportintegration.
+type CreateSupportIntegrationInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Email       *string                `json:"email,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+}
+
+// CreateSupportIntegrationResponse represents the response from creating a supportintegration.
+type CreateSupportIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateSupportIntegration creates a new supportintegration.
+func (c *Client) CreateSupportIntegration(ctx context.Context, input CreateSupportIntegrationInput) (*CreateSupportIntegrationResponse, error) {
+	query := `
+		mutation CreateSupportIntegration($input: SupportIntegrationCreateRequest!) {
+			createSupportIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateSupportIntegration *CreateSupportIntegrationResponse `json:"createSupportIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateSupportIntegration, nil
+}
+
+// UpdateSupportIntegrationInput represents the input for updating a supportintegration.
+type UpdateSupportIntegrationInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Email       *string                `json:"email,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+}
+
+// UpdateSupportIntegrationResponse represents the response from updating a supportintegration.
+type UpdateSupportIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateSupportIntegration updates an existing supportintegration.
+func (c *Client) UpdateSupportIntegration(ctx context.Context, id string, input UpdateSupportIntegrationInput) (*UpdateSupportIntegrationResponse, error) {
+	query := `
+		mutation UpdateSupportIntegration($supportIntegrationId: ID!, $input: SupportIntegrationUpdateRequest!) {
+			updateSupportIntegration(supportIntegrationId: $supportIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"supportIntegrationId": id,
+		"input":                input,
+	}
+
+	var response struct {
+		UpdateSupportIntegration *UpdateSupportIntegrationResponse `json:"updateSupportIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateSupportIntegration, nil
+}
+
+// DeleteSupportIntegrationResponse represents the response from deleting a supportintegration.
+type DeleteSupportIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteSupportIntegration deletes a supportintegration.
+func (c *Client) DeleteSupportIntegration(ctx context.Context, id string) (*DeleteSupportIntegrationResponse, error) {
+	query := `
+		mutation DeleteSupportIntegration($supportIntegrationId: ID!) {
+			deleteSupportIntegration(supportIntegrationId: $supportIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"supportIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteSupportIntegration *DeleteSupportIntegrationResponse `json:"deleteSupportIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteSupportIntegration, nil
+}
+
+// GetSupportIntegrationResponse represents the response from fetching a supportintegration.
+type GetSupportIntegrationResponse struct {
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Email       *string                `json:"email,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetSupportIntegration fetches a supportintegration by ID.
+func (c *Client) GetSupportIntegration(ctx context.Context, id string) (*GetSupportIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetSupportIntegration($cursor: ID) {
+			supportIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						blueprintId
+						botId
+						description
+						email
+						meta
+						name
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		SupportIntegrations struct {
+			Edges []struct {
+				Node *GetSupportIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"supportIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.SupportIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("supportintegration with ID %s not found", id)
+}
 
 // CreateTelegramIntegrationInput represents the input for creating a telegramintegration.
 type CreateTelegramIntegrationInput struct {
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // CreateTelegramIntegrationResponse represents the response from creating a telegramintegration.
@@ -3114,15 +4301,17 @@ func (c *Client) CreateTelegramIntegration(ctx context.Context, input CreateTele
 
 // UpdateTelegramIntegrationInput represents the input for updating a telegramintegration.
 type UpdateTelegramIntegrationInput struct {
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // UpdateTelegramIntegrationResponse represents the response from updating a telegramintegration.
@@ -3142,7 +4331,7 @@ func (c *Client) UpdateTelegramIntegration(ctx context.Context, id string, input
 
 	variables := map[string]interface{}{
 		"telegramIntegrationId": id,
-		"input":              input,
+		"input":                 input,
 	}
 
 	var response struct {
@@ -3188,18 +4377,20 @@ func (c *Client) DeleteTelegramIntegration(ctx context.Context, id string) (*Del
 
 // GetTelegramIntegrationResponse represents the response from fetching a telegramintegration.
 type GetTelegramIntegrationResponse struct {
-	ID *string `json:"id"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	BotToken *string `json:"botToken,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	BotToken          *string                `json:"botToken,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetTelegramIntegration fetches a telegramintegration by ID.
@@ -3211,6 +4402,8 @@ func (c *Client) GetTelegramIntegration(ctx context.Context, id string) (*GetTel
 				edges {
 					node {
 						id
+						alias
+						allowFrom
 						attachments
 						blueprintId
 						botId
@@ -3254,17 +4447,18 @@ func (c *Client) GetTelegramIntegration(ctx context.Context, id string) (*GetTel
 	return nil, fmt.Errorf("telegramintegration with ID %s not found", id)
 }
 
-
 // CreateTriggerIntegrationInput represents the input for creating a triggerintegration.
 type CreateTriggerIntegrationInput struct {
-	Authenticate *bool `json:"authenticate,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	Schedule *string `json:"schedule,omitempty"`
+	Alias           *string                `json:"alias,omitempty"`
+	Authenticate    *bool                  `json:"authenticate,omitempty"`
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
+	BotId           *string                `json:"botId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *int64                 `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
 }
 
 // CreateTriggerIntegrationResponse represents the response from creating a triggerintegration.
@@ -3299,14 +4493,16 @@ func (c *Client) CreateTriggerIntegration(ctx context.Context, input CreateTrigg
 
 // UpdateTriggerIntegrationInput represents the input for updating a triggerintegration.
 type UpdateTriggerIntegrationInput struct {
-	Authenticate *bool `json:"authenticate,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	Schedule *string `json:"schedule,omitempty"`
+	Alias           *string                `json:"alias,omitempty"`
+	Authenticate    *bool                  `json:"authenticate,omitempty"`
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
+	BotId           *string                `json:"botId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *int64                 `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
 }
 
 // UpdateTriggerIntegrationResponse represents the response from updating a triggerintegration.
@@ -3326,7 +4522,7 @@ func (c *Client) UpdateTriggerIntegration(ctx context.Context, id string, input 
 
 	variables := map[string]interface{}{
 		"triggerIntegrationId": id,
-		"input":              input,
+		"input":                input,
 	}
 
 	var response struct {
@@ -3372,17 +4568,19 @@ func (c *Client) DeleteTriggerIntegration(ctx context.Context, id string) (*Dele
 
 // GetTriggerIntegrationResponse represents the response from fetching a triggerintegration.
 type GetTriggerIntegrationResponse struct {
-	ID *string `json:"id"`
-	Authenticate *bool `json:"authenticate,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	Schedule *string `json:"schedule,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID              *string                `json:"id"`
+	Alias           *string                `json:"alias,omitempty"`
+	Authenticate    *bool                  `json:"authenticate,omitempty"`
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
+	BotId           *string                `json:"botId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *int64                 `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
+	CreatedAt       *string                `json:"createdAt,omitempty"`
+	UpdatedAt       *string                `json:"updatedAt,omitempty"`
 }
 
 // GetTriggerIntegration fetches a triggerintegration by ID.
@@ -3394,14 +4592,16 @@ func (c *Client) GetTriggerIntegration(ctx context.Context, id string) (*GetTrig
 				edges {
 					node {
 						id
+						alias
 						authenticate
 						blueprintId
 						botId
 						description
 						meta
 						name
-						sessionDuration
 						schedule
+						sessionDuration
+						timezone
 						createdAt
 						updatedAt
 					}
@@ -3436,16 +4636,20 @@ func (c *Client) GetTriggerIntegration(ctx context.Context, id string) (*GetTrig
 	return nil, fmt.Errorf("triggerintegration with ID %s not found", id)
 }
 
-
 // CreateTwilioIntegrationInput represents the input for creating a twiliointegration.
 type CreateTwilioIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccountSid        *string                `json:"accountSid,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AuthToken         *string                `json:"authToken,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	Voice             *string                `json:"voice,omitempty"`
 }
 
 // CreateTwilioIntegrationResponse represents the response from creating a twiliointegration.
@@ -3480,13 +4684,18 @@ func (c *Client) CreateTwilioIntegration(ctx context.Context, input CreateTwilio
 
 // UpdateTwilioIntegrationInput represents the input for updating a twiliointegration.
 type UpdateTwilioIntegrationInput struct {
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccountSid        *string                `json:"accountSid,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AuthToken         *string                `json:"authToken,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	Voice             *string                `json:"voice,omitempty"`
 }
 
 // UpdateTwilioIntegrationResponse represents the response from updating a twiliointegration.
@@ -3506,7 +4715,7 @@ func (c *Client) UpdateTwilioIntegration(ctx context.Context, id string, input U
 
 	variables := map[string]interface{}{
 		"twilioIntegrationId": id,
-		"input":              input,
+		"input":               input,
 	}
 
 	var response struct {
@@ -3552,16 +4761,21 @@ func (c *Client) DeleteTwilioIntegration(ctx context.Context, id string) (*Delet
 
 // GetTwilioIntegrationResponse represents the response from fetching a twiliointegration.
 type GetTwilioIntegrationResponse struct {
-	ID *string `json:"id"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	AccountSid        *string                `json:"accountSid,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	AuthToken         *string                `json:"authToken,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	Voice             *string                `json:"voice,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetTwilioIntegration fetches a twiliointegration by ID.
@@ -3573,6 +4787,10 @@ func (c *Client) GetTwilioIntegration(ctx context.Context, id string) (*GetTwili
 				edges {
 					node {
 						id
+						accountSid
+						alias
+						allowFrom
+						authToken
 						blueprintId
 						botId
 						contactCollection
@@ -3580,6 +4798,7 @@ func (c *Client) GetTwilioIntegration(ctx context.Context, id string) (*GetTwili
 						meta
 						name
 						sessionDuration
+						voice
 						createdAt
 						updatedAt
 					}
@@ -3614,19 +4833,20 @@ func (c *Client) GetTwilioIntegration(ctx context.Context, id string) (*GetTwili
 	return nil, fmt.Errorf("twiliointegration with ID %s not found", id)
 }
 
-
 // CreateWhatsAppIntegrationInput represents the input for creating a whatsappintegration.
 type CreateWhatsAppIntegrationInput struct {
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PhoneNumberId *string `json:"phoneNumberId,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PhoneNumberId     *string                `json:"phoneNumberId,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // CreateWhatsAppIntegrationResponse represents the response from creating a whatsappintegration.
@@ -3661,16 +4881,18 @@ func (c *Client) CreateWhatsAppIntegration(ctx context.Context, input CreateWhat
 
 // UpdateWhatsAppIntegrationInput represents the input for updating a whatsappintegration.
 type UpdateWhatsAppIntegrationInput struct {
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PhoneNumberId *string `json:"phoneNumberId,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PhoneNumberId     *string                `json:"phoneNumberId,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
 }
 
 // UpdateWhatsAppIntegrationResponse represents the response from updating a whatsappintegration.
@@ -3690,7 +4912,7 @@ func (c *Client) UpdateWhatsAppIntegration(ctx context.Context, id string, input
 
 	variables := map[string]interface{}{
 		"whatsAppIntegrationId": id,
-		"input":              input,
+		"input":                 input,
 	}
 
 	var response struct {
@@ -3736,19 +4958,21 @@ func (c *Client) DeleteWhatsAppIntegration(ctx context.Context, id string) (*Del
 
 // GetWhatsAppIntegrationResponse represents the response from fetching a whatsappintegration.
 type GetWhatsAppIntegrationResponse struct {
-	ID *string `json:"id"`
-	AccessToken *string `json:"accessToken,omitempty"`
-	Attachments *bool `json:"attachments,omitempty"`
-	BlueprintId *string `json:"blueprintId,omitempty"`
-	BotId *string `json:"botId,omitempty"`
-	ContactCollection *bool `json:"contactCollection,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Meta map[string]interface{} `json:"meta,omitempty"`
-	Name *string `json:"name,omitempty"`
-	PhoneNumberId *string `json:"phoneNumberId,omitempty"`
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
-	CreatedAt *string `json:"createdAt,omitempty"`
-	UpdatedAt *string `json:"updatedAt,omitempty"`
+	ID                *string                `json:"id"`
+	AccessToken       *string                `json:"accessToken,omitempty"`
+	Alias             *string                `json:"alias,omitempty"`
+	AllowFrom         *string                `json:"allowFrom,omitempty"`
+	Attachments       *bool                  `json:"attachments,omitempty"`
+	BlueprintId       *string                `json:"blueprintId,omitempty"`
+	BotId             *string                `json:"botId,omitempty"`
+	ContactCollection *bool                  `json:"contactCollection,omitempty"`
+	Description       *string                `json:"description,omitempty"`
+	Meta              map[string]interface{} `json:"meta,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	PhoneNumberId     *string                `json:"phoneNumberId,omitempty"`
+	SessionDuration   *int64                 `json:"sessionDuration,omitempty"`
+	CreatedAt         *string                `json:"createdAt,omitempty"`
+	UpdatedAt         *string                `json:"updatedAt,omitempty"`
 }
 
 // GetWhatsAppIntegration fetches a whatsappintegration by ID.
@@ -3761,6 +4985,8 @@ func (c *Client) GetWhatsAppIntegration(ctx context.Context, id string) (*GetWha
 					node {
 						id
 						accessToken
+						alias
+						allowFrom
 						attachments
 						blueprintId
 						botId
@@ -3802,4 +5028,289 @@ func (c *Client) GetWhatsAppIntegration(ctx context.Context, id string) (*GetWha
 	}
 
 	return nil, fmt.Errorf("whatsappintegration with ID %s not found", id)
+}
+
+// CreateWidgetIntegrationInput represents the input for creating a widgetintegration.
+type CreateWidgetIntegrationInput struct {
+	Alias               *string                `json:"alias,omitempty"`
+	Attachments         *bool                  `json:"attachments,omitempty"`
+	AutoScroll          *bool                  `json:"autoScroll,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	BotId               *string                `json:"botId,omitempty"`
+	Carousel            *bool                  `json:"carousel,omitempty"`
+	ContactCollection   *bool                  `json:"contactCollection,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	ExportConversation  *bool                  `json:"exportConversation,omitempty"`
+	Form                *bool                  `json:"form,omitempty"`
+	Initial             *string                `json:"initial,omitempty"`
+	Intro               *string                `json:"intro,omitempty"`
+	Language            *string                `json:"language,omitempty"`
+	Layout              *string                `json:"layout,omitempty"`
+	Math                *bool                  `json:"math,omitempty"`
+	Maximize            *bool                  `json:"maximize,omitempty"`
+	MessagePeek         *bool                  `json:"messagePeek,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	Origin              *string                `json:"origin,omitempty"`
+	Placeholder         *string                `json:"placeholder,omitempty"`
+	Plugins             *string                `json:"plugins,omitempty"`
+	PoweredBy           *bool                  `json:"poweredBy,omitempty"`
+	RestartConversation *bool                  `json:"restartConversation,omitempty"`
+	SessionDuration     *int64                 `json:"sessionDuration,omitempty"`
+	StartFirst          *bool                  `json:"startFirst,omitempty"`
+	Stream              *bool                  `json:"stream,omitempty"`
+	Theme               *string                `json:"theme,omitempty"`
+	Title               *string                `json:"title,omitempty"`
+	Tools               *bool                  `json:"tools,omitempty"`
+	Unfurl              *bool                  `json:"unfurl,omitempty"`
+	Verbose             *bool                  `json:"verbose,omitempty"`
+	VoiceIn             *bool                  `json:"voiceIn,omitempty"`
+	VoiceOut            *bool                  `json:"voiceOut,omitempty"`
+}
+
+// CreateWidgetIntegrationResponse represents the response from creating a widgetintegration.
+type CreateWidgetIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateWidgetIntegration creates a new widgetintegration.
+func (c *Client) CreateWidgetIntegration(ctx context.Context, input CreateWidgetIntegrationInput) (*CreateWidgetIntegrationResponse, error) {
+	query := `
+		mutation CreateWidgetIntegration($input: WidgetIntegrationCreateRequest!) {
+			createWidgetIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateWidgetIntegration *CreateWidgetIntegrationResponse `json:"createWidgetIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateWidgetIntegration, nil
+}
+
+// UpdateWidgetIntegrationInput represents the input for updating a widgetintegration.
+type UpdateWidgetIntegrationInput struct {
+	Alias               *string                `json:"alias,omitempty"`
+	Attachments         *bool                  `json:"attachments,omitempty"`
+	AutoScroll          *bool                  `json:"autoScroll,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	BotId               *string                `json:"botId,omitempty"`
+	Carousel            *bool                  `json:"carousel,omitempty"`
+	ContactCollection   *bool                  `json:"contactCollection,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	ExportConversation  *bool                  `json:"exportConversation,omitempty"`
+	Form                *bool                  `json:"form,omitempty"`
+	Initial             *string                `json:"initial,omitempty"`
+	Intro               *string                `json:"intro,omitempty"`
+	Language            *string                `json:"language,omitempty"`
+	Layout              *string                `json:"layout,omitempty"`
+	Math                *bool                  `json:"math,omitempty"`
+	Maximize            *bool                  `json:"maximize,omitempty"`
+	MessagePeek         *bool                  `json:"messagePeek,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	Origin              *string                `json:"origin,omitempty"`
+	Placeholder         *string                `json:"placeholder,omitempty"`
+	Plugins             *string                `json:"plugins,omitempty"`
+	PoweredBy           *bool                  `json:"poweredBy,omitempty"`
+	RestartConversation *bool                  `json:"restartConversation,omitempty"`
+	SessionDuration     *int64                 `json:"sessionDuration,omitempty"`
+	StartFirst          *bool                  `json:"startFirst,omitempty"`
+	Stream              *bool                  `json:"stream,omitempty"`
+	Theme               *string                `json:"theme,omitempty"`
+	Title               *string                `json:"title,omitempty"`
+	Tools               *bool                  `json:"tools,omitempty"`
+	Unfurl              *bool                  `json:"unfurl,omitempty"`
+	Verbose             *bool                  `json:"verbose,omitempty"`
+	VoiceIn             *bool                  `json:"voiceIn,omitempty"`
+	VoiceOut            *bool                  `json:"voiceOut,omitempty"`
+}
+
+// UpdateWidgetIntegrationResponse represents the response from updating a widgetintegration.
+type UpdateWidgetIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateWidgetIntegration updates an existing widgetintegration.
+func (c *Client) UpdateWidgetIntegration(ctx context.Context, id string, input UpdateWidgetIntegrationInput) (*UpdateWidgetIntegrationResponse, error) {
+	query := `
+		mutation UpdateWidgetIntegration($widgetIntegrationId: ID!, $input: WidgetIntegrationUpdateRequest!) {
+			updateWidgetIntegration(widgetIntegrationId: $widgetIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"widgetIntegrationId": id,
+		"input":               input,
+	}
+
+	var response struct {
+		UpdateWidgetIntegration *UpdateWidgetIntegrationResponse `json:"updateWidgetIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateWidgetIntegration, nil
+}
+
+// DeleteWidgetIntegrationResponse represents the response from deleting a widgetintegration.
+type DeleteWidgetIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteWidgetIntegration deletes a widgetintegration.
+func (c *Client) DeleteWidgetIntegration(ctx context.Context, id string) (*DeleteWidgetIntegrationResponse, error) {
+	query := `
+		mutation DeleteWidgetIntegration($widgetIntegrationId: ID!) {
+			deleteWidgetIntegration(widgetIntegrationId: $widgetIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"widgetIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteWidgetIntegration *DeleteWidgetIntegrationResponse `json:"deleteWidgetIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteWidgetIntegration, nil
+}
+
+// GetWidgetIntegrationResponse represents the response from fetching a widgetintegration.
+type GetWidgetIntegrationResponse struct {
+	ID                  *string                `json:"id"`
+	Alias               *string                `json:"alias,omitempty"`
+	Attachments         *bool                  `json:"attachments,omitempty"`
+	AutoScroll          *bool                  `json:"autoScroll,omitempty"`
+	BlueprintId         *string                `json:"blueprintId,omitempty"`
+	BotId               *string                `json:"botId,omitempty"`
+	Carousel            *bool                  `json:"carousel,omitempty"`
+	ContactCollection   *bool                  `json:"contactCollection,omitempty"`
+	Description         *string                `json:"description,omitempty"`
+	ExportConversation  *bool                  `json:"exportConversation,omitempty"`
+	Form                *bool                  `json:"form,omitempty"`
+	Initial             *string                `json:"initial,omitempty"`
+	Intro               *string                `json:"intro,omitempty"`
+	Language            *string                `json:"language,omitempty"`
+	Layout              *string                `json:"layout,omitempty"`
+	Math                *bool                  `json:"math,omitempty"`
+	Maximize            *bool                  `json:"maximize,omitempty"`
+	MessagePeek         *bool                  `json:"messagePeek,omitempty"`
+	Meta                map[string]interface{} `json:"meta,omitempty"`
+	Name                *string                `json:"name,omitempty"`
+	Origin              *string                `json:"origin,omitempty"`
+	Placeholder         *string                `json:"placeholder,omitempty"`
+	Plugins             *string                `json:"plugins,omitempty"`
+	PoweredBy           *bool                  `json:"poweredBy,omitempty"`
+	RestartConversation *bool                  `json:"restartConversation,omitempty"`
+	SessionDuration     *int64                 `json:"sessionDuration,omitempty"`
+	StartFirst          *bool                  `json:"startFirst,omitempty"`
+	Stream              *bool                  `json:"stream,omitempty"`
+	Theme               *string                `json:"theme,omitempty"`
+	Title               *string                `json:"title,omitempty"`
+	Tools               *bool                  `json:"tools,omitempty"`
+	Unfurl              *bool                  `json:"unfurl,omitempty"`
+	Verbose             *bool                  `json:"verbose,omitempty"`
+	VoiceIn             *bool                  `json:"voiceIn,omitempty"`
+	VoiceOut            *bool                  `json:"voiceOut,omitempty"`
+	CreatedAt           *string                `json:"createdAt,omitempty"`
+	UpdatedAt           *string                `json:"updatedAt,omitempty"`
+}
+
+// GetWidgetIntegration fetches a widgetintegration by ID.
+func (c *Client) GetWidgetIntegration(ctx context.Context, id string) (*GetWidgetIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetWidgetIntegration($cursor: ID) {
+			widgetIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						attachments
+						autoScroll
+						blueprintId
+						botId
+						carousel
+						contactCollection
+						description
+						exportConversation
+						form
+						initial
+						intro
+						language
+						layout
+						math
+						maximize
+						messagePeek
+						meta
+						name
+						origin
+						placeholder
+						plugins
+						poweredBy
+						restartConversation
+						sessionDuration
+						startFirst
+						stream
+						theme
+						title
+						tools
+						unfurl
+						verbose
+						voiceIn
+						voiceOut
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		WidgetIntegrations struct {
+			Edges []struct {
+				Node *GetWidgetIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"widgetIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.WidgetIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("widgetintegration with ID %s not found", id)
 }

@@ -32,16 +32,18 @@ type TriggerIntegrationResource struct {
 type TriggerIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	Authenticate types.Bool `tfsdk:"authenticate"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	Schedule types.String `tfsdk:"schedule"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias           types.String `tfsdk:"alias"`
+	Authenticate    types.Bool   `tfsdk:"authenticate"`
+	BlueprintId     types.String `tfsdk:"blueprint_id"`
+	BotId           types.String `tfsdk:"bot_id"`
+	Description     types.String `tfsdk:"description"`
+	Meta            types.Map    `tfsdk:"meta"`
+	Name            types.String `tfsdk:"name"`
+	Schedule        types.String `tfsdk:"schedule"`
+	SessionDuration types.Int64  `tfsdk:"session_duration"`
+	Timezone        types.String `tfsdk:"timezone"`
+	CreatedAt       types.String `tfsdk:"created_at"`
+	UpdatedAt       types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -62,6 +64,10 @@ func (r *TriggerIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"authenticate": schema.BoolAttribute{
 				MarkdownDescription: "Whether to require authentication for the trigger",
 				Optional:            true,
@@ -87,12 +93,16 @@ func (r *TriggerIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "The name of the integration",
 				Optional:            true,
 			},
+			"schedule": schema.StringAttribute{
+				MarkdownDescription: "The schedule for automatic trigger execution",
+				Optional:            true,
+			},
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
 			},
-			"schedule": schema.StringAttribute{
-				MarkdownDescription: "The schedule for automatic trigger execution",
+			"timezone": schema.StringAttribute{
+				MarkdownDescription: "The IANA timezone used to evaluate the trigger schedule",
 				Optional:            true,
 			},
 			"created_at": schema.StringAttribute{
@@ -139,14 +149,16 @@ func (r *TriggerIntegrationResource) Create(ctx context.Context, req resource.Cr
 	// Call the ChatBotKit GraphQL API to create triggerintegration
 
 	result, err := r.client.CreateTriggerIntegration(ctx, CreateTriggerIntegrationInput{
-		Authenticate: data.Authenticate.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
+		Alias:           data.Alias.ValueStringPointer(),
+		Authenticate:    data.Authenticate.ValueBoolPointer(),
+		BlueprintId:     data.BlueprintId.ValueStringPointer(),
+		BotId:           data.BotId.ValueStringPointer(),
+		Description:     data.Description.ValueStringPointer(),
+		Meta:            convertMapToInterface(ctx, data.Meta),
+		Name:            data.Name.ValueStringPointer(),
+		Schedule:        data.Schedule.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		Schedule: data.Schedule.ValueStringPointer(),
+		Timezone:        data.Timezone.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create triggerintegration: %s", err))
@@ -188,6 +200,9 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.Authenticate != nil {
 		data.Authenticate = types.BoolPointerValue(result.Authenticate)
 	}
@@ -208,11 +223,14 @@ func (r *TriggerIntegrationResource) Read(ctx context.Context, req resource.Read
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
+	if result.Schedule != nil {
+		data.Schedule = types.StringPointerValue(result.Schedule)
+	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
 	}
-	if result.Schedule != nil {
-		data.Schedule = types.StringPointerValue(result.Schedule)
+	if result.Timezone != nil {
+		data.Timezone = types.StringPointerValue(result.Timezone)
 	}
 	if result.CreatedAt != nil {
 		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
@@ -239,14 +257,16 @@ func (r *TriggerIntegrationResource) Update(ctx context.Context, req resource.Up
 	// Call the ChatBotKit GraphQL API to update triggerintegration
 
 	_, err := r.client.UpdateTriggerIntegration(ctx, data.ID.ValueString(), UpdateTriggerIntegrationInput{
-		Authenticate: data.Authenticate.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
+		Alias:           data.Alias.ValueStringPointer(),
+		Authenticate:    data.Authenticate.ValueBoolPointer(),
+		BlueprintId:     data.BlueprintId.ValueStringPointer(),
+		BotId:           data.BotId.ValueStringPointer(),
+		Description:     data.Description.ValueStringPointer(),
+		Meta:            convertMapToInterface(ctx, data.Meta),
+		Name:            data.Name.ValueStringPointer(),
+		Schedule:        data.Schedule.ValueStringPointer(),
 		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		Schedule: data.Schedule.ValueStringPointer(),
+		Timezone:        data.Timezone.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update triggerintegration: %s", err))

@@ -32,22 +32,24 @@ type SlackIntegrationResource struct {
 type SlackIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	AutoRespond types.String `tfsdk:"auto_respond"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	BotToken types.String `tfsdk:"bot_token"`
-	ContactCollection types.Bool `tfsdk:"contact_collection"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Ratings types.Bool `tfsdk:"ratings"`
-	References types.Bool `tfsdk:"references"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	SigningSecret types.String `tfsdk:"signing_secret"`
-	UserToken types.String `tfsdk:"user_token"`
-	VisibleMessages types.Int64 `tfsdk:"visible_messages"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias             types.String `tfsdk:"alias"`
+	AllowFrom         types.String `tfsdk:"allow_from"`
+	AutoRespond       types.String `tfsdk:"auto_respond"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	BotToken          types.String `tfsdk:"bot_token"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	Ratings           types.Bool   `tfsdk:"ratings"`
+	References        types.Bool   `tfsdk:"references"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	SigningSecret     types.String `tfsdk:"signing_secret"`
+	UserToken         types.String `tfsdk:"user_token"`
+	VisibleMessages   types.Int64  `tfsdk:"visible_messages"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -68,6 +70,14 @@ func (r *SlackIntegrationResource) Schema(ctx context.Context, req resource.Sche
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
+			"allow_from": schema.StringAttribute{
+				MarkdownDescription: "Newline-or-comma-separated list of allowed senders. Use Slack user IDs (U…/W…), channel IDs (C…/G…/D…), @username, or #channel-name. Use * to allow all. Leave empty to deny all.",
+				Optional:            true,
+			},
 			"auto_respond": schema.StringAttribute{
 				MarkdownDescription: "Auto-respond configuration for the integration",
 				Optional:            true,
@@ -171,20 +181,22 @@ func (r *SlackIntegrationResource) Create(ctx context.Context, req resource.Crea
 	// Call the ChatBotKit GraphQL API to create slackintegration
 
 	result, err := r.client.CreateSlackIntegration(ctx, CreateSlackIntegrationInput{
-		AutoRespond: data.AutoRespond.ValueStringPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AutoRespond:       data.AutoRespond.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Ratings: data.Ratings.ValueBoolPointer(),
-		References: data.References.ValueBoolPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		SigningSecret: data.SigningSecret.ValueStringPointer(),
-		UserToken: data.UserToken.ValueStringPointer(),
-		VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		Ratings:           data.Ratings.ValueBoolPointer(),
+		References:        data.References.ValueBoolPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
+		SigningSecret:     data.SigningSecret.ValueStringPointer(),
+		UserToken:         data.UserToken.ValueStringPointer(),
+		VisibleMessages:   data.VisibleMessages.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create slackintegration: %s", err))
@@ -226,6 +238,12 @@ func (r *SlackIntegrationResource) Read(ctx context.Context, req resource.ReadRe
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
+	if result.AllowFrom != nil {
+		data.AllowFrom = types.StringPointerValue(result.AllowFrom)
+	}
 	if result.AutoRespond != nil {
 		data.AutoRespond = types.StringPointerValue(result.AutoRespond)
 	}
@@ -295,20 +313,22 @@ func (r *SlackIntegrationResource) Update(ctx context.Context, req resource.Upda
 	// Call the ChatBotKit GraphQL API to update slackintegration
 
 	_, err := r.client.UpdateSlackIntegration(ctx, data.ID.ValueString(), UpdateSlackIntegrationInput{
-		AutoRespond: data.AutoRespond.ValueStringPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AutoRespond:       data.AutoRespond.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Ratings: data.Ratings.ValueBoolPointer(),
-		References: data.References.ValueBoolPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
-		SigningSecret: data.SigningSecret.ValueStringPointer(),
-		UserToken: data.UserToken.ValueStringPointer(),
-		VisibleMessages: data.VisibleMessages.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		Ratings:           data.Ratings.ValueBoolPointer(),
+		References:        data.References.ValueBoolPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
+		SigningSecret:     data.SigningSecret.ValueStringPointer(),
+		UserToken:         data.UserToken.ValueStringPointer(),
+		VisibleMessages:   data.VisibleMessages.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update slackintegration: %s", err))

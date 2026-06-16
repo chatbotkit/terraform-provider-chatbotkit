@@ -92,6 +92,7 @@ The following arguments are supported:
 - `bot_id` - (Optional) The ID of the ChatBotKit bot to connect.
 - `request` - (Optional) The webhook URL to send extracted data to.
 - `schema` - (Optional) A map defining the JSON schema for data extraction.
+- `model` - (Optional) The language model to use for data extraction. If not specified, the default model is used.
 - `blueprint_id` - (Optional) The ID of a blueprint to associate with this integration.
 - `meta` - (Optional) A map of metadata key-value pairs.
 

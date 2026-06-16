@@ -32,13 +32,15 @@ type McpserverIntegrationResource struct {
 type McpserverIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SkillsetId types.String `tfsdk:"skillset_id"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias             types.String `tfsdk:"alias"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	OAuthConnectionId types.String `tfsdk:"o_auth_connection_id"`
+	SkillsetId        types.String `tfsdk:"skillset_id"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -59,6 +61,10 @@ func (r *McpserverIntegrationResource) Schema(ctx context.Context, req resource.
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -74,6 +80,10 @@ func (r *McpserverIntegrationResource) Schema(ctx context.Context, req resource.
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the integration",
+				Optional:            true,
+			},
+			"o_auth_connection_id": schema.StringAttribute{
+				MarkdownDescription: "The ID of the OAuth connection for IdP-based authentication",
 				Optional:            true,
 			},
 			"skillset_id": schema.StringAttribute{
@@ -124,11 +134,13 @@ func (r *McpserverIntegrationResource) Create(ctx context.Context, req resource.
 	// Call the ChatBotKit GraphQL API to create mcpserverintegration
 
 	result, err := r.client.CreateMcpserverIntegration(ctx, CreateMcpserverIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SkillsetId: data.SkillsetId.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		OAuthConnectionId: data.OAuthConnectionId.ValueStringPointer(),
+		SkillsetId:        data.SkillsetId.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create mcpserverintegration: %s", err))
@@ -170,6 +182,9 @@ func (r *McpserverIntegrationResource) Read(ctx context.Context, req resource.Re
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -183,6 +198,9 @@ func (r *McpserverIntegrationResource) Read(ctx context.Context, req resource.Re
 	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.OAuthConnectionId != nil {
+		data.OAuthConnectionId = types.StringPointerValue(result.OAuthConnectionId)
 	}
 	if result.SkillsetId != nil {
 		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
@@ -212,11 +230,13 @@ func (r *McpserverIntegrationResource) Update(ctx context.Context, req resource.
 	// Call the ChatBotKit GraphQL API to update mcpserverintegration
 
 	_, err := r.client.UpdateMcpserverIntegration(ctx, data.ID.ValueString(), UpdateMcpserverIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SkillsetId: data.SkillsetId.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		OAuthConnectionId: data.OAuthConnectionId.ValueStringPointer(),
+		SkillsetId:        data.SkillsetId.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update mcpserverintegration: %s", err))

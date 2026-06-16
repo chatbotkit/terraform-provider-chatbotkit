@@ -32,16 +32,17 @@ type NotionIntegrationResource struct {
 type NotionIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	DatasetId types.String `tfsdk:"dataset_id"`
-	Description types.String `tfsdk:"description"`
-	ExpiresIn types.Int64 `tfsdk:"expires_in"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
+	Alias        types.String `tfsdk:"alias"`
+	BlueprintId  types.String `tfsdk:"blueprint_id"`
+	DatasetId    types.String `tfsdk:"dataset_id"`
+	Description  types.String `tfsdk:"description"`
+	ExpiresIn    types.Int64  `tfsdk:"expires_in"`
+	Meta         types.Map    `tfsdk:"meta"`
+	Name         types.String `tfsdk:"name"`
 	SyncSchedule types.String `tfsdk:"sync_schedule"`
-	Token types.String `tfsdk:"token"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Token        types.String `tfsdk:"token"`
+	CreatedAt    types.String `tfsdk:"created_at"`
+	UpdatedAt    types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -62,6 +63,10 @@ func (r *NotionIntegrationResource) Schema(ctx context.Context, req resource.Sch
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -139,14 +144,15 @@ func (r *NotionIntegrationResource) Create(ctx context.Context, req resource.Cre
 	// Call the ChatBotKit GraphQL API to create notionintegration
 
 	result, err := r.client.CreateNotionIntegration(ctx, CreateNotionIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId: data.DatasetId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
+		Alias:        data.Alias.ValueStringPointer(),
+		BlueprintId:  data.BlueprintId.ValueStringPointer(),
+		DatasetId:    data.DatasetId.ValueStringPointer(),
+		Description:  data.Description.ValueStringPointer(),
+		ExpiresIn:    data.ExpiresIn.ValueInt64Pointer(),
+		Meta:         convertMapToInterface(ctx, data.Meta),
+		Name:         data.Name.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-		Token: data.Token.ValueStringPointer(),
+		Token:        data.Token.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create notionintegration: %s", err))
@@ -188,6 +194,9 @@ func (r *NotionIntegrationResource) Read(ctx context.Context, req resource.ReadR
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -239,14 +248,15 @@ func (r *NotionIntegrationResource) Update(ctx context.Context, req resource.Upd
 	// Call the ChatBotKit GraphQL API to update notionintegration
 
 	_, err := r.client.UpdateNotionIntegration(ctx, data.ID.ValueString(), UpdateNotionIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId: data.DatasetId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
+		Alias:        data.Alias.ValueStringPointer(),
+		BlueprintId:  data.BlueprintId.ValueStringPointer(),
+		DatasetId:    data.DatasetId.ValueStringPointer(),
+		Description:  data.Description.ValueStringPointer(),
+		ExpiresIn:    data.ExpiresIn.ValueInt64Pointer(),
+		Meta:         convertMapToInterface(ctx, data.Meta),
+		Name:         data.Name.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-		Token: data.Token.ValueStringPointer(),
+		Token:        data.Token.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update notionintegration: %s", err))

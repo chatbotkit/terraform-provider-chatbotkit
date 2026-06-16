@@ -15,59 +15,63 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var (
-	_ resource.Resource                = &WhatsAppIntegrationResource{}
-	_ resource.ResourceWithImportState = &WhatsAppIntegrationResource{}
+	_ resource.Resource                = &InstagramIntegrationResource{}
+	_ resource.ResourceWithImportState = &InstagramIntegrationResource{}
 )
 
-func NewWhatsAppIntegrationResource() resource.Resource {
-	return &WhatsAppIntegrationResource{}
+func NewInstagramIntegrationResource() resource.Resource {
+	return &InstagramIntegrationResource{}
 }
 
-// WhatsAppIntegrationResource defines the resource implementation.
-type WhatsAppIntegrationResource struct {
+// InstagramIntegrationResource defines the resource implementation.
+type InstagramIntegrationResource struct {
 	client *Client
 }
 
-// WhatsAppIntegrationResourceModel describes the resource data model.
-type WhatsAppIntegrationResourceModel struct {
+// InstagramIntegrationResourceModel describes the resource data model.
+type InstagramIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	AccessToken types.String `tfsdk:"access_token"`
-	Attachments types.Bool `tfsdk:"attachments"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	ContactCollection types.Bool `tfsdk:"contact_collection"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	PhoneNumberId types.String `tfsdk:"phone_number_id"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	AccessToken       types.String `tfsdk:"access_token"`
+	Alias             types.String `tfsdk:"alias"`
+	Attachments       types.Bool   `tfsdk:"attachments"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
-func (r *WhatsAppIntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_whats_app_integration"
+func (r *InstagramIntegrationResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_instagram_integration"
 }
 
 // Schema defines the schema for the resource.
-func (r *WhatsAppIntegrationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *InstagramIntegrationResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Input parameters for creating a new WhatsApp integration",
+		MarkdownDescription: "Input parameters for creating a new Instagram integration",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "The unique identifier of the whatsappintegration",
+				MarkdownDescription: "The unique identifier of the instagramintegration",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 
 			"access_token": schema.StringAttribute{
-				MarkdownDescription: "The WhatsApp Business API access token",
+				MarkdownDescription: "The Instagram access token",
 				Optional:            true,
 				Sensitive:           true,
+			},
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
 			},
 			"attachments": schema.BoolAttribute{
 				MarkdownDescription: "Whether to enable file attachments",
@@ -98,10 +102,6 @@ func (r *WhatsAppIntegrationResource) Schema(ctx context.Context, req resource.S
 				MarkdownDescription: "The name of the integration",
 				Optional:            true,
 			},
-			"phone_number_id": schema.StringAttribute{
-				MarkdownDescription: "The WhatsApp Business phone number ID",
-				Optional:            true,
-			},
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
 				Optional:            true,
@@ -119,7 +119,7 @@ func (r *WhatsAppIntegrationResource) Schema(ctx context.Context, req resource.S
 }
 
 // Configure adds the provider configured client to the resource.
-func (r *WhatsAppIntegrationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *InstagramIntegrationResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -137,8 +137,8 @@ func (r *WhatsAppIntegrationResource) Configure(ctx context.Context, req resourc
 }
 
 // Create creates the resource and sets the initial Terraform state.
-func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data WhatsAppIntegrationResourceModel
+func (r *InstagramIntegrationResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data InstagramIntegrationResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -147,22 +147,22 @@ func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.C
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to create whatsappintegration
+	// Call the ChatBotKit GraphQL API to create instagramintegration
 
-	result, err := r.client.CreateWhatsAppIntegration(ctx, CreateWhatsAppIntegrationInput{
-		AccessToken: data.AccessToken.ValueStringPointer(),
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+	result, err := r.client.CreateInstagramIntegration(ctx, CreateInstagramIntegrationInput{
+		AccessToken:       data.AccessToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create whatsappintegration: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create instagramintegration: %s", err))
 		return
 	}
 
@@ -176,8 +176,8 @@ func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.C
 }
 
 // Read refreshes the Terraform state with the latest data.
-func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data WhatsAppIntegrationResourceModel
+func (r *InstagramIntegrationResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data InstagramIntegrationResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -186,16 +186,16 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to read whatsappintegration
+	// Call the ChatBotKit GraphQL API to read instagramintegration
 
-	result, err := r.client.GetWhatsAppIntegration(ctx, data.ID.ValueString())
+	result, err := r.client.GetInstagramIntegration(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
 		if strings.Contains(err.Error(), "not found") {
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read whatsappintegration: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read instagramintegration: %s", err))
 		return
 	}
 
@@ -203,6 +203,9 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 
 	if result.AccessToken != nil {
 		data.AccessToken = types.StringPointerValue(result.AccessToken)
+	}
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
 	}
 	if result.Attachments != nil {
 		data.Attachments = types.BoolPointerValue(result.Attachments)
@@ -227,9 +230,6 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
-	if result.PhoneNumberId != nil {
-		data.PhoneNumberId = types.StringPointerValue(result.PhoneNumberId)
-	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
 	}
@@ -245,8 +245,8 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
-func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data WhatsAppIntegrationResourceModel
+func (r *InstagramIntegrationResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data InstagramIntegrationResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -255,22 +255,22 @@ func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.U
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to update whatsappintegration
+	// Call the ChatBotKit GraphQL API to update instagramintegration
 
-	_, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), UpdateWhatsAppIntegrationInput{
-		AccessToken: data.AccessToken.ValueStringPointer(),
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+	_, err := r.client.UpdateInstagramIntegration(ctx, data.ID.ValueString(), UpdateInstagramIntegrationInput{
+		AccessToken:       data.AccessToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		PhoneNumberId: data.PhoneNumberId.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update whatsappintegration: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update instagramintegration: %s", err))
 		return
 	}
 
@@ -279,8 +279,8 @@ func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.U
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
-func (r *WhatsAppIntegrationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data WhatsAppIntegrationResourceModel
+func (r *InstagramIntegrationResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data InstagramIntegrationResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -289,16 +289,16 @@ func (r *WhatsAppIntegrationResource) Delete(ctx context.Context, req resource.D
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to delete whatsappintegration
+	// Call the ChatBotKit GraphQL API to delete instagramintegration
 
-	_, err := r.client.DeleteWhatsAppIntegration(ctx, data.ID.ValueString())
+	_, err := r.client.DeleteInstagramIntegration(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete whatsappintegration: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete instagramintegration: %s", err))
 		return
 	}
 }
 
 // ImportState imports the resource state from Terraform.
-func (r *WhatsAppIntegrationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *InstagramIntegrationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

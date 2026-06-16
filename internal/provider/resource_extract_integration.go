@@ -32,15 +32,17 @@ type ExtractIntegrationResource struct {
 type ExtractIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
+	BotId       types.String `tfsdk:"bot_id"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Request types.String `tfsdk:"request"`
-	Schema types.Map `tfsdk:"schema"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Model       types.String `tfsdk:"model"`
+	Name        types.String `tfsdk:"name"`
+	Request     types.String `tfsdk:"request"`
+	Schema      types.Map    `tfsdk:"schema"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -61,6 +63,10 @@ func (r *ExtractIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -77,6 +83,10 @@ func (r *ExtractIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				MarkdownDescription: "Additional metadata for the integration",
 				Optional:            true,
 				ElementType:         types.StringType,
+			},
+			"model": schema.StringAttribute{
+				MarkdownDescription: "The LLM model to use for the extract integration",
+				Optional:            true,
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the integration",
@@ -135,13 +145,15 @@ func (r *ExtractIntegrationResource) Create(ctx context.Context, req resource.Cr
 	// Call the ChatBotKit GraphQL API to create extractintegration
 
 	result, err := r.client.CreateExtractIntegration(ctx, CreateExtractIntegrationInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Request: data.Request.ValueStringPointer(),
-		Schema: convertMapToInterface(ctx, data.Schema),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Model:       data.Model.ValueStringPointer(),
+		Name:        data.Name.ValueStringPointer(),
+		Request:     data.Request.ValueStringPointer(),
+		Schema:      convertMapToInterface(ctx, data.Schema),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create extractintegration: %s", err))
@@ -183,6 +195,9 @@ func (r *ExtractIntegrationResource) Read(ctx context.Context, req resource.Read
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -196,6 +211,9 @@ func (r *ExtractIntegrationResource) Read(ctx context.Context, req resource.Read
 		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
 		resp.Diagnostics.Append(diags...)
 		data.Meta = mapValue
+	}
+	if result.Model != nil {
+		data.Model = types.StringPointerValue(result.Model)
 	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
@@ -233,13 +251,15 @@ func (r *ExtractIntegrationResource) Update(ctx context.Context, req resource.Up
 	// Call the ChatBotKit GraphQL API to update extractintegration
 
 	_, err := r.client.UpdateExtractIntegration(ctx, data.ID.ValueString(), UpdateExtractIntegrationInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Request: data.Request.ValueStringPointer(),
-		Schema: convertMapToInterface(ctx, data.Schema),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Model:       data.Model.ValueStringPointer(),
+		Name:        data.Name.ValueStringPointer(),
+		Request:     data.Request.ValueStringPointer(),
+		Schema:      convertMapToInterface(ctx, data.Schema),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update extractintegration: %s", err))

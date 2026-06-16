@@ -32,13 +32,14 @@ type FileResource struct {
 type FileResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -59,6 +60,10 @@ func (r *FileResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the file",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -124,11 +129,12 @@ func (r *FileResource) Create(ctx context.Context, req resource.CreateRequest, r
 	// Call the ChatBotKit GraphQL API to create file
 
 	result, err := r.client.CreateFile(ctx, CreateFileInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create file: %s", err))
@@ -170,6 +176,9 @@ func (r *FileResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -212,11 +221,12 @@ func (r *FileResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	// Call the ChatBotKit GraphQL API to update file
 
 	_, err := r.client.UpdateFile(ctx, data.ID.ValueString(), UpdateFileInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update file: %s", err))
