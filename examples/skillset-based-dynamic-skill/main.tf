@@ -92,7 +92,7 @@ resource "chatbotkit_skillset_ability" "install_skill" {
 # In production, these would contain domain-specific abilities and instructions
 
 resource "chatbotkit_skillset" "skill_1" {
-  name = "Data Analysis Skill"
+  name        = "Data Analysis Skill"
   description = <<-EOT
     Analyze and interpret data patterns
     ---
@@ -105,7 +105,7 @@ resource "chatbotkit_skillset" "skill_1" {
 }
 
 resource "chatbotkit_skillset" "skill_2" {
-  name = "Content Writing Skill"
+  name        = "Content Writing Skill"
   description = <<-EOT
     Create professional written content
     ---
@@ -118,7 +118,7 @@ resource "chatbotkit_skillset" "skill_2" {
 }
 
 resource "chatbotkit_skillset" "skill_3" {
-  name = "Research Skill"
+  name        = "Research Skill"
   description = <<-EOT
     Conduct thorough research on topics
     ---
@@ -131,7 +131,7 @@ resource "chatbotkit_skillset" "skill_3" {
 }
 
 resource "chatbotkit_skillset" "skill_4" {
-  name = "Problem Solving Skill"
+  name        = "Problem Solving Skill"
   description = <<-EOT
     Break down and solve complex problems
     ---

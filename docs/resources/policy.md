@@ -16,9 +16,9 @@ resource "chatbotkit_policy" "retention" {
   name        = "30-day retention"
   description = "Delete conversation data after 30 days"
   type        = "retention"
-  config = jsonencode({
-    days = 30
-  })
+  config = {
+    days = "30"
+  }
 }
 ```
 

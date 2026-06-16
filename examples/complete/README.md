@@ -120,19 +120,6 @@ These use the ChatBotKit action syntax with the `search` and `fetch` commands.
 
 ## Customization
 
-### Adding Records to the Dataset
-
-After creating the dataset, you can add records to populate it with knowledge:
-
-```hcl
-resource "chatbotkit_dataset_record" "faq_1" {
-  dataset_id  = chatbotkit_dataset.knowledge_base.id
-  name        = "FAQ: How to reset password"
-  description = "Instructions for password reset"
-  text        = "To reset your password, go to the login page and click 'Forgot Password'..."
-}
-```
-
 ### Adding More Abilities
 
 You can add additional abilities to the skillset:

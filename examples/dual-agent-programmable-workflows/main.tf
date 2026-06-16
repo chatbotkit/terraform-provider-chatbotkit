@@ -50,7 +50,7 @@ resource "chatbotkit_bot" "architect" {
   name        = "Workflow Architect"
   description = "Programs custom scripts, automations, and maintains the playbook documentation"
   model       = "claude-4.5-opus"
-  
+
   backstory = <<-EOT
     You are the Workflow Architect, a specialized AI agent responsible for
     designing, programming, and documenting automation workflows. Your role
@@ -158,7 +158,7 @@ resource "chatbotkit_bot" "runner" {
   name        = "Task Runner"
   description = "Executes programmed workflows by reading the playbook and running scripts"
   model       = "claude-4.5-sonnet"
-  
+
   backstory = <<-EOT
     You are the Task Runner, a specialized AI agent responsible for
     executing automation workflows. Your role is to read the Automation
@@ -244,12 +244,12 @@ resource "chatbotkit_skillset_ability" "runner_bash" {
 # Automated trigger for scheduled workflow execution
 
 resource "chatbotkit_trigger_integration" "scheduled_trigger" {
-  bot_id            = chatbotkit_bot.runner.id
-  name              = "Scheduled Task Trigger"
-  description       = "Automated trigger for scheduled workflow execution by the Task Runner"
-  authenticate      = true
-  session_duration  = 1800000
-  schedule  = "hourly"
+  bot_id           = chatbotkit_bot.runner.id
+  name             = "Scheduled Task Trigger"
+  description      = "Automated trigger for scheduled workflow execution by the Task Runner"
+  authenticate     = true
+  session_duration = 1800000
+  schedule         = "hourly"
 }
 
 # ============================================================================

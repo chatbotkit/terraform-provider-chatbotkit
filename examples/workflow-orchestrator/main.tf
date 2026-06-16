@@ -191,7 +191,7 @@ resource "chatbotkit_bot" "orchestrator" {
   name        = "Workflow Orchestrator"
   description = "Multi-step workflow execution engine with dynamic capability loading and comprehensive tracing"
   model       = "claude-4.5-sonnet"
-  
+
   backstory = <<-EOT
     You are a Workflow Orchestrator Agent responsible for executing complex
     multi-step workflows with precision and comprehensive logging. Your role
@@ -271,12 +271,12 @@ resource "chatbotkit_bot" "orchestrator" {
 # Manual or scheduled trigger for workflow execution
 
 resource "chatbotkit_trigger_integration" "workflow_trigger" {
-  bot_id            = chatbotkit_bot.orchestrator.id
-  name              = "Workflow Execution Trigger"
-  description       = "Manual or scheduled trigger for workflow execution"
-  authenticate      = true
-  session_duration  = 3600000
-  schedule  = "never"
+  bot_id           = chatbotkit_bot.orchestrator.id
+  name             = "Workflow Execution Trigger"
+  description      = "Manual or scheduled trigger for workflow execution"
+  authenticate     = true
+  session_duration = 3600000
+  schedule         = "never"
 }
 
 # ============================================================================

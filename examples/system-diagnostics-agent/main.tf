@@ -104,7 +104,7 @@ resource "chatbotkit_bot" "diagnostics_agent" {
   name        = "System Diagnostics Agent"
   description = "A self-monitoring AI agent that tests and reports on its own capabilities"
   model       = "claude-4.5-sonnet"
-  
+
   backstory = <<-EOT
     You are a System Diagnostics Agent responsible for monitoring and
     validating your own capabilities. Your role is to systematically test
@@ -141,12 +141,12 @@ resource "chatbotkit_bot" "diagnostics_agent" {
 # Automated trigger for periodic system diagnostics
 
 resource "chatbotkit_trigger_integration" "diagnostic_schedule" {
-  bot_id            = chatbotkit_bot.diagnostics_agent.id
-  name              = "Diagnostic Schedule"
-  description       = "Automated trigger for periodic system diagnostics and health checks"
-  authenticate      = true
-  session_duration  = 1800000
-  schedule  = "daily"
+  bot_id           = chatbotkit_bot.diagnostics_agent.id
+  name             = "Diagnostic Schedule"
+  description      = "Automated trigger for periodic system diagnostics and health checks"
+  authenticate     = true
+  session_duration = 1800000
+  schedule         = "daily"
 }
 
 # ============================================================================
