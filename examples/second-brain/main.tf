@@ -50,10 +50,10 @@ resource "chatbotkit_secret" "notion" {
   description = "The API key for accessing Notion."
   type        = "template"
   kind        = "personal"
-  
-  config = jsonencode({
+
+  config = {
     template = "platform/notion"
-  })
+  }
 }
 
 resource "chatbotkit_secret" "google_calendar" {
@@ -61,10 +61,10 @@ resource "chatbotkit_secret" "google_calendar" {
   description = "Connect to Google Calendar to manage your events and schedules."
   type        = "template"
   kind        = "personal"
-  
-  config = jsonencode({
+
+  config = {
     template = "platform/google/calendar"
-  })
+  }
 }
 
 # ============================================================================
@@ -226,7 +226,7 @@ resource "chatbotkit_bot" "second_brain" {
   name        = "Second Brain"
   description = "Your AI-powered personal knowledge management system"
   model       = "claude-4.5-sonnet"
-  
+
   backstory = <<-EOT
     You are a Second Brain-an AI-powered personal knowledge management
     system designed to help your user capture, organize, and surface
@@ -256,13 +256,13 @@ resource "chatbotkit_bot" "second_brain" {
 # Enable mobile access via Telegram
 
 resource "chatbotkit_telegram_integration" "second_brain_bot" {
-  bot_id              = chatbotkit_bot.second_brain.id
-  name                = "Second Brain Bot"
-  description         = "Access your second brain from Telegram"
-  bot_token           = var.telegram_bot_token
-  contact_collection  = false
-  session_duration    = 0
-  attachments         = false
+  bot_id             = chatbotkit_bot.second_brain.id
+  name               = "Second Brain Bot"
+  description        = "Access your second brain from Telegram"
+  bot_token          = var.telegram_bot_token
+  contact_collection = false
+  session_duration   = 0
+  attachments        = false
 }
 
 # ============================================================================

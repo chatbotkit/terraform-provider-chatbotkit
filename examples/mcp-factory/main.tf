@@ -56,7 +56,7 @@ resource "chatbotkit_skillset_ability" "analytics_report" {
   EOT
 }
 
-resource "chatbotkit_mcp_server_integration" "analytics_mcp" {
+resource "chatbotkit_mcpserver_integration" "analytics_mcp" {
   skillset_id = chatbotkit_skillset.analytics_service.id
   name        = "Analytics MCP Server"
   description = "MCP server exposing analytics capabilities"
@@ -92,7 +92,7 @@ resource "chatbotkit_skillset_ability" "content_edit" {
   EOT
 }
 
-resource "chatbotkit_mcp_server_integration" "content_mcp" {
+resource "chatbotkit_mcpserver_integration" "content_mcp" {
   skillset_id = chatbotkit_skillset.content_service.id
   name        = "Content MCP Server"
   description = "MCP server exposing content management capabilities"
@@ -128,7 +128,7 @@ resource "chatbotkit_skillset_ability" "research_summarize" {
   EOT
 }
 
-resource "chatbotkit_mcp_server_integration" "research_mcp" {
+resource "chatbotkit_mcpserver_integration" "research_mcp" {
   skillset_id = chatbotkit_skillset.research_service.id
   name        = "Research MCP Server"
   description = "MCP server exposing research capabilities"
@@ -164,7 +164,7 @@ resource "chatbotkit_skillset_ability" "tasks_track" {
   EOT
 }
 
-resource "chatbotkit_mcp_server_integration" "tasks_mcp" {
+resource "chatbotkit_mcpserver_integration" "tasks_mcp" {
   skillset_id = chatbotkit_skillset.tasks_service.id
   name        = "Tasks MCP Server"
   description = "MCP server exposing task management capabilities"
@@ -177,10 +177,10 @@ resource "chatbotkit_mcp_server_integration" "tasks_mcp" {
 output "mcp_server_urls" {
   description = "URLs for all MCP server integrations"
   value = {
-    analytics = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcp_server_integration.analytics_mcp.name}"
-    content   = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcp_server_integration.content_mcp.name}"
-    research  = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcp_server_integration.research_mcp.name}"
-    tasks     = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcp_server_integration.tasks_mcp.name}"
+    analytics = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcpserver_integration.analytics_mcp.name}"
+    content   = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcpserver_integration.content_mcp.name}"
+    research  = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcpserver_integration.research_mcp.name}"
+    tasks     = "Use the MCP server URL from the ChatBotKit dashboard for: ${chatbotkit_mcpserver_integration.tasks_mcp.name}"
   }
 }
 

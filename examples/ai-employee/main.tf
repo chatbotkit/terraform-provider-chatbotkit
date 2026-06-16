@@ -38,7 +38,7 @@ resource "chatbotkit_bot" "ai_employee" {
   name        = "AI Employee"
   description = "An AI Employee that automates tasks and enhances workplace efficiency"
   model       = "claude-4.5-opus"
-  
+
   backstory = <<-EOT
     # PRIMARY IDENTITY SECTION
     
@@ -115,7 +115,7 @@ resource "chatbotkit_space" "workspace" {
 resource "chatbotkit_skillset_ability" "shell_exec" {
   skillset_id = chatbotkit_skillset.core_skillset.id
   space_id    = chatbotkit_space.workspace.id
-  
+
   name        = "Shell Execution"
   description = "Execute shell commands or scripts in the secure workspace"
   instruction = <<-EOT
@@ -127,7 +127,7 @@ resource "chatbotkit_skillset_ability" "shell_exec" {
 # List available skillsets
 resource "chatbotkit_skillset_ability" "list_skillsets" {
   skillset_id = chatbotkit_skillset.core_skillset.id
-  
+
   name        = "List Skillsets"
   description = "Display available skillsets that can be installed"
   instruction = <<-EOT
@@ -140,7 +140,7 @@ resource "chatbotkit_skillset_ability" "list_skillsets" {
 # Install skillset by ID
 resource "chatbotkit_skillset_ability" "install_skillset" {
   skillset_id = chatbotkit_skillset.core_skillset.id
-  
+
   name        = "Install Skillset"
   description = "Bring a skillset into context by its ID"
   instruction = <<-EOT
@@ -166,17 +166,17 @@ resource "chatbotkit_secret" "google_mail" {
   description = "OAuth2 token for accessing Google Mail"
   type        = "template"
   kind        = "personal"
-  
-  config = jsonencode({
+
+  config = {
     template = "platform/google/mail"
-  })
+  }
 }
 
 # Gmail abilities
 resource "chatbotkit_skillset_ability" "list_gmail_messages" {
   skillset_id = chatbotkit_skillset.mail_skillset.id
   secret_id   = chatbotkit_secret.google_mail.id
-  
+
   name        = "List Gmail Messages"
   description = "Get a list of all gmail messages sorted in descending order"
   instruction = <<-EOT
@@ -188,7 +188,7 @@ resource "chatbotkit_skillset_ability" "list_gmail_messages" {
 resource "chatbotkit_skillset_ability" "fetch_gmail_message" {
   skillset_id = chatbotkit_skillset.mail_skillset.id
   secret_id   = chatbotkit_secret.google_mail.id
-  
+
   name        = "Fetch Gmail Message"
   description = "Get a specific gmail message by id"
   instruction = <<-EOT
@@ -201,7 +201,7 @@ resource "chatbotkit_skillset_ability" "fetch_gmail_message" {
 resource "chatbotkit_skillset_ability" "search_gmail_messages" {
   skillset_id = chatbotkit_skillset.mail_skillset.id
   secret_id   = chatbotkit_secret.google_mail.id
-  
+
   name        = "Search Gmail Messages"
   description = "Search for messages in Gmail"
   instruction = <<-EOT
@@ -213,7 +213,7 @@ resource "chatbotkit_skillset_ability" "search_gmail_messages" {
 resource "chatbotkit_skillset_ability" "send_gmail_message" {
   skillset_id = chatbotkit_skillset.mail_skillset.id
   secret_id   = chatbotkit_secret.google_mail.id
-  
+
   name        = "Send Gmail Message"
   description = "Send an email using Gmail"
   instruction = <<-EOT
@@ -240,17 +240,17 @@ resource "chatbotkit_secret" "notion" {
   description = "OAuth2 token for accessing Notion"
   type        = "template"
   kind        = "personal"
-  
-  config = jsonencode({
+
+  config = {
     template = "platform/notion"
-  })
+  }
 }
 
 # Notion abilities
 resource "chatbotkit_skillset_ability" "search_notion" {
   skillset_id = chatbotkit_skillset.notion_skillset.id
   secret_id   = chatbotkit_secret.notion.id
-  
+
   name        = "Search Notion"
   description = "Search all of Notion for specific keywords using multiple queries"
   instruction = <<-EOT
@@ -262,7 +262,7 @@ resource "chatbotkit_skillset_ability" "search_notion" {
 resource "chatbotkit_skillset_ability" "fetch_notion_page" {
   skillset_id = chatbotkit_skillset.notion_skillset.id
   secret_id   = chatbotkit_secret.notion.id
-  
+
   name        = "Fetch Notion Page"
   description = "Fetch details of a specific page in Notion"
   instruction = <<-EOT
@@ -274,7 +274,7 @@ resource "chatbotkit_skillset_ability" "fetch_notion_page" {
 resource "chatbotkit_skillset_ability" "create_notion_database_item" {
   skillset_id = chatbotkit_skillset.notion_skillset.id
   secret_id   = chatbotkit_secret.notion.id
-  
+
   name        = "Create Notion Database Item"
   description = "Create a new item in a Notion database"
   instruction = <<-EOT

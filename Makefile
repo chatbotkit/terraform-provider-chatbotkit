@@ -1,4 +1,4 @@
-.PHONY: all build test test-verbose vet fmt fmt-check lint tidy clean
+.PHONY: all build test test-verbose vet fmt fmt-check lint validate-examples tidy clean
 
 PACKAGES := ./...
 FMT_FILES := $(shell find . -name "*.go")
@@ -11,6 +11,11 @@ build:
 
 test:
 	go test -race -count=1 $(PACKAGES)
+
+# Validate every example against the locally-built provider (no credentials needed).
+# Requires the terraform CLI to be installed.
+validate-examples:
+	./scripts/validate-examples.sh
 
 test-verbose:
 	go test -race -count=1 -v $(PACKAGES)

@@ -66,6 +66,27 @@ jobs:
         with:
           version: latest
 
+  validate-examples:
+    name: Validate Examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Validate examples
+        run: ./scripts/validate-examples.sh
+
   # Acceptance tests run only on demand (workflow_dispatch) or for release branches
   # as they require real API credentials
   acceptance:
