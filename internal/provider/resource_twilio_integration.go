@@ -32,15 +32,20 @@ type TwilioIntegrationResource struct {
 type TwilioIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	ContactCollection types.Bool `tfsdk:"contact_collection"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	AccountSid        types.String `tfsdk:"account_sid"`
+	Alias             types.String `tfsdk:"alias"`
+	AllowFrom         types.String `tfsdk:"allow_from"`
+	AuthToken         types.String `tfsdk:"auth_token"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	Voice             types.String `tfsdk:"voice"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -61,6 +66,23 @@ func (r *TwilioIntegrationResource) Schema(ctx context.Context, req resource.Sch
 				},
 			},
 
+			"account_sid": schema.StringAttribute{
+				MarkdownDescription: "The Twilio Account SID",
+				Optional:            true,
+			},
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
+			"allow_from": schema.StringAttribute{
+				MarkdownDescription: "The allowed senders for the integration",
+				Optional:            true,
+			},
+			"auth_token": schema.StringAttribute{
+				MarkdownDescription: "The Twilio auth token",
+				Optional:            true,
+				Sensitive:           true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -88,6 +110,10 @@ func (r *TwilioIntegrationResource) Schema(ctx context.Context, req resource.Sch
 			},
 			"session_duration": schema.Int64Attribute{
 				MarkdownDescription: "The duration of the session in milliseconds",
+				Optional:            true,
+			},
+			"voice": schema.StringAttribute{
+				MarkdownDescription: "The Twilio voice configuration",
 				Optional:            true,
 			},
 			"created_at": schema.StringAttribute{
@@ -134,13 +160,18 @@ func (r *TwilioIntegrationResource) Create(ctx context.Context, req resource.Cre
 	// Call the ChatBotKit GraphQL API to create twiliointegration
 
 	result, err := r.client.CreateTwilioIntegration(ctx, CreateTwilioIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		AccountSid:        data.AccountSid.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AuthToken:         data.AuthToken.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
+		Voice:             data.Voice.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create twiliointegration: %s", err))
@@ -182,6 +213,18 @@ func (r *TwilioIntegrationResource) Read(ctx context.Context, req resource.ReadR
 
 	// Update data model with response values
 
+	if result.AccountSid != nil {
+		data.AccountSid = types.StringPointerValue(result.AccountSid)
+	}
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
+	if result.AllowFrom != nil {
+		data.AllowFrom = types.StringPointerValue(result.AllowFrom)
+	}
+	if result.AuthToken != nil {
+		data.AuthToken = types.StringPointerValue(result.AuthToken)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -204,6 +247,9 @@ func (r *TwilioIntegrationResource) Read(ctx context.Context, req resource.ReadR
 	}
 	if result.SessionDuration != nil {
 		data.SessionDuration = types.Int64PointerValue(result.SessionDuration)
+	}
+	if result.Voice != nil {
+		data.Voice = types.StringPointerValue(result.Voice)
 	}
 	if result.CreatedAt != nil {
 		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
@@ -230,13 +276,18 @@ func (r *TwilioIntegrationResource) Update(ctx context.Context, req resource.Upd
 	// Call the ChatBotKit GraphQL API to update twiliointegration
 
 	_, err := r.client.UpdateTwilioIntegration(ctx, data.ID.ValueString(), UpdateTwilioIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		AccountSid:        data.AccountSid.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AuthToken:         data.AuthToken.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
+		Voice:             data.Voice.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update twiliointegration: %s", err))

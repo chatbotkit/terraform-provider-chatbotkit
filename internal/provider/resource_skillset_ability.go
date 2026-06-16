@@ -32,18 +32,18 @@ type SkillsetAbilityResource struct {
 type SkillsetAbilityResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	SkillsetId types.String `tfsdk:"skillset_id"`
+	SkillsetId  types.String `tfsdk:"skillset_id"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
+	BotId       types.String `tfsdk:"bot_id"`
 	Description types.String `tfsdk:"description"`
-	FileId types.String `tfsdk:"file_id"`
+	FileId      types.String `tfsdk:"file_id"`
 	Instruction types.String `tfsdk:"instruction"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SecretId types.String `tfsdk:"secret_id"`
-	SpaceId types.String `tfsdk:"space_id"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	SecretId    types.String `tfsdk:"secret_id"`
+	SpaceId     types.String `tfsdk:"space_id"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -154,14 +154,14 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 
 	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), CreateSkillsetAbilityInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		FileId: data.FileId.ValueStringPointer(),
+		FileId:      data.FileId.ValueStringPointer(),
 		Instruction: data.Instruction.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SecretId: data.SecretId.ValueStringPointer(),
-		SpaceId: data.SpaceId.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		SecretId:    data.SecretId.ValueStringPointer(),
+		SpaceId:     data.SpaceId.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillsetability: %s", err))
@@ -258,14 +258,14 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 
 	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), UpdateSkillsetAbilityInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		FileId: data.FileId.ValueStringPointer(),
+		FileId:      data.FileId.ValueStringPointer(),
 		Instruction: data.Instruction.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SecretId: data.SecretId.ValueStringPointer(),
-		SpaceId: data.SpaceId.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		SecretId:    data.SecretId.ValueStringPointer(),
+		SpaceId:     data.SpaceId.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillsetability: %s", err))

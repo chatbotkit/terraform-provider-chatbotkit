@@ -32,16 +32,18 @@ type MessengerIntegrationResource struct {
 type MessengerIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	AccessToken types.String `tfsdk:"access_token"`
-	Attachments types.Bool `tfsdk:"attachments"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	AccessToken       types.String `tfsdk:"access_token"`
+	Alias             types.String `tfsdk:"alias"`
+	Attachments       types.Bool   `tfsdk:"attachments"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -67,6 +69,10 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 				Optional:            true,
 				Sensitive:           true,
 			},
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"attachments": schema.BoolAttribute{
 				MarkdownDescription: "Whether to enable file attachments",
 				Optional:            true,
@@ -77,6 +83,10 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 			},
 			"bot_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the bot to connect",
+				Optional:            true,
+			},
+			"contact_collection": schema.BoolAttribute{
+				MarkdownDescription: "Whether to enable contact collection",
 				Optional:            true,
 			},
 			"description": schema.StringAttribute{
@@ -140,14 +150,16 @@ func (r *MessengerIntegrationResource) Create(ctx context.Context, req resource.
 	// Call the ChatBotKit GraphQL API to create messengerintegration
 
 	result, err := r.client.CreateMessengerIntegration(ctx, CreateMessengerIntegrationInput{
-		AccessToken: data.AccessToken.ValueStringPointer(),
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		AccessToken:       data.AccessToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create messengerintegration: %s", err))
@@ -192,6 +204,9 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 	if result.AccessToken != nil {
 		data.AccessToken = types.StringPointerValue(result.AccessToken)
 	}
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.Attachments != nil {
 		data.Attachments = types.BoolPointerValue(result.Attachments)
 	}
@@ -200,6 +215,9 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 	}
 	if result.BotId != nil {
 		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.ContactCollection != nil {
+		data.ContactCollection = types.BoolPointerValue(result.ContactCollection)
 	}
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
@@ -240,14 +258,16 @@ func (r *MessengerIntegrationResource) Update(ctx context.Context, req resource.
 	// Call the ChatBotKit GraphQL API to update messengerintegration
 
 	_, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), UpdateMessengerIntegrationInput{
-		AccessToken: data.AccessToken.ValueStringPointer(),
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		AccessToken:       data.AccessToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		ContactCollection: data.ContactCollection.ValueBoolPointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update messengerintegration: %s", err))

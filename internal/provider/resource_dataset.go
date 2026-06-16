@@ -32,22 +32,23 @@ type DatasetResource struct {
 type DatasetResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	Description types.String `tfsdk:"description"`
-	MatchInstruction types.String `tfsdk:"match_instruction"`
-	Meta types.Map `tfsdk:"meta"`
-	MismatchInstruction types.String `tfsdk:"mismatch_instruction"`
-	Name types.String `tfsdk:"name"`
-	RecordMaxTokens types.Int64 `tfsdk:"record_max_tokens"`
-	Reranker types.String `tfsdk:"reranker"`
-	SearchMaxRecords types.Int64 `tfsdk:"search_max_records"`
-	SearchMaxTokens types.Int64 `tfsdk:"search_max_tokens"`
-	SearchMinScore types.Float64 `tfsdk:"search_min_score"`
-	Separators types.String `tfsdk:"separators"`
-	Store types.String `tfsdk:"store"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias               types.String  `tfsdk:"alias"`
+	BlueprintId         types.String  `tfsdk:"blueprint_id"`
+	Description         types.String  `tfsdk:"description"`
+	MatchInstruction    types.String  `tfsdk:"match_instruction"`
+	Meta                types.Map     `tfsdk:"meta"`
+	MismatchInstruction types.String  `tfsdk:"mismatch_instruction"`
+	Name                types.String  `tfsdk:"name"`
+	RecordMaxTokens     types.Int64   `tfsdk:"record_max_tokens"`
+	Reranker            types.String  `tfsdk:"reranker"`
+	SearchMaxRecords    types.Int64   `tfsdk:"search_max_records"`
+	SearchMaxTokens     types.Int64   `tfsdk:"search_max_tokens"`
+	SearchMinScore      types.Float64 `tfsdk:"search_min_score"`
+	Separators          types.String  `tfsdk:"separators"`
+	Store               types.String  `tfsdk:"store"`
+	Visibility          types.String  `tfsdk:"visibility"`
+	CreatedAt           types.String  `tfsdk:"created_at"`
+	UpdatedAt           types.String  `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -68,6 +69,10 @@ func (r *DatasetResource) Schema(ctx context.Context, req resource.SchemaRequest
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the dataset",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -169,20 +174,21 @@ func (r *DatasetResource) Create(ctx context.Context, req resource.CreateRequest
 	// Call the ChatBotKit GraphQL API to create dataset
 
 	result, err := r.client.CreateDataset(ctx, CreateDatasetInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
+		Alias:               data.Alias.ValueStringPointer(),
+		BlueprintId:         data.BlueprintId.ValueStringPointer(),
+		Description:         data.Description.ValueStringPointer(),
+		MatchInstruction:    data.MatchInstruction.ValueStringPointer(),
+		Meta:                convertMapToInterface(ctx, data.Meta),
 		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
-		Name: data.Name.ValueStringPointer(),
-		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
-		Reranker: data.Reranker.ValueStringPointer(),
-		SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
-		SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
-		SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
-		Separators: data.Separators.ValueStringPointer(),
-		Store: data.Store.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Name:                data.Name.ValueStringPointer(),
+		RecordMaxTokens:     data.RecordMaxTokens.ValueInt64Pointer(),
+		Reranker:            data.Reranker.ValueStringPointer(),
+		SearchMaxRecords:    data.SearchMaxRecords.ValueInt64Pointer(),
+		SearchMaxTokens:     data.SearchMaxTokens.ValueInt64Pointer(),
+		SearchMinScore:      data.SearchMinScore.ValueFloat64Pointer(),
+		Separators:          data.Separators.ValueStringPointer(),
+		Store:               data.Store.ValueStringPointer(),
+		Visibility:          data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create dataset: %s", err))
@@ -224,6 +230,9 @@ func (r *DatasetResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -293,20 +302,21 @@ func (r *DatasetResource) Update(ctx context.Context, req resource.UpdateRequest
 	// Call the ChatBotKit GraphQL API to update dataset
 
 	_, err := r.client.UpdateDataset(ctx, data.ID.ValueString(), UpdateDatasetInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		MatchInstruction: data.MatchInstruction.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
+		Alias:               data.Alias.ValueStringPointer(),
+		BlueprintId:         data.BlueprintId.ValueStringPointer(),
+		Description:         data.Description.ValueStringPointer(),
+		MatchInstruction:    data.MatchInstruction.ValueStringPointer(),
+		Meta:                convertMapToInterface(ctx, data.Meta),
 		MismatchInstruction: data.MismatchInstruction.ValueStringPointer(),
-		Name: data.Name.ValueStringPointer(),
-		RecordMaxTokens: data.RecordMaxTokens.ValueInt64Pointer(),
-		Reranker: data.Reranker.ValueStringPointer(),
-		SearchMaxRecords: data.SearchMaxRecords.ValueInt64Pointer(),
-		SearchMaxTokens: data.SearchMaxTokens.ValueInt64Pointer(),
-		SearchMinScore: data.SearchMinScore.ValueFloat64Pointer(),
-		Separators: data.Separators.ValueStringPointer(),
-		Store: data.Store.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Name:                data.Name.ValueStringPointer(),
+		RecordMaxTokens:     data.RecordMaxTokens.ValueInt64Pointer(),
+		Reranker:            data.Reranker.ValueStringPointer(),
+		SearchMaxRecords:    data.SearchMaxRecords.ValueInt64Pointer(),
+		SearchMaxTokens:     data.SearchMaxTokens.ValueInt64Pointer(),
+		SearchMinScore:      data.SearchMinScore.ValueFloat64Pointer(),
+		Separators:          data.Separators.ValueStringPointer(),
+		Store:               data.Store.ValueStringPointer(),
+		Visibility:          data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update dataset: %s", err))

@@ -15,105 +15,86 @@ import (
 
 // Ensure provider defined types fully satisfy framework interfaces.
 var (
-	_ resource.Resource                = &BotResource{}
-	_ resource.ResourceWithImportState = &BotResource{}
+	_ resource.Resource                = &PolicyResource{}
+	_ resource.ResourceWithImportState = &PolicyResource{}
 )
 
-func NewBotResource() resource.Resource {
-	return &BotResource{}
+func NewPolicyResource() resource.Resource {
+	return &PolicyResource{}
 }
 
-// BotResource defines the resource implementation.
-type BotResource struct {
+// PolicyResource defines the resource implementation.
+type PolicyResource struct {
 	client *Client
 }
 
-// BotResourceModel describes the resource data model.
-type BotResourceModel struct {
+// PolicyResourceModel describes the resource data model.
+type PolicyResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
 	Alias       types.String `tfsdk:"alias"`
-	Backstory   types.String `tfsdk:"backstory"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	DatasetId   types.String `tfsdk:"dataset_id"`
+	BotId       types.String `tfsdk:"bot_id"`
+	Config      types.Map    `tfsdk:"config"`
 	Description types.String `tfsdk:"description"`
 	Meta        types.Map    `tfsdk:"meta"`
-	Model       types.String `tfsdk:"model"`
-	Moderation  types.Bool   `tfsdk:"moderation"`
 	Name        types.String `tfsdk:"name"`
-	Privacy     types.Bool   `tfsdk:"privacy"`
-	SkillsetId  types.String `tfsdk:"skillset_id"`
-	Visibility  types.String `tfsdk:"visibility"`
+	Type        types.String `tfsdk:"type"`
 	CreatedAt   types.String `tfsdk:"created_at"`
 	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
-func (r *BotResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_bot"
+func (r *PolicyResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_policy"
 }
 
 // Schema defines the schema for the resource.
-func (r *BotResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+func (r *PolicyResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Input parameters for creating a new bot",
+		MarkdownDescription: "Input parameters for creating a new policy",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Computed:            true,
-				MarkdownDescription: "The unique identifier of the bot",
+				MarkdownDescription: "The unique identifier of the policy",
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
 			},
 
 			"alias": schema.StringAttribute{
-				MarkdownDescription: "The alias ID for the bot",
-				Optional:            true,
-			},
-			"backstory": schema.StringAttribute{
-				MarkdownDescription: "The backstory for the bot",
+				MarkdownDescription: "The alias ID for the policy",
 				Optional:            true,
 			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
 			},
-			"dataset_id": schema.StringAttribute{
-				MarkdownDescription: "The ID of the dataset to use",
+			"bot_id": schema.StringAttribute{
+				MarkdownDescription: "The ID of the bot to associate",
 				Optional:            true,
 			},
-			"description": schema.StringAttribute{
-				MarkdownDescription: "The description of the bot",
-				Optional:            true,
-			},
-			"meta": schema.MapAttribute{
-				MarkdownDescription: "Additional metadata for the bot",
+			"config": schema.MapAttribute{
+				MarkdownDescription: "The policy configuration as JSON",
 				Optional:            true,
 				ElementType:         types.StringType,
 			},
-			"model": schema.StringAttribute{
-				MarkdownDescription: "The AI model to use for the bot",
+			"description": schema.StringAttribute{
+				MarkdownDescription: "The description of the policy",
 				Optional:            true,
 			},
-			"moderation": schema.BoolAttribute{
-				MarkdownDescription: "Whether moderation is enabled",
+			"meta": schema.MapAttribute{
+				MarkdownDescription: "Additional metadata for the policy",
 				Optional:            true,
+				ElementType:         types.StringType,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: "The name of the bot",
+				MarkdownDescription: "The name of the policy",
 				Optional:            true,
 			},
-			"privacy": schema.BoolAttribute{
-				MarkdownDescription: "Whether privacy mode is enabled",
-				Optional:            true,
-			},
-			"skillset_id": schema.StringAttribute{
-				MarkdownDescription: "The ID of the skillset to use",
-				Optional:            true,
-			},
-			"visibility": schema.StringAttribute{
-				MarkdownDescription: "The visibility level of the bot",
-				Optional:            true,
+			"type": schema.StringAttribute{
+				MarkdownDescription: "The type of the policy",
+				Required:            true,
 			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "Timestamp when the resource was created",
@@ -128,7 +109,7 @@ func (r *BotResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 }
 
 // Configure adds the provider configured client to the resource.
-func (r *BotResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+func (r *PolicyResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -146,8 +127,8 @@ func (r *BotResource) Configure(ctx context.Context, req resource.ConfigureReque
 }
 
 // Create creates the resource and sets the initial Terraform state.
-func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data BotResourceModel
+func (r *PolicyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data PolicyResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -156,24 +137,20 @@ func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, re
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to create bot
+	// Call the ChatBotKit GraphQL API to create policy
 
-	result, err := r.client.CreateBot(ctx, CreateBotInput{
+	result, err := r.client.CreatePolicy(ctx, CreatePolicyInput{
 		Alias:       data.Alias.ValueStringPointer(),
-		Backstory:   data.Backstory.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId:   data.DatasetId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),
-		Model:       data.Model.ValueStringPointer(),
-		Moderation:  data.Moderation.ValueBoolPointer(),
 		Name:        data.Name.ValueStringPointer(),
-		Privacy:     data.Privacy.ValueBoolPointer(),
-		SkillsetId:  data.SkillsetId.ValueStringPointer(),
-		Visibility:  data.Visibility.ValueStringPointer(),
+		Type:        data.Type.ValueString(),
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create bot: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create policy: %s", err))
 		return
 	}
 
@@ -187,8 +164,8 @@ func (r *BotResource) Create(ctx context.Context, req resource.CreateRequest, re
 }
 
 // Read refreshes the Terraform state with the latest data.
-func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data BotResourceModel
+func (r *PolicyResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data PolicyResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -197,16 +174,16 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to read bot
+	// Call the ChatBotKit GraphQL API to read policy
 
-	result, err := r.client.GetBot(ctx, data.ID.ValueString())
+	result, err := r.client.GetPolicy(ctx, data.ID.ValueString())
 	if err != nil {
 		// Check if resource was deleted outside of Terraform
 		if strings.Contains(err.Error(), "not found") {
 			resp.State.RemoveResource(ctx)
 			return
 		}
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read bot: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read policy: %s", err))
 		return
 	}
 
@@ -215,14 +192,16 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	if result.Alias != nil {
 		data.Alias = types.StringPointerValue(result.Alias)
 	}
-	if result.Backstory != nil {
-		data.Backstory = types.StringPointerValue(result.Backstory)
-	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
-	if result.DatasetId != nil {
-		data.DatasetId = types.StringPointerValue(result.DatasetId)
+	if result.BotId != nil {
+		data.BotId = types.StringPointerValue(result.BotId)
+	}
+	if result.Config != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Config)
+		resp.Diagnostics.Append(diags...)
+		data.Config = mapValue
 	}
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
@@ -232,24 +211,10 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 		resp.Diagnostics.Append(diags...)
 		data.Meta = mapValue
 	}
-	if result.Model != nil {
-		data.Model = types.StringPointerValue(result.Model)
-	}
-	if result.Moderation != nil {
-		data.Moderation = types.BoolPointerValue(result.Moderation)
-	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
-	if result.Privacy != nil {
-		data.Privacy = types.BoolPointerValue(result.Privacy)
-	}
-	if result.SkillsetId != nil {
-		data.SkillsetId = types.StringPointerValue(result.SkillsetId)
-	}
-	if result.Visibility != nil {
-		data.Visibility = types.StringPointerValue(result.Visibility)
-	}
+	data.Type = types.StringValue(result.Type)
 	if result.CreatedAt != nil {
 		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
 	}
@@ -262,8 +227,8 @@ func (r *BotResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
-func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data BotResourceModel
+func (r *PolicyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data PolicyResourceModel
 
 	// Read Terraform plan data into the model
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -272,24 +237,20 @@ func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to update bot
+	// Call the ChatBotKit GraphQL API to update policy
 
-	_, err := r.client.UpdateBot(ctx, data.ID.ValueString(), UpdateBotInput{
+	_, err := r.client.UpdatePolicy(ctx, data.ID.ValueString(), UpdatePolicyInput{
 		Alias:       data.Alias.ValueStringPointer(),
-		Backstory:   data.Backstory.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId:   data.DatasetId.ValueStringPointer(),
+		BotId:       data.BotId.ValueStringPointer(),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),
-		Model:       data.Model.ValueStringPointer(),
-		Moderation:  data.Moderation.ValueBoolPointer(),
 		Name:        data.Name.ValueStringPointer(),
-		Privacy:     data.Privacy.ValueBoolPointer(),
-		SkillsetId:  data.SkillsetId.ValueStringPointer(),
-		Visibility:  data.Visibility.ValueStringPointer(),
+		Type:        data.Type.ValueString(),
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update bot: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update policy: %s", err))
 		return
 	}
 
@@ -298,8 +259,8 @@ func (r *BotResource) Update(ctx context.Context, req resource.UpdateRequest, re
 }
 
 // Delete deletes the resource and removes the Terraform state on success.
-func (r *BotResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var data BotResourceModel
+func (r *PolicyResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data PolicyResourceModel
 
 	// Read Terraform prior state data into the model
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
@@ -308,16 +269,16 @@ func (r *BotResource) Delete(ctx context.Context, req resource.DeleteRequest, re
 		return
 	}
 
-	// Call the ChatBotKit GraphQL API to delete bot
+	// Call the ChatBotKit GraphQL API to delete policy
 
-	_, err := r.client.DeleteBot(ctx, data.ID.ValueString())
+	_, err := r.client.DeletePolicy(ctx, data.ID.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete bot: %s", err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to delete policy: %s", err))
 		return
 	}
 }
 
 // ImportState imports the resource state from Terraform.
-func (r *BotResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+func (r *PolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }

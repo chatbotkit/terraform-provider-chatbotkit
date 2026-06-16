@@ -1,11 +1,11 @@
 ---
-page_title: "chatbotkit_whats_app_integration Resource - terraform-provider-chatbotkit"
+page_title: "chatbotkit_whatsapp_integration Resource - terraform-provider-chatbotkit"
 subcategory: ""
 description: |-
   Manages a ChatBotKit WhatsApp Integration resource.
 ---
 
-# chatbotkit_whats_app_integration (Resource)
+# chatbotkit_whatsapp_integration (Resource)
 
 Manages a ChatBotKit WhatsApp Integration. This integration allows you to connect your ChatBotKit bot to WhatsApp Business, enabling AI-powered conversations with customers on WhatsApp.
 
@@ -20,7 +20,7 @@ resource "chatbotkit_bot" "assistant" {
   backstory   = "You are a helpful customer service assistant on WhatsApp."
 }
 
-resource "chatbotkit_whats_app_integration" "example" {
+resource "chatbotkit_whatsapp_integration" "example" {
   name            = "WhatsApp Business Bot"
   description     = "Connect bot to WhatsApp Business"
   bot_id          = chatbotkit_bot.assistant.id
@@ -32,7 +32,7 @@ resource "chatbotkit_whats_app_integration" "example" {
 ### Full Configuration
 
 ```terraform
-resource "chatbotkit_whats_app_integration" "advanced" {
+resource "chatbotkit_whatsapp_integration" "advanced" {
   name        = "Advanced WhatsApp Integration"
   description = "Full-featured WhatsApp integration"
   bot_id      = chatbotkit_bot.assistant.id
@@ -53,7 +53,7 @@ resource "chatbotkit_blueprint" "whatsapp_template" {
   description = "Template for WhatsApp integrations"
 }
 
-resource "chatbotkit_whats_app_integration" "from_template" {
+resource "chatbotkit_whatsapp_integration" "from_template" {
   name            = "Customer Support"
   description     = "Created from template"
   blueprint_id    = chatbotkit_blueprint.whatsapp_template.id
@@ -91,5 +91,5 @@ In addition to all arguments above, the following attributes are exported:
 WhatsApp integrations can be imported using their ID:
 
 ```bash
-terraform import chatbotkit_whats_app_integration.example whatsapp_abc123def456
+terraform import chatbotkit_whatsapp_integration.example whatsapp_abc123def456
 ```

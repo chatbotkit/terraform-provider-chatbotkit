@@ -25,12 +25,13 @@ type BlueprintDataSource struct {
 type BlueprintDataSourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the data source type name.
@@ -48,6 +49,10 @@ func (d *BlueprintDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				MarkdownDescription: "The unique identifier of the blueprint to look up",
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the blueprint",
+				Computed:            true,
+			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "The description of the blueprint",
 				Computed:            true,
@@ -115,6 +120,9 @@ func (d *BlueprintDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}

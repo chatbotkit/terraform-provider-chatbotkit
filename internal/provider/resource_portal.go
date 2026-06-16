@@ -32,14 +32,15 @@ type PortalResource struct {
 type PortalResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	Config types.Map `tfsdk:"config"`
+	Config      types.Map    `tfsdk:"config"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Slug types.String `tfsdk:"slug"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Slug        types.String `tfsdk:"slug"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -60,6 +61,10 @@ func (r *PortalResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the portal",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -130,12 +135,13 @@ func (r *PortalResource) Create(ctx context.Context, req resource.CreateRequest,
 	// Call the ChatBotKit GraphQL API to create portal
 
 	result, err := r.client.CreatePortal(ctx, CreatePortalInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Config: convertMapToInterface(ctx, data.Config),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Slug: data.Slug.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Slug:        data.Slug.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create portal: %s", err))
@@ -177,6 +183,9 @@ func (r *PortalResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -224,12 +233,13 @@ func (r *PortalResource) Update(ctx context.Context, req resource.UpdateRequest,
 	// Call the ChatBotKit GraphQL API to update portal
 
 	_, err := r.client.UpdatePortal(ctx, data.ID.ValueString(), UpdatePortalInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		Config: convertMapToInterface(ctx, data.Config),
+		Config:      convertMapToInterface(ctx, data.Config),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Slug: data.Slug.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Slug:        data.Slug.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update portal: %s", err))

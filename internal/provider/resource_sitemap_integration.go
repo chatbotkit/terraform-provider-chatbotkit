@@ -32,19 +32,20 @@ type SitemapIntegrationResource struct {
 type SitemapIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	DatasetId types.String `tfsdk:"dataset_id"`
-	Description types.String `tfsdk:"description"`
-	ExpiresIn types.Int64 `tfsdk:"expires_in"`
-	Glob types.String `tfsdk:"glob"`
-	Javascript types.Bool `tfsdk:"javascript"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Selectors types.String `tfsdk:"selectors"`
+	Alias        types.String `tfsdk:"alias"`
+	BlueprintId  types.String `tfsdk:"blueprint_id"`
+	DatasetId    types.String `tfsdk:"dataset_id"`
+	Description  types.String `tfsdk:"description"`
+	ExpiresIn    types.Int64  `tfsdk:"expires_in"`
+	Glob         types.String `tfsdk:"glob"`
+	Javascript   types.Bool   `tfsdk:"javascript"`
+	Meta         types.Map    `tfsdk:"meta"`
+	Name         types.String `tfsdk:"name"`
+	Selectors    types.String `tfsdk:"selectors"`
 	SyncSchedule types.String `tfsdk:"sync_schedule"`
-	URL types.String `tfsdk:"url"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	URL          types.String `tfsdk:"url"`
+	CreatedAt    types.String `tfsdk:"created_at"`
+	UpdatedAt    types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -65,6 +66,10 @@ func (r *SitemapIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Optional:            true,
@@ -154,17 +159,18 @@ func (r *SitemapIntegrationResource) Create(ctx context.Context, req resource.Cr
 	// Call the ChatBotKit GraphQL API to create sitemapintegration
 
 	result, err := r.client.CreateSitemapIntegration(ctx, CreateSitemapIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId: data.DatasetId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		Glob: data.Glob.ValueStringPointer(),
-		Javascript: data.Javascript.ValueBoolPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Selectors: data.Selectors.ValueStringPointer(),
+		Alias:        data.Alias.ValueStringPointer(),
+		BlueprintId:  data.BlueprintId.ValueStringPointer(),
+		DatasetId:    data.DatasetId.ValueStringPointer(),
+		Description:  data.Description.ValueStringPointer(),
+		ExpiresIn:    data.ExpiresIn.ValueInt64Pointer(),
+		Glob:         data.Glob.ValueStringPointer(),
+		Javascript:   data.Javascript.ValueBoolPointer(),
+		Meta:         convertMapToInterface(ctx, data.Meta),
+		Name:         data.Name.ValueStringPointer(),
+		Selectors:    data.Selectors.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-		URL: data.URL.ValueStringPointer(),
+		URL:          data.URL.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create sitemapintegration: %s", err))
@@ -206,6 +212,9 @@ func (r *SitemapIntegrationResource) Read(ctx context.Context, req resource.Read
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}
@@ -266,17 +275,18 @@ func (r *SitemapIntegrationResource) Update(ctx context.Context, req resource.Up
 	// Call the ChatBotKit GraphQL API to update sitemapintegration
 
 	_, err := r.client.UpdateSitemapIntegration(ctx, data.ID.ValueString(), UpdateSitemapIntegrationInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		DatasetId: data.DatasetId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		ExpiresIn: data.ExpiresIn.ValueInt64Pointer(),
-		Glob: data.Glob.ValueStringPointer(),
-		Javascript: data.Javascript.ValueBoolPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Selectors: data.Selectors.ValueStringPointer(),
+		Alias:        data.Alias.ValueStringPointer(),
+		BlueprintId:  data.BlueprintId.ValueStringPointer(),
+		DatasetId:    data.DatasetId.ValueStringPointer(),
+		Description:  data.Description.ValueStringPointer(),
+		ExpiresIn:    data.ExpiresIn.ValueInt64Pointer(),
+		Glob:         data.Glob.ValueStringPointer(),
+		Javascript:   data.Javascript.ValueBoolPointer(),
+		Meta:         convertMapToInterface(ctx, data.Meta),
+		Name:         data.Name.ValueStringPointer(),
+		Selectors:    data.Selectors.ValueStringPointer(),
 		SyncSchedule: data.SyncSchedule.ValueStringPointer(),
-		URL: data.URL.ValueStringPointer(),
+		URL:          data.URL.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update sitemapintegration: %s", err))

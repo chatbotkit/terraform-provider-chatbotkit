@@ -32,17 +32,19 @@ type TelegramIntegrationResource struct {
 type TelegramIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	Attachments types.Bool `tfsdk:"attachments"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	BotToken types.String `tfsdk:"bot_token"`
-	ContactCollection types.Bool `tfsdk:"contact_collection"`
-	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias             types.String `tfsdk:"alias"`
+	AllowFrom         types.String `tfsdk:"allow_from"`
+	Attachments       types.Bool   `tfsdk:"attachments"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	BotToken          types.String `tfsdk:"bot_token"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -63,6 +65,14 @@ func (r *TelegramIntegrationResource) Schema(ctx context.Context, req resource.S
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
+			"allow_from": schema.StringAttribute{
+				MarkdownDescription: "Newline-or-comma-separated list of allowed senders. Use @username or @numericId for users, #chatId for groups. Leave empty to allow all.",
+				Optional:            true,
+			},
 			"attachments": schema.BoolAttribute{
 				MarkdownDescription: "Whether to enable file attachments",
 				Optional:            true,
@@ -145,15 +155,17 @@ func (r *TelegramIntegrationResource) Create(ctx context.Context, req resource.C
 	// Call the ChatBotKit GraphQL API to create telegramintegration
 
 	result, err := r.client.CreateTelegramIntegration(ctx, CreateTelegramIntegrationInput{
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create telegramintegration: %s", err))
@@ -195,6 +207,12 @@ func (r *TelegramIntegrationResource) Read(ctx context.Context, req resource.Rea
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
+	if result.AllowFrom != nil {
+		data.AllowFrom = types.StringPointerValue(result.AllowFrom)
+	}
 	if result.Attachments != nil {
 		data.Attachments = types.BoolPointerValue(result.Attachments)
 	}
@@ -249,15 +267,17 @@ func (r *TelegramIntegrationResource) Update(ctx context.Context, req resource.U
 	// Call the ChatBotKit GraphQL API to update telegramintegration
 
 	_, err := r.client.UpdateTelegramIntegration(ctx, data.ID.ValueString(), UpdateTelegramIntegrationInput{
-		Attachments: data.Attachments.ValueBoolPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		Attachments:       data.Attachments.ValueBoolPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update telegramintegration: %s", err))

@@ -25,19 +25,20 @@ type BotDataSource struct {
 type BotDataSourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	Backstory types.String `tfsdk:"backstory"`
+	Alias       types.String `tfsdk:"alias"`
+	Backstory   types.String `tfsdk:"backstory"`
 	BlueprintId types.String `tfsdk:"blueprint_id"`
-	DatasetId types.String `tfsdk:"dataset_id"`
+	DatasetId   types.String `tfsdk:"dataset_id"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Model types.String `tfsdk:"model"`
-	Moderation types.Bool `tfsdk:"moderation"`
-	Name types.String `tfsdk:"name"`
-	Privacy types.Bool `tfsdk:"privacy"`
-	SkillsetId types.String `tfsdk:"skillset_id"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Model       types.String `tfsdk:"model"`
+	Moderation  types.Bool   `tfsdk:"moderation"`
+	Name        types.String `tfsdk:"name"`
+	Privacy     types.Bool   `tfsdk:"privacy"`
+	SkillsetId  types.String `tfsdk:"skillset_id"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the data source type name.
@@ -55,6 +56,10 @@ func (d *BotDataSource) Schema(ctx context.Context, req datasource.SchemaRequest
 				MarkdownDescription: "The unique identifier of the bot to look up",
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the bot",
+				Computed:            true,
+			},
 			"backstory": schema.StringAttribute{
 				MarkdownDescription: "The backstory for the bot",
 				Computed:            true,
@@ -150,6 +155,9 @@ func (d *BotDataSource) Read(ctx context.Context, req datasource.ReadRequest, re
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.Backstory != nil {
 		data.Backstory = types.StringPointerValue(result.Backstory)
 	}

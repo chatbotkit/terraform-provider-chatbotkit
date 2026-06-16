@@ -66,6 +66,7 @@ type ContextSecretType string
 const (
 	ContextSecretTypeBasic ContextSecretType = "basic"
 	ContextSecretTypeBearer ContextSecretType = "bearer"
+	ContextSecretTypeJwt ContextSecretType = "jwt"
 	ContextSecretTypeOauth ContextSecretType = "oauth"
 	ContextSecretTypePlain ContextSecretType = "plain"
 	ContextSecretTypeReference ContextSecretType = "reference"
@@ -113,10 +114,19 @@ const (
 	MessageTypeActivity MessageType = "activity"
 	MessageTypeBackstory MessageType = "backstory"
 	MessageTypeBot MessageType = "bot"
+	MessageTypeCheckpoint MessageType = "checkpoint"
 	MessageTypeContext MessageType = "context"
 	MessageTypeInstruction MessageType = "instruction"
 	MessageTypeReasoning MessageType = "reasoning"
 	MessageTypeUser MessageType = "user"
+)
+
+// PolicyType Types of policies that can be used in the system
+type PolicyType string
+
+const (
+	PolicyTypeRetention PolicyType = "retention"
+	PolicyTypeUsage PolicyType = "usage"
 )
 
 // Schedule Schedule options for trigger integrations
@@ -164,6 +174,7 @@ type SecretType string
 const (
 	SecretTypeBasic SecretType = "basic"
 	SecretTypeBearer SecretType = "bearer"
+	SecretTypeJwt SecretType = "jwt"
 	SecretTypeOauth SecretType = "oauth"
 	SecretTypePlain SecretType = "plain"
 	SecretTypeReference SecretType = "reference"
@@ -216,6 +227,7 @@ const (
 type TaskStatus string
 
 const (
+	TaskStatusCanceled TaskStatus = "canceled"
 	TaskStatusIdle TaskStatus = "idle"
 	TaskStatusRunning TaskStatus = "running"
 )
@@ -775,6 +787,8 @@ type DiscordIntegration struct {
 
 // DiscordIntegrationCreateRequest Input parameters for creating a new Discord integration
 type DiscordIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for the discord integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// The Discord application ID
@@ -815,6 +829,8 @@ type DiscordIntegrationDeleteResponse struct {
 
 // DiscordIntegrationUpdateRequest Input parameters for updating an existing Discord integration
 type DiscordIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for the discord integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// The Discord application ID
@@ -876,6 +892,8 @@ type EmailIntegration struct {
 
 // EmailIntegrationCreateRequest Input parameters for creating a new Email integration
 type EmailIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// A line-separated list of allowed sender email addresses
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -910,6 +928,8 @@ type EmailIntegrationDeleteResponse struct {
 
 // EmailIntegrationUpdateRequest Input parameters for updating an existing Email integration
 type EmailIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// A line-separated list of allowed sender email addresses
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -1000,6 +1020,8 @@ type ExtractIntegration struct {
 
 // ExtractIntegrationCreateRequest Input parameters for creating a new Extract integration
 type ExtractIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot to connect
@@ -1032,6 +1054,8 @@ type ExtractIntegrationDeleteResponse struct {
 
 // ExtractIntegrationUpdateRequest Input parameters for updating an existing Extract integration
 type ExtractIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot to connect
@@ -1152,8 +1176,12 @@ type GooglechatIntegration struct {
 
 // GooglechatIntegrationCreateRequest Input parameters for creating a new Google Chat integration
 type GooglechatIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
+	// Whether to enable file attachments
+	Attachments *bool `json:"attachments,omitempty"`
 	// Configure automatic response behavior
 	AutoRespond *string `json:"autoRespond,omitempty"`
 	// The ID of the blueprint to use
@@ -1190,8 +1218,12 @@ type GooglechatIntegrationDeleteResponse struct {
 
 // GooglechatIntegrationUpdateRequest Input parameters for updating an existing Google Chat integration
 type GooglechatIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
+	// Whether to enable file attachments
+	Attachments *bool `json:"attachments,omitempty"`
 	// Configure automatic response behavior
 	AutoRespond *string `json:"autoRespond,omitempty"`
 	// The ID of the blueprint to use
@@ -1295,6 +1327,8 @@ type InstagramIntegration struct {
 type InstagramIntegrationCreateRequest struct {
 	// The Instagram access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to enable file attachments
 	Attachments *bool `json:"attachments,omitempty"`
 	// The ID of the blueprint to use
@@ -1329,6 +1363,8 @@ type InstagramIntegrationDeleteResponse struct {
 type InstagramIntegrationUpdateRequest struct {
 	// The Instagram access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to enable file attachments
 	Attachments *bool `json:"attachments,omitempty"`
 	// The ID of the blueprint to use
@@ -1374,6 +1410,8 @@ type McpserverIntegration struct {
 
 // McpserverIntegrationCreateRequest Input parameters for creating a new MCP Server integration
 type McpserverIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The description of the integration
@@ -1382,6 +1420,8 @@ type McpserverIntegrationCreateRequest struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
+	// The ID of the OAuth connection for IdP-based authentication
+	OAuthConnectionId *string `json:"oAuthConnectionId,omitempty"`
 	// The ID of the skillset to connect
 	SkillsetId *string `json:"skillsetId,omitempty"`
 }
@@ -1400,6 +1440,8 @@ type McpserverIntegrationDeleteResponse struct {
 
 // McpserverIntegrationUpdateRequest Input parameters for updating an existing MCP Server integration
 type McpserverIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The description of the integration
@@ -1408,6 +1450,8 @@ type McpserverIntegrationUpdateRequest struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
+	// The ID of the OAuth connection for IdP-based authentication
+	OAuthConnectionId *string `json:"oAuthConnectionId,omitempty"`
 	// The ID of the skillset to connect
 	SkillsetId *string `json:"skillsetId,omitempty"`
 }
@@ -1489,6 +1533,8 @@ type MessengerIntegration struct {
 type MessengerIntegrationCreateRequest struct {
 	// The Facebook Messenger page access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to enable file attachments
 	Attachments *bool `json:"attachments,omitempty"`
 	// The ID of the blueprint to use
@@ -1523,6 +1569,8 @@ type MessengerIntegrationDeleteResponse struct {
 type MessengerIntegrationUpdateRequest struct {
 	// The Facebook Messenger page access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to enable file attachments
 	Attachments *bool `json:"attachments,omitempty"`
 	// The ID of the blueprint to use
@@ -1576,6 +1624,8 @@ type MicrosoftteamsIntegration struct {
 
 // MicrosoftteamsIntegrationCreateRequest Input parameters for creating a new Microsoft Teams integration
 type MicrosoftteamsIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// The ID of the blueprint to use
@@ -1614,6 +1664,8 @@ type MicrosoftteamsIntegrationDeleteResponse struct {
 
 // MicrosoftteamsIntegrationUpdateRequest Input parameters for updating an existing Microsoft Teams integration
 type MicrosoftteamsIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The allowed senders for this integration
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// The ID of the blueprint to use
@@ -1657,18 +1709,22 @@ type Mutation struct {
 	CreateInstagramIntegration *InstagramIntegrationCreateResponse `json:"createInstagramIntegration,omitempty"`
 	CreateMcpserverIntegration *McpserverIntegrationCreateResponse `json:"createMcpserverIntegration,omitempty"`
 	CreateMessengerIntegration *MessengerIntegrationCreateResponse `json:"createMessengerIntegration,omitempty"`
+	CreateMicrosoftteamsIntegration *MicrosoftteamsIntegrationCreateResponse `json:"createMicrosoftteamsIntegration,omitempty"`
 	CreateNotionIntegration *NotionIntegrationCreateResponse `json:"createNotionIntegration,omitempty"`
+	CreatePolicy *PolicyCreateResponse `json:"createPolicy,omitempty"`
 	CreatePortal *PortalCreateResponse `json:"createPortal,omitempty"`
 	CreateSecret *SecretCreateResponse `json:"createSecret,omitempty"`
 	CreateSitemapIntegration *SitemapIntegrationCreateResponse `json:"createSitemapIntegration,omitempty"`
 	CreateSkillset *SkillsetCreateResponse `json:"createSkillset,omitempty"`
 	CreateSkillsetAbility *SkillsetAbilityCreateResponse `json:"createSkillsetAbility,omitempty"`
 	CreateSlackIntegration *SlackIntegrationCreateResponse `json:"createSlackIntegration,omitempty"`
-	CreateMicrosoftteamsIntegration *MicrosoftteamsIntegrationCreateResponse `json:"createMicrosoftteamsIntegration,omitempty"`
+	CreateSpace *SpaceCreateResponse `json:"createSpace,omitempty"`
+	CreateSupportIntegration *SupportIntegrationCreateResponse `json:"createSupportIntegration,omitempty"`
 	CreateTelegramIntegration *TelegramIntegrationCreateResponse `json:"createTelegramIntegration,omitempty"`
 	CreateTriggerIntegration *TriggerIntegrationCreateResponse `json:"createTriggerIntegration,omitempty"`
 	CreateTwilioIntegration *TwilioIntegrationCreateResponse `json:"createTwilioIntegration,omitempty"`
 	CreateWhatsAppIntegration *WhatsAppIntegrationCreateResponse `json:"createWhatsAppIntegration,omitempty"`
+	CreateWidgetIntegration *WidgetIntegrationCreateResponse `json:"createWidgetIntegration,omitempty"`
 	DeleteBlueprint *BlueprintDeleteResponse `json:"deleteBlueprint,omitempty"`
 	DeleteBot *BotDeleteResponse `json:"deleteBot,omitempty"`
 	DeleteDataset *DatasetDeleteResponse `json:"deleteDataset,omitempty"`
@@ -1680,18 +1736,22 @@ type Mutation struct {
 	DeleteInstagramIntegration *InstagramIntegrationDeleteResponse `json:"deleteInstagramIntegration,omitempty"`
 	DeleteMcpserverIntegration *McpserverIntegrationDeleteResponse `json:"deleteMcpserverIntegration,omitempty"`
 	DeleteMessengerIntegration *MessengerIntegrationDeleteResponse `json:"deleteMessengerIntegration,omitempty"`
+	DeleteMicrosoftteamsIntegration *MicrosoftteamsIntegrationDeleteResponse `json:"deleteMicrosoftteamsIntegration,omitempty"`
 	DeleteNotionIntegration *NotionIntegrationDeleteResponse `json:"deleteNotionIntegration,omitempty"`
+	DeletePolicy *PolicyDeleteResponse `json:"deletePolicy,omitempty"`
 	DeletePortal *PortalDeleteResponse `json:"deletePortal,omitempty"`
 	DeleteSecret *SecretDeleteResponse `json:"deleteSecret,omitempty"`
 	DeleteSitemapIntegration *SitemapIntegrationDeleteResponse `json:"deleteSitemapIntegration,omitempty"`
 	DeleteSkillset *SkillsetDeleteResponse `json:"deleteSkillset,omitempty"`
 	DeleteSkillsetAbility *SkillsetAbilityDeleteResponse `json:"deleteSkillsetAbility,omitempty"`
 	DeleteSlackIntegration *SlackIntegrationDeleteResponse `json:"deleteSlackIntegration,omitempty"`
-	DeleteMicrosoftteamsIntegration *MicrosoftteamsIntegrationDeleteResponse `json:"deleteMicrosoftteamsIntegration,omitempty"`
+	DeleteSpace *SpaceDeleteResponse `json:"deleteSpace,omitempty"`
+	DeleteSupportIntegration *SupportIntegrationDeleteResponse `json:"deleteSupportIntegration,omitempty"`
 	DeleteTelegramIntegration *TelegramIntegrationDeleteResponse `json:"deleteTelegramIntegration,omitempty"`
 	DeleteTriggerIntegration *TriggerIntegrationDeleteResponse `json:"deleteTriggerIntegration,omitempty"`
 	DeleteTwilioIntegration *TwilioIntegrationDeleteResponse `json:"deleteTwilioIntegration,omitempty"`
 	DeleteWhatsAppIntegration *WhatsAppIntegrationDeleteResponse `json:"deleteWhatsAppIntegration,omitempty"`
+	DeleteWidgetIntegration *WidgetIntegrationDeleteResponse `json:"deleteWidgetIntegration,omitempty"`
 	RevokeSecret *SecretRevokeResponse `json:"revokeSecret,omitempty"`
 	UpdateBlueprint *BlueprintUpdateResponse `json:"updateBlueprint,omitempty"`
 	UpdateBot *BotUpdateResponse `json:"updateBot,omitempty"`
@@ -1704,18 +1764,22 @@ type Mutation struct {
 	UpdateInstagramIntegration *InstagramIntegrationUpdateResponse `json:"updateInstagramIntegration,omitempty"`
 	UpdateMcpserverIntegration *McpserverIntegrationUpdateResponse `json:"updateMcpserverIntegration,omitempty"`
 	UpdateMessengerIntegration *MessengerIntegrationUpdateResponse `json:"updateMessengerIntegration,omitempty"`
+	UpdateMicrosoftteamsIntegration *MicrosoftteamsIntegrationUpdateResponse `json:"updateMicrosoftteamsIntegration,omitempty"`
 	UpdateNotionIntegration *NotionIntegrationUpdateResponse `json:"updateNotionIntegration,omitempty"`
+	UpdatePolicy *PolicyUpdateResponse `json:"updatePolicy,omitempty"`
 	UpdatePortal *PortalUpdateResponse `json:"updatePortal,omitempty"`
 	UpdateSecret *SecretUpdateResponse `json:"updateSecret,omitempty"`
 	UpdateSitemapIntegration *SitemapIntegrationUpdateResponse `json:"updateSitemapIntegration,omitempty"`
 	UpdateSkillset *SkillsetUpdateResponse `json:"updateSkillset,omitempty"`
 	UpdateSkillsetAbility *SkillsetAbilityUpdateResponse `json:"updateSkillsetAbility,omitempty"`
 	UpdateSlackIntegration *SlackIntegrationUpdateResponse `json:"updateSlackIntegration,omitempty"`
-	UpdateMicrosoftteamsIntegration *MicrosoftteamsIntegrationUpdateResponse `json:"updateMicrosoftteamsIntegration,omitempty"`
+	UpdateSpace *SpaceUpdateResponse `json:"updateSpace,omitempty"`
+	UpdateSupportIntegration *SupportIntegrationUpdateResponse `json:"updateSupportIntegration,omitempty"`
 	UpdateTelegramIntegration *TelegramIntegrationUpdateResponse `json:"updateTelegramIntegration,omitempty"`
 	UpdateTriggerIntegration *TriggerIntegrationUpdateResponse `json:"updateTriggerIntegration,omitempty"`
 	UpdateTwilioIntegration *TwilioIntegrationUpdateResponse `json:"updateTwilioIntegration,omitempty"`
 	UpdateWhatsAppIntegration *WhatsAppIntegrationUpdateResponse `json:"updateWhatsAppIntegration,omitempty"`
+	UpdateWidgetIntegration *WidgetIntegrationUpdateResponse `json:"updateWidgetIntegration,omitempty"`
 }
 
 type NotionIntegration struct {
@@ -1745,6 +1809,8 @@ type NotionIntegration struct {
 
 // NotionIntegrationCreateRequest Input parameters for creating a new Notion integration
 type NotionIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the dataset to sync to
@@ -1777,6 +1843,8 @@ type NotionIntegrationDeleteResponse struct {
 
 // NotionIntegrationUpdateRequest Input parameters for updating an existing Notion integration
 type NotionIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the dataset to sync to
@@ -2038,6 +2106,89 @@ type PlatformTutorial struct {
 	Name *string `json:"name,omitempty"`
 	// The tags associated with the platform content tutorial
 	Tags []string `json:"tags,omitempty"`
+}
+
+type Policy struct {
+	// The alias ID for the policy
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint associated with the policy
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot associated with the policy
+	BotId *string `json:"botId,omitempty"`
+	// The configuration of the policy
+	Config map[string]interface{} `json:"config,omitempty"`
+	// The date and time when the policy was created
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The description of the policy
+	Description *string `json:"description,omitempty"`
+	// The unique identifier of the policy
+	ID *string `json:"id,omitempty"`
+	// The metadata associated with the policy
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the policy
+	Name *string `json:"name,omitempty"`
+	// The type of the policy
+	Type *PolicyType `json:"type,omitempty"`
+	// The date and time when the policy was last updated
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// PolicyCreateRequest Input parameters for creating a new policy
+type PolicyCreateRequest struct {
+	// The alias ID for the policy
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to associate
+	BotId *string `json:"botId,omitempty"`
+	// The policy configuration as JSON
+	Config map[string]interface{} `json:"config,omitempty"`
+	// The description of the policy
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the policy
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the policy
+	Name *string `json:"name,omitempty"`
+	// The type of the policy
+	Type PolicyType `json:"type"`
+}
+
+// PolicyCreateResponse Response containing the ID of a newly created policy
+type PolicyCreateResponse struct {
+	// The unique identifier of the created policy
+	ID *string `json:"id,omitempty"`
+}
+
+// PolicyDeleteResponse Response containing the ID of a deleted policy
+type PolicyDeleteResponse struct {
+	// The unique identifier of the deleted policy
+	ID *string `json:"id,omitempty"`
+}
+
+// PolicyUpdateRequest Input parameters for updating an existing policy
+type PolicyUpdateRequest struct {
+	// The alias ID for the policy
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to associate
+	BotId *string `json:"botId,omitempty"`
+	// The policy configuration as JSON
+	Config map[string]interface{} `json:"config,omitempty"`
+	// The description of the policy
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the policy
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the policy
+	Name *string `json:"name,omitempty"`
+	// The type of the policy
+	Type *PolicyType `json:"type,omitempty"`
+}
+
+// PolicyUpdateResponse Response containing the ID of an updated policy
+type PolicyUpdateResponse struct {
+	// The unique identifier of the updated policy
+	ID *string `json:"id,omitempty"`
 }
 
 type Portal struct {
@@ -2315,6 +2466,8 @@ type SitemapIntegration struct {
 
 // SitemapIntegrationCreateRequest Input parameters for creating a new Sitemap integration
 type SitemapIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the dataset to sync to
@@ -2353,6 +2506,8 @@ type SitemapIntegrationDeleteResponse struct {
 
 // SitemapIntegrationUpdateRequest Input parameters for updating an existing Sitemap integration
 type SitemapIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the dataset to sync to
@@ -2553,6 +2708,8 @@ type SlackIntegration struct {
 
 // SlackIntegrationCreateRequest Input parameters for creating a new Slack integration
 type SlackIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use Slack user IDs (U…/W…), channel IDs (C…/G…/D…), @username, or #channel-name. Use * to allow all. Leave empty to deny all.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Auto-respond configuration for the integration
@@ -2599,6 +2756,8 @@ type SlackIntegrationDeleteResponse struct {
 
 // SlackIntegrationUpdateRequest Input parameters for updating an existing Slack integration
 type SlackIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use Slack user IDs (U…/W…), channel IDs (C…/G…/D…), @username, or #channel-name. Use * to allow all. Leave empty to deny all.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Auto-respond configuration for the integration
@@ -2638,10 +2797,16 @@ type SlackIntegrationUpdateResponse struct {
 }
 
 type Space struct {
+	// The alias ID for the space
+	Alias *string `json:"alias,omitempty"`
 	// The blueprint associated with the space
 	Blueprint *Blueprint `json:"blueprint,omitempty"`
+	// The ID of the blueprint associated with the space
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The contact associated with the space
 	Contact *Contact `json:"contact,omitempty"`
+	// The ID of the contact associated with the space
+	ContactId *string `json:"contactId,omitempty"`
 	// The conversations associated with the space
 	Conversations interface{} `json:"conversations,omitempty"`
 	// The date and time when the space was created
@@ -2660,15 +2825,73 @@ type Space struct {
 	User *User `json:"user,omitempty"`
 }
 
+// SpaceCreateRequest Input parameters for creating a new space
+type SpaceCreateRequest struct {
+	// The alias ID for the space
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the contact to associate
+	ContactId *string `json:"contactId,omitempty"`
+	// The description of the space
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the space
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the space
+	Name *string `json:"name,omitempty"`
+}
+
+// SpaceCreateResponse Response containing the ID of a newly created space
+type SpaceCreateResponse struct {
+	// The unique identifier of the created space
+	ID *string `json:"id,omitempty"`
+}
+
+// SpaceDeleteResponse Response containing the ID of a deleted space
+type SpaceDeleteResponse struct {
+	// The unique identifier of the deleted space
+	ID *string `json:"id,omitempty"`
+}
+
+// SpaceUpdateRequest Input parameters for updating an existing space
+type SpaceUpdateRequest struct {
+	// The alias ID for the space
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the contact to associate
+	ContactId *string `json:"contactId,omitempty"`
+	// The description of the space
+	Description *string `json:"description,omitempty"`
+	// Additional metadata for the space
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the space
+	Name *string `json:"name,omitempty"`
+}
+
+// SpaceUpdateResponse Response containing the ID of an updated space
+type SpaceUpdateResponse struct {
+	// The unique identifier of the updated space
+	ID *string `json:"id,omitempty"`
+}
+
 type SupportIntegration struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
 	// The blueprint associated with the support integration
 	Blueprint *Blueprint `json:"blueprint,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The bot associated with the support integration
 	Bot *Bot `json:"bot,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
 	// The date and time when the support integration was created
 	CreatedAt *string `json:"createdAt,omitempty"`
 	// The description of the support integration
 	Description *string `json:"description,omitempty"`
+	// The support email address
+	Email *string `json:"email,omitempty"`
 	// The unique identifier of the support integration
 	ID *string `json:"id,omitempty"`
 	// The metadata associated with the support integration
@@ -2677,6 +2900,57 @@ type SupportIntegration struct {
 	Name *string `json:"name,omitempty"`
 	// The date and time when the support integration was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+// SupportIntegrationCreateRequest Input parameters for creating a new Support integration
+type SupportIntegrationCreateRequest struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// The description
+	Description *string `json:"description,omitempty"`
+	// The support email address
+	Email *string `json:"email,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name
+	Name *string `json:"name,omitempty"`
+}
+
+// SupportIntegrationCreateResponse Response containing the ID of a newly created Support integration
+type SupportIntegrationCreateResponse struct {
+	ID *string `json:"id,omitempty"`
+}
+
+// SupportIntegrationDeleteResponse Response containing the ID of a deleted Support integration
+type SupportIntegrationDeleteResponse struct {
+	ID *string `json:"id,omitempty"`
+}
+
+// SupportIntegrationUpdateRequest Input parameters for updating an existing Support integration
+type SupportIntegrationUpdateRequest struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// The description
+	Description *string `json:"description,omitempty"`
+	// The support email address
+	Email *string `json:"email,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name
+	Name *string `json:"name,omitempty"`
+}
+
+// SupportIntegrationUpdateResponse Response containing the ID of a updated Support integration
+type SupportIntegrationUpdateResponse struct {
+	ID *string `json:"id,omitempty"`
 }
 
 type Task struct {
@@ -2690,6 +2964,8 @@ type Task struct {
 	CreatedAt *string `json:"createdAt,omitempty"`
 	// The description of the task
 	Description *string `json:"description,omitempty"`
+	// The executions associated with the task
+	Executions interface{} `json:"executions,omitempty"`
 	// The unique identifier of the task
 	ID *string `json:"id,omitempty"`
 	// The metadata associated with the task
@@ -2705,6 +2981,33 @@ type Task struct {
 	// The status of the task
 	Status *TaskStatus `json:"status,omitempty"`
 	// The date and time when the task was last updated
+	UpdatedAt *string `json:"updatedAt,omitempty"`
+}
+
+type TaskExecution struct {
+	// The date and time when the task execution completed
+	CompletedAt *string `json:"completedAt,omitempty"`
+	// The conversation associated with this execution
+	Conversation *Conversation `json:"conversation,omitempty"`
+	// The date and time when the task execution was created
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The description of the task execution
+	Description *string `json:"description,omitempty"`
+	// The unique identifier of the task execution
+	ID *string `json:"id,omitempty"`
+	// The metadata associated with the task execution
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name of the task execution
+	Name *string `json:"name,omitempty"`
+	// The outcome of the task execution
+	Outcome *TaskOutcome `json:"outcome,omitempty"`
+	// The status of the task execution
+	Status *TaskStatus `json:"status,omitempty"`
+	// The summary of the task execution
+	Summary *string `json:"summary,omitempty"`
+	// The task associated with this execution
+	Task *Task `json:"task,omitempty"`
+	// The date and time when the task execution was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
@@ -2737,6 +3040,8 @@ type TelegramIntegration struct {
 
 // TelegramIntegrationCreateRequest Input parameters for creating a new Telegram integration
 type TelegramIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use @username or @numericId for users, #chatId for groups. Leave empty to allow all.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -2773,6 +3078,8 @@ type TelegramIntegrationDeleteResponse struct {
 
 // TelegramIntegrationUpdateRequest Input parameters for updating an existing Telegram integration
 type TelegramIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use @username or @numericId for users, #chatId for groups. Leave empty to allow all.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -2820,16 +3127,18 @@ type TriggerIntegration struct {
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the trigger integration
 	Name *string `json:"name,omitempty"`
-	// The session duration for the trigger integration
-	SessionDuration *float64 `json:"sessionDuration,omitempty"`
 	// The schedule for the trigger integration
 	Schedule *string `json:"schedule,omitempty"`
+	// The session duration for the trigger integration
+	SessionDuration *float64 `json:"sessionDuration,omitempty"`
 	// The date and time when the trigger integration was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 // TriggerIntegrationCreateRequest Input parameters for creating a new Trigger integration
 type TriggerIntegrationCreateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to require authentication for the trigger
 	Authenticate *bool `json:"authenticate,omitempty"`
 	// The ID of the blueprint to use
@@ -2838,18 +3147,16 @@ type TriggerIntegrationCreateRequest struct {
 	BotId *string `json:"botId,omitempty"`
 	// The description of the integration
 	Description *string `json:"description,omitempty"`
-	// The maximum number of iterations per trigger execution
-	MaxIterations *int64 `json:"maxIterations,omitempty"`
-	// The maximum time per trigger execution in milliseconds
-	MaxTime *int64 `json:"maxTime,omitempty"`
 	// Additional metadata for the integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
-	// The duration of the session in milliseconds
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
 	// The schedule for automatic trigger execution
 	Schedule *string `json:"schedule,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The IANA timezone used to evaluate the trigger schedule
+	Timezone *string `json:"timezone,omitempty"`
 }
 
 // TriggerIntegrationCreateResponse Response containing the ID of a newly created Trigger integration
@@ -2866,6 +3173,8 @@ type TriggerIntegrationDeleteResponse struct {
 
 // TriggerIntegrationUpdateRequest Input parameters for updating an existing Trigger integration
 type TriggerIntegrationUpdateRequest struct {
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Whether to require authentication for the trigger
 	Authenticate *bool `json:"authenticate,omitempty"`
 	// The ID of the blueprint to use
@@ -2874,18 +3183,16 @@ type TriggerIntegrationUpdateRequest struct {
 	BotId *string `json:"botId,omitempty"`
 	// The description of the integration
 	Description *string `json:"description,omitempty"`
-	// The maximum number of iterations per trigger execution
-	MaxIterations *int64 `json:"maxIterations,omitempty"`
-	// The maximum time per trigger execution in milliseconds
-	MaxTime *int64 `json:"maxTime,omitempty"`
 	// Additional metadata for the integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the integration
 	Name *string `json:"name,omitempty"`
-	// The duration of the session in milliseconds
-	SessionDuration *int64 `json:"sessionDuration,omitempty"`
 	// The schedule for automatic trigger execution
 	Schedule *string `json:"schedule,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The IANA timezone used to evaluate the trigger schedule
+	Timezone *string `json:"timezone,omitempty"`
 }
 
 // TriggerIntegrationUpdateResponse Response containing the ID of an updated Trigger integration
@@ -2919,6 +3226,14 @@ type TwilioIntegration struct {
 
 // TwilioIntegrationCreateRequest Input parameters for creating a new Twilio integration
 type TwilioIntegrationCreateRequest struct {
+	// The Twilio Account SID
+	AccountSid *string `json:"accountSid,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
+	// The allowed senders for the integration
+	AllowFrom *string `json:"allowFrom,omitempty"`
+	// The Twilio auth token
+	AuthToken *string `json:"authToken,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot to connect
@@ -2933,6 +3248,8 @@ type TwilioIntegrationCreateRequest struct {
 	Name *string `json:"name,omitempty"`
 	// The duration of the session in milliseconds
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The Twilio voice configuration
+	Voice *string `json:"voice,omitempty"`
 }
 
 // TwilioIntegrationCreateResponse Response containing the ID of a newly created Twilio integration
@@ -2949,6 +3266,14 @@ type TwilioIntegrationDeleteResponse struct {
 
 // TwilioIntegrationUpdateRequest Input parameters for updating an existing Twilio integration
 type TwilioIntegrationUpdateRequest struct {
+	// The Twilio Account SID
+	AccountSid *string `json:"accountSid,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
+	// The allowed senders for the integration
+	AllowFrom *string `json:"allowFrom,omitempty"`
+	// The Twilio auth token
+	AuthToken *string `json:"authToken,omitempty"`
 	// The ID of the blueprint to use
 	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot to connect
@@ -2963,6 +3288,8 @@ type TwilioIntegrationUpdateRequest struct {
 	Name *string `json:"name,omitempty"`
 	// The duration of the session in milliseconds
 	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// The Twilio voice configuration
+	Voice *string `json:"voice,omitempty"`
 }
 
 // TwilioIntegrationUpdateResponse Response containing the ID of an updated Twilio integration
@@ -3013,6 +3340,8 @@ type WhatsappIntegration struct {
 type WhatsAppIntegrationCreateRequest struct {
 	// The WhatsApp Business API access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use phone numbers in E.164 format (digits only). Leave empty to block all. Use * to allow everyone.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -3051,6 +3380,8 @@ type WhatsAppIntegrationDeleteResponse struct {
 type WhatsAppIntegrationUpdateRequest struct {
 	// The WhatsApp Business API access token
 	AccessToken *string `json:"accessToken,omitempty"`
+	// The alias ID for the integration
+	Alias *string `json:"alias,omitempty"`
 	// Newline-or-comma-separated list of allowed senders. Use phone numbers in E.164 format (digits only). Leave empty to block all. Use * to allow everyone.
 	AllowFrom *string `json:"allowFrom,omitempty"`
 	// Whether to enable file attachments
@@ -3080,26 +3411,241 @@ type WhatsAppIntegrationUpdateResponse struct {
 }
 
 type WidgetIntegration struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
 	// Whether attachments are enabled
 	Attachments *bool `json:"attachments,omitempty"`
+	// Whether auto-scroll is enabled
+	AutoScroll *bool `json:"autoScroll,omitempty"`
 	// The blueprint associated with the widget integration
 	Blueprint *Blueprint `json:"blueprint,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The bot associated with the widget integration
 	Bot *Bot `json:"bot,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether the carousel is enabled
+	Carousel *bool `json:"carousel,omitempty"`
 	// Whether contact collection is enabled
 	ContactCollection *bool `json:"contactCollection,omitempty"`
 	// The date and time when the widget integration was created
 	CreatedAt *string `json:"createdAt,omitempty"`
 	// The description of the widget integration
 	Description *string `json:"description,omitempty"`
+	// Whether conversation export is enabled
+	ExportConversation *bool `json:"exportConversation,omitempty"`
+	// Whether forms are enabled
+	Form *bool `json:"form,omitempty"`
 	// The unique identifier of the widget integration
 	ID *string `json:"id,omitempty"`
+	// The initial message
+	Initial *string `json:"initial,omitempty"`
+	// The widget intro message
+	Intro *string `json:"intro,omitempty"`
+	// The widget language
+	Language *string `json:"language,omitempty"`
+	// The widget layout
+	Layout *string `json:"layout,omitempty"`
+	// Whether math rendering is enabled
+	Math *bool `json:"math,omitempty"`
+	// Whether the widget can be maximized
+	Maximize *bool `json:"maximize,omitempty"`
+	// Whether message peek is enabled
+	MessagePeek *bool `json:"messagePeek,omitempty"`
 	// The metadata associated with the widget integration
 	Meta map[string]interface{} `json:"meta,omitempty"`
 	// The name of the widget integration
 	Name *string `json:"name,omitempty"`
+	// The allowed origin
+	Origin *string `json:"origin,omitempty"`
+	// The input placeholder text
+	Placeholder *string `json:"placeholder,omitempty"`
+	// The enabled plugins
+	Plugins *string `json:"plugins,omitempty"`
+	// Whether the powered-by label is shown
+	PoweredBy *bool `json:"poweredBy,omitempty"`
+	// Whether conversation restart is enabled
+	RestartConversation *bool `json:"restartConversation,omitempty"`
 	// The session duration for the widget integration
 	SessionDuration *float64 `json:"sessionDuration,omitempty"`
+	// Whether to start first
+	StartFirst *bool `json:"startFirst,omitempty"`
+	// Whether to stream responses
+	Stream *bool `json:"stream,omitempty"`
+	// The widget theme
+	Theme *string `json:"theme,omitempty"`
+	// The widget title
+	Title *string `json:"title,omitempty"`
+	// Whether tools are enabled
+	Tools *bool `json:"tools,omitempty"`
+	// Whether link unfurling is enabled
+	Unfurl *bool `json:"unfurl,omitempty"`
 	// The date and time when the widget integration was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
+	// Whether verbose mode is enabled
+	Verbose *bool `json:"verbose,omitempty"`
+	// Whether voice input is enabled
+	VoiceIn *bool `json:"voiceIn,omitempty"`
+	// Whether voice output is enabled
+	VoiceOut *bool `json:"voiceOut,omitempty"`
+}
+
+// WidgetIntegrationCreateRequest Input parameters for creating a new Widget integration
+type WidgetIntegrationCreateRequest struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
+	// Whether attachments are enabled
+	Attachments *bool `json:"attachments,omitempty"`
+	// Whether auto-scroll is enabled
+	AutoScroll *bool `json:"autoScroll,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether the carousel is enabled
+	Carousel *bool `json:"carousel,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description
+	Description *string `json:"description,omitempty"`
+	// Whether conversation export is enabled
+	ExportConversation *bool `json:"exportConversation,omitempty"`
+	// Whether forms are enabled
+	Form *bool `json:"form,omitempty"`
+	// The initial message
+	Initial *string `json:"initial,omitempty"`
+	// The widget intro message
+	Intro *string `json:"intro,omitempty"`
+	// The widget language
+	Language *string `json:"language,omitempty"`
+	// The widget layout
+	Layout *string `json:"layout,omitempty"`
+	// Whether math rendering is enabled
+	Math *bool `json:"math,omitempty"`
+	// Whether the widget can be maximized
+	Maximize *bool `json:"maximize,omitempty"`
+	// Whether message peek is enabled
+	MessagePeek *bool `json:"messagePeek,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name
+	Name *string `json:"name,omitempty"`
+	// The allowed origin
+	Origin *string `json:"origin,omitempty"`
+	// The input placeholder text
+	Placeholder *string `json:"placeholder,omitempty"`
+	// The enabled plugins
+	Plugins *string `json:"plugins,omitempty"`
+	// Whether the powered-by label is shown
+	PoweredBy *bool `json:"poweredBy,omitempty"`
+	// Whether conversation restart is enabled
+	RestartConversation *bool `json:"restartConversation,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// Whether to start first
+	StartFirst *bool `json:"startFirst,omitempty"`
+	// Whether to stream responses
+	Stream *bool `json:"stream,omitempty"`
+	// The widget theme
+	Theme *string `json:"theme,omitempty"`
+	// The widget title
+	Title *string `json:"title,omitempty"`
+	// Whether tools are enabled
+	Tools *bool `json:"tools,omitempty"`
+	// Whether link unfurling is enabled
+	Unfurl *bool `json:"unfurl,omitempty"`
+	// Whether verbose mode is enabled
+	Verbose *bool `json:"verbose,omitempty"`
+	// Whether voice input is enabled
+	VoiceIn *bool `json:"voiceIn,omitempty"`
+	// Whether voice output is enabled
+	VoiceOut *bool `json:"voiceOut,omitempty"`
+}
+
+// WidgetIntegrationCreateResponse Response containing the ID of a newly created Widget integration
+type WidgetIntegrationCreateResponse struct {
+	ID *string `json:"id,omitempty"`
+}
+
+// WidgetIntegrationDeleteResponse Response containing the ID of a deleted Widget integration
+type WidgetIntegrationDeleteResponse struct {
+	ID *string `json:"id,omitempty"`
+}
+
+// WidgetIntegrationUpdateRequest Input parameters for updating an existing Widget integration
+type WidgetIntegrationUpdateRequest struct {
+	// The alias ID
+	Alias *string `json:"alias,omitempty"`
+	// Whether attachments are enabled
+	Attachments *bool `json:"attachments,omitempty"`
+	// Whether auto-scroll is enabled
+	AutoScroll *bool `json:"autoScroll,omitempty"`
+	// The ID of the blueprint to use
+	BlueprintId *string `json:"blueprintId,omitempty"`
+	// The ID of the bot to connect
+	BotId *string `json:"botId,omitempty"`
+	// Whether the carousel is enabled
+	Carousel *bool `json:"carousel,omitempty"`
+	// Whether to collect contact information
+	ContactCollection *bool `json:"contactCollection,omitempty"`
+	// The description
+	Description *string `json:"description,omitempty"`
+	// Whether conversation export is enabled
+	ExportConversation *bool `json:"exportConversation,omitempty"`
+	// Whether forms are enabled
+	Form *bool `json:"form,omitempty"`
+	// The initial message
+	Initial *string `json:"initial,omitempty"`
+	// The widget intro message
+	Intro *string `json:"intro,omitempty"`
+	// The widget language
+	Language *string `json:"language,omitempty"`
+	// The widget layout
+	Layout *string `json:"layout,omitempty"`
+	// Whether math rendering is enabled
+	Math *bool `json:"math,omitempty"`
+	// Whether the widget can be maximized
+	Maximize *bool `json:"maximize,omitempty"`
+	// Whether message peek is enabled
+	MessagePeek *bool `json:"messagePeek,omitempty"`
+	// Additional metadata for the integration
+	Meta map[string]interface{} `json:"meta,omitempty"`
+	// The name
+	Name *string `json:"name,omitempty"`
+	// The allowed origin
+	Origin *string `json:"origin,omitempty"`
+	// The input placeholder text
+	Placeholder *string `json:"placeholder,omitempty"`
+	// The enabled plugins
+	Plugins *string `json:"plugins,omitempty"`
+	// Whether the powered-by label is shown
+	PoweredBy *bool `json:"poweredBy,omitempty"`
+	// Whether conversation restart is enabled
+	RestartConversation *bool `json:"restartConversation,omitempty"`
+	// The duration of the session in milliseconds
+	SessionDuration *int64 `json:"sessionDuration,omitempty"`
+	// Whether to start first
+	StartFirst *bool `json:"startFirst,omitempty"`
+	// Whether to stream responses
+	Stream *bool `json:"stream,omitempty"`
+	// The widget theme
+	Theme *string `json:"theme,omitempty"`
+	// The widget title
+	Title *string `json:"title,omitempty"`
+	// Whether tools are enabled
+	Tools *bool `json:"tools,omitempty"`
+	// Whether link unfurling is enabled
+	Unfurl *bool `json:"unfurl,omitempty"`
+	// Whether verbose mode is enabled
+	Verbose *bool `json:"verbose,omitempty"`
+	// Whether voice input is enabled
+	VoiceIn *bool `json:"voiceIn,omitempty"`
+	// Whether voice output is enabled
+	VoiceOut *bool `json:"voiceOut,omitempty"`
+}
+
+// WidgetIntegrationUpdateResponse Response containing the ID of a updated Widget integration
+type WidgetIntegrationUpdateResponse struct {
+	ID *string `json:"id,omitempty"`
 }

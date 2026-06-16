@@ -25,22 +25,23 @@ type DatasetDataSource struct {
 type DatasetDataSourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	Description types.String `tfsdk:"description"`
-	MatchInstruction types.String `tfsdk:"match_instruction"`
-	Meta types.Map `tfsdk:"meta"`
-	MismatchInstruction types.String `tfsdk:"mismatch_instruction"`
-	Name types.String `tfsdk:"name"`
-	RecordMaxTokens types.Int64 `tfsdk:"record_max_tokens"`
-	Reranker types.String `tfsdk:"reranker"`
-	SearchMaxRecords types.Int64 `tfsdk:"search_max_records"`
-	SearchMaxTokens types.Int64 `tfsdk:"search_max_tokens"`
-	SearchMinScore types.Float64 `tfsdk:"search_min_score"`
-	Separators types.String `tfsdk:"separators"`
-	Store types.String `tfsdk:"store"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias               types.String  `tfsdk:"alias"`
+	BlueprintId         types.String  `tfsdk:"blueprint_id"`
+	Description         types.String  `tfsdk:"description"`
+	MatchInstruction    types.String  `tfsdk:"match_instruction"`
+	Meta                types.Map     `tfsdk:"meta"`
+	MismatchInstruction types.String  `tfsdk:"mismatch_instruction"`
+	Name                types.String  `tfsdk:"name"`
+	RecordMaxTokens     types.Int64   `tfsdk:"record_max_tokens"`
+	Reranker            types.String  `tfsdk:"reranker"`
+	SearchMaxRecords    types.Int64   `tfsdk:"search_max_records"`
+	SearchMaxTokens     types.Int64   `tfsdk:"search_max_tokens"`
+	SearchMinScore      types.Float64 `tfsdk:"search_min_score"`
+	Separators          types.String  `tfsdk:"separators"`
+	Store               types.String  `tfsdk:"store"`
+	Visibility          types.String  `tfsdk:"visibility"`
+	CreatedAt           types.String  `tfsdk:"created_at"`
+	UpdatedAt           types.String  `tfsdk:"updated_at"`
 }
 
 // Metadata returns the data source type name.
@@ -58,6 +59,10 @@ func (d *DatasetDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 				MarkdownDescription: "The unique identifier of the dataset to look up",
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the dataset",
+				Computed:            true,
+			},
 			"blueprint_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the blueprint to use",
 				Computed:            true,
@@ -165,6 +170,9 @@ func (d *DatasetDataSource) Read(ctx context.Context, req datasource.ReadRequest
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.BlueprintId != nil {
 		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
 	}

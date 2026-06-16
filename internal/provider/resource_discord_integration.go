@@ -32,19 +32,21 @@ type DiscordIntegrationResource struct {
 type DiscordIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
-	AppId types.String `tfsdk:"app_id"`
-	BlueprintId types.String `tfsdk:"blueprint_id"`
-	BotId types.String `tfsdk:"bot_id"`
-	BotToken types.String `tfsdk:"bot_token"`
-	ContactCollection types.Bool `tfsdk:"contact_collection"`
-	Description types.String `tfsdk:"description"`
-	Handle types.String `tfsdk:"handle"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	PublicKey types.String `tfsdk:"public_key"`
-	SessionDuration types.Int64 `tfsdk:"session_duration"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Alias             types.String `tfsdk:"alias"`
+	AllowFrom         types.String `tfsdk:"allow_from"`
+	AppId             types.String `tfsdk:"app_id"`
+	BlueprintId       types.String `tfsdk:"blueprint_id"`
+	BotId             types.String `tfsdk:"bot_id"`
+	BotToken          types.String `tfsdk:"bot_token"`
+	ContactCollection types.Bool   `tfsdk:"contact_collection"`
+	Description       types.String `tfsdk:"description"`
+	Handle            types.String `tfsdk:"handle"`
+	Meta              types.Map    `tfsdk:"meta"`
+	Name              types.String `tfsdk:"name"`
+	PublicKey         types.String `tfsdk:"public_key"`
+	SessionDuration   types.Int64  `tfsdk:"session_duration"`
+	CreatedAt         types.String `tfsdk:"created_at"`
+	UpdatedAt         types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -65,6 +67,14 @@ func (r *DiscordIntegrationResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the integration",
+				Optional:            true,
+			},
+			"allow_from": schema.StringAttribute{
+				MarkdownDescription: "The allowed senders for the discord integration",
+				Optional:            true,
+			},
 			"app_id": schema.StringAttribute{
 				MarkdownDescription: "The Discord application ID",
 				Optional:            true,
@@ -155,17 +165,19 @@ func (r *DiscordIntegrationResource) Create(ctx context.Context, req resource.Cr
 	// Call the ChatBotKit GraphQL API to create discordintegration
 
 	result, err := r.client.CreateDiscordIntegration(ctx, CreateDiscordIntegrationInput{
-		AppId: data.AppId.ValueStringPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AppId:             data.AppId.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Handle: data.Handle.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		PublicKey: data.PublicKey.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Handle:            data.Handle.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		PublicKey:         data.PublicKey.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create discordintegration: %s", err))
@@ -207,6 +219,12 @@ func (r *DiscordIntegrationResource) Read(ctx context.Context, req resource.Read
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
+	if result.AllowFrom != nil {
+		data.AllowFrom = types.StringPointerValue(result.AllowFrom)
+	}
 	if result.AppId != nil {
 		data.AppId = types.StringPointerValue(result.AppId)
 	}
@@ -267,17 +285,19 @@ func (r *DiscordIntegrationResource) Update(ctx context.Context, req resource.Up
 	// Call the ChatBotKit GraphQL API to update discordintegration
 
 	_, err := r.client.UpdateDiscordIntegration(ctx, data.ID.ValueString(), UpdateDiscordIntegrationInput{
-		AppId: data.AppId.ValueStringPointer(),
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId: data.BotId.ValueStringPointer(),
-		BotToken: data.BotToken.ValueStringPointer(),
+		Alias:             data.Alias.ValueStringPointer(),
+		AllowFrom:         data.AllowFrom.ValueStringPointer(),
+		AppId:             data.AppId.ValueStringPointer(),
+		BlueprintId:       data.BlueprintId.ValueStringPointer(),
+		BotId:             data.BotId.ValueStringPointer(),
+		BotToken:          data.BotToken.ValueStringPointer(),
 		ContactCollection: data.ContactCollection.ValueBoolPointer(),
-		Description: data.Description.ValueStringPointer(),
-		Handle: data.Handle.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		PublicKey: data.PublicKey.ValueStringPointer(),
-		SessionDuration: data.SessionDuration.ValueInt64Pointer(),
+		Description:       data.Description.ValueStringPointer(),
+		Handle:            data.Handle.ValueStringPointer(),
+		Meta:              convertMapToInterface(ctx, data.Meta),
+		Name:              data.Name.ValueStringPointer(),
+		PublicKey:         data.PublicKey.ValueStringPointer(),
+		SessionDuration:   data.SessionDuration.ValueInt64Pointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update discordintegration: %s", err))

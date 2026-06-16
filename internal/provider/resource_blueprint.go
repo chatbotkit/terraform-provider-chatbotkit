@@ -32,12 +32,13 @@ type BlueprintResource struct {
 type BlueprintResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	Alias       types.String `tfsdk:"alias"`
 	Description types.String `tfsdk:"description"`
-	Meta types.Map `tfsdk:"meta"`
-	Name types.String `tfsdk:"name"`
-	Visibility types.String `tfsdk:"visibility"`
-	CreatedAt types.String `tfsdk:"created_at"`
-	UpdatedAt types.String `tfsdk:"updated_at"`
+	Meta        types.Map    `tfsdk:"meta"`
+	Name        types.String `tfsdk:"name"`
+	Visibility  types.String `tfsdk:"visibility"`
+	CreatedAt   types.String `tfsdk:"created_at"`
+	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
 
 // Metadata returns the resource type name.
@@ -58,6 +59,10 @@ func (r *BlueprintResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 
+			"alias": schema.StringAttribute{
+				MarkdownDescription: "The alias ID for the blueprint",
+				Optional:            true,
+			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "The description of the blueprint",
 				Optional:            true,
@@ -119,10 +124,11 @@ func (r *BlueprintResource) Create(ctx context.Context, req resource.CreateReque
 	// Call the ChatBotKit GraphQL API to create blueprint
 
 	result, err := r.client.CreateBlueprint(ctx, CreateBlueprintInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create blueprint: %s", err))
@@ -164,6 +170,9 @@ func (r *BlueprintResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	// Update data model with response values
 
+	if result.Alias != nil {
+		data.Alias = types.StringPointerValue(result.Alias)
+	}
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
@@ -203,10 +212,11 @@ func (r *BlueprintResource) Update(ctx context.Context, req resource.UpdateReque
 	// Call the ChatBotKit GraphQL API to update blueprint
 
 	_, err := r.client.UpdateBlueprint(ctx, data.ID.ValueString(), UpdateBlueprintInput{
+		Alias:       data.Alias.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
-		Meta: convertMapToInterface(ctx, data.Meta),
-		Name: data.Name.ValueStringPointer(),
-		Visibility: data.Visibility.ValueStringPointer(),
+		Meta:        convertMapToInterface(ctx, data.Meta),
+		Name:        data.Name.ValueStringPointer(),
+		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update blueprint: %s", err))
