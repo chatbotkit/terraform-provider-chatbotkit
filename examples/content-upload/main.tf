@@ -27,16 +27,16 @@ resource "chatbotkit_file_content" "notes" {
 
 # Upload a local file (use source_hash so changes are detected).
 resource "chatbotkit_file" "report" {
-  name = "report.pdf"
+  name = "report.csv"
 }
 
 resource "chatbotkit_file_content" "report" {
   file_id     = chatbotkit_file.report.id
-  source      = "${path.module}/files/report.pdf"
-  source_hash = filesha256("${path.module}/files/report.pdf")
+  source      = "${path.module}/files/report.csv"
+  source_hash = filesha256("${path.module}/files/report.csv")
 }
 
-# --- Space storage objects --------------------------------------------------
+# --- Space storage files ----------------------------------------------------
 
 resource "chatbotkit_space" "workspace" {
   name        = "Team Workspace"
