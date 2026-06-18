@@ -23,6 +23,7 @@ type ChatBotKitProvider struct {
 type ChatBotKitProviderModel struct {
 	APIKey  types.String `tfsdk:"api_key"`
 	BaseURL types.String `tfsdk:"base_url"`
+	RunAs   types.String `tfsdk:"run_as"`
 }
 
 func (p *ChatBotKitProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -41,6 +42,10 @@ func (p *ChatBotKitProvider) Schema(ctx context.Context, req provider.SchemaRequ
 			},
 			"base_url": schema.StringAttribute{
 				MarkdownDescription: "The base URL for the ChatBotKit API. Defaults to https://api.chatbotkit.com/graphql",
+				Optional:            true,
+			},
+			"run_as": schema.StringAttribute{
+				MarkdownDescription: "The ID of a sub-account (partner user) to operate on behalf of. When set, requests include the X-RunAs-UserId header, so a single api_key (a partner/master token) can manage many sub-accounts by configuring one provider alias per sub-account. Can also be set via the CHATBOTKIT_RUN_AS environment variable.",
 				Optional:            true,
 			},
 		},
@@ -75,6 +80,13 @@ func (p *ChatBotKitProvider) Configure(ctx context.Context, req provider.Configu
 
 	// Create the API client
 	client := NewClient(apiKey, baseURL)
+
+	// Optionally operate on behalf of a sub-account (partner user).
+	runAs := data.RunAs.ValueString()
+	if runAs == "" {
+		runAs = os.Getenv("CHATBOTKIT_RUN_AS")
+	}
+	client.RunAs = runAs
 
 	resp.DataSourceData = client
 	resp.ResourceData = client

@@ -1,0 +1,12 @@
+# Sub-account (partner user) IDs — one per customer.
+#
+# These select which sub-account each customer's module deploys into, via run_as.
+# They are account IDs, not secrets. The single partner/master token is supplied
+# separately via the CHATBOTKIT_API_KEY environment variable:
+#
+#   export CHATBOTKIT_API_KEY="sk-...your-partner-token..."
+#
+# Copy this file to terraform.tfvars and fill in the real account IDs.
+
+acme_account_id   = "user_REPLACE-with-acme-sub-account-id"
+globex_account_id = "user_REPLACE-with-globex-sub-account-id"
