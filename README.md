@@ -139,9 +139,11 @@ The provider supports the following resources:
 | `chatbotkit_skillset_ability`           | Manages a skillset ability          |
 | `chatbotkit_secret`                     | Manages a secret                    |
 | `chatbotkit_file`                       | Manages a file                      |
+| `chatbotkit_file_content`               | Uploads content to a file           |
 | `chatbotkit_portal`                     | Manages a portal                    |
 | `chatbotkit_policy`                      | Manages a policy                    |
 | `chatbotkit_space`                      | Manages a space                     |
+| `chatbotkit_space_storage_file`         | Manages a file in space storage     |
 | `chatbotkit_discord_integration`        | Manages Discord integration         |
 | `chatbotkit_email_integration`          | Manages Email integration           |
 | `chatbotkit_extract_integration`        | Manages Extract integration         |

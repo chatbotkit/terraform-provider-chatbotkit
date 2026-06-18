@@ -4,6 +4,32 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-06-18
+
+### Added
+
+- `chatbotkit_file_content` resource for uploading content to an existing
+  `chatbotkit_file`. Accepts exactly one of `content` (inline), `source` (a local
+  file), or `source_url` (an HTTP or data URL fetched server-side). Files up to
+  ~4.5MB are uploaded directly; larger files are uploaded to storage via a
+  presigned request automatically.
+- `chatbotkit_space_storage_file` resource for managing a file at a path within a
+  space's storage. Supports the same `content` / `source` / `source_url` inputs
+  and transparent presigned uploads for large files, and removes the stored file
+  on destroy.
+- Both resources support an optional `content_type` (auto-detected from the file
+  extension, falling back to content sniffing) and an optional `source_hash`
+  (e.g. `filesha256(...)`) so changes to a local `source` file trigger
+  re-uploads.
+
+### Changed
+
+- The provider registration now appends a hand-maintained set of resources
+  (`manualResources()` in `resources_manual.go`) to the generated list, allowing
+  resources backed by REST endpoints that are not expressed in the GraphQL schema
+  (such as the new content uploads) to coexist with generated resources across
+  regeneration.
+
 ## [1.3.0] - 2026-06-16
 
 ### Added
@@ -44,4 +70,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   configurations and state referencing the old type must be updated (e.g. via
   `terraform state mv`).
 
+[1.4.0]: https://github.com/chatbotkit/terraform-provider-chatbotkit/releases/tag/v1.4.0
 [1.3.0]: https://github.com/chatbotkit/terraform-provider-chatbotkit/releases/tag/v1.3.0

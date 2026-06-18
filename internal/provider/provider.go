@@ -81,7 +81,7 @@ func (p *ChatBotKitProvider) Configure(ctx context.Context, req provider.Configu
 }
 
 func (p *ChatBotKitProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
+	return append([]func() resource.Resource{
 
 		NewBlueprintResource,
 		NewBotResource,
@@ -110,7 +110,7 @@ func (p *ChatBotKitProvider) Resources(ctx context.Context) []func() resource.Re
 		NewTwilioIntegrationResource,
 		NewWhatsAppIntegrationResource,
 		NewWidgetIntegrationResource,
-	}
+	}, manualResources()...)
 }
 
 func (p *ChatBotKitProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
