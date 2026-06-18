@@ -17,6 +17,7 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 
 | Example | Description | Key Features |
 |---------|-------------|--------------|
+| [agent-framework](./agent-framework/) | An agent framework architecture (instructions, abilities, workspace, file-based skills, channels, schedules, heartbeat) — authored as a project of files that Terraform uploads and wires up | Bot, Skillset, Ability packs (shell + space skills), Space + file uploads, Slack integration, Scheduled triggers, Heartbeat |
 | [dual-agent-programmable-workflows](./dual-agent-programmable-workflows/) | Two-agent architecture for workflow programming and execution | Multi-agent collaboration, Shared resources, Asymmetric access patterns, Scheduled triggers |
 | [system-diagnostics-agent](./system-diagnostics-agent/) | Self-monitoring agent that reports on its own capabilities | Self-introspection, Blueprint resource discovery, Scheduled diagnostics, Automated reporting |
 | [second-brain](./second-brain/) | Personal knowledge management system with Notion and Calendar | Persistent workspace, Notion integration, Google Calendar, Telegram bot, Dynamic skillsets |
@@ -94,6 +95,19 @@ Demonstrates a full-featured AI assistant with knowledge base and web capabiliti
 - Resource dependencies
 
 **Use when:** You need a comprehensive reference or want to build a feature-rich assistant.
+
+### Agent Framework Example
+Defines an autonomous agent as a project of files (`instructions.md`, `skills/*/SKILL.md`, `heartbeat.md`) and provisions the whole thing — agent, tools, workspace, skills, channels, and schedules — with Terraform. A reference architecture showing the ChatBotKit backend can build anything, entirely as infrastructure-as-code. The agent (named Atlas) is authored as a real project under `agent/` that Terraform uploads to the backend and wires up.
+
+**What you'll learn:**
+- Authoring an agent as a project of files, then provisioning it with Terraform
+- Driving a bot's backstory from `instructions.md` via `file()`
+- Giving an agent a rich toolset with ability packs (`pack/shell` for shell/file/import tools, `pack/cbk/space/skills` for skill discovery)
+- File-based skills: `skills/*/SKILL.md` (+ bundled scripts) uploaded into a workspace under `.skills/` with `fileset` + `for_each`, then discovered and read by the agent's space-skill tools
+- A Slack channel (with Discord/Teams/WhatsApp ready to uncomment)
+- Two kinds of schedules: timed triggers and a frequent heartbeat whose instructions come from `heartbeat.md` (the trigger description)
+
+**Use when:** You want an agent-framework developer experience managed as infrastructure-as-code, with the agent, its project files, and all its surfaces created and torn down reproducibly.
 
 ### Dual-Agent Programmable Workflows Example
 Two-agent architecture where a Workflow Architect programs custom scripts and a Task Runner executes them.
