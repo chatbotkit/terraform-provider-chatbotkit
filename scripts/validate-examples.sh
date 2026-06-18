@@ -36,9 +36,15 @@ failed=0
 for dir in examples/*/; do
   ls "$dir"*.tf >/dev/null 2>&1 || continue
   echo "==> validating ${dir}"
-  if ! terraform -chdir="$dir" validate; then
+  # Install local modules so validate can resolve them. The provider still comes
+  # from the dev override, so this needs no registry download or backend.
+  if ! terraform -chdir="$dir" init -backend=false -input=false >/dev/null; then
+    echo "init failed for ${dir}"
+    failed=1
+  elif ! terraform -chdir="$dir" validate; then
     failed=1
   fi
+  rm -rf "$dir.terraform" "$dir.terraform.lock.hcl"
 done
 
 if [ "$failed" -ne 0 ]; then
