@@ -4,6 +4,17 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-18
+
+### Added
+
+- `run_as` provider attribute. When set, the provider sends the `X-RunAs-UserId`
+  header so a single `api_key` (a partner/master token) can operate on a
+  sub-account (partner user). Configure one provider alias per sub-account to
+  manage many tenants from one configuration — the standard Terraform
+  multi-account pattern. Can also be set via the `CHATBOTKIT_RUN_AS` environment
+  variable.
+
 ## [1.4.0] - 2026-06-18
 
 ### Added
