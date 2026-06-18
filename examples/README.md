@@ -18,6 +18,8 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 | Example | Description | Key Features |
 |---------|-------------|--------------|
 | [agent-framework](./agent-framework/) | An agent framework architecture (instructions, abilities, workspace, file-based skills, channels, schedules, heartbeat) — authored as a project of files that Terraform uploads and wires up | Bot, Skillset, Ability packs (shell + space skills), Space + file uploads, Slack integration, Scheduled triggers, Heartbeat |
+| [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's own sub-account, from one module. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
+| [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer (each its own module/folder), composed into one shared state and deployed in a single apply. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
 | [dual-agent-programmable-workflows](./dual-agent-programmable-workflows/) | Two-agent architecture for workflow programming and execution | Multi-agent collaboration, Shared resources, Asymmetric access patterns, Scheduled triggers |
 | [system-diagnostics-agent](./system-diagnostics-agent/) | Self-monitoring agent that reports on its own capabilities | Self-introspection, Blueprint resource discovery, Scheduled diagnostics, Automated reporting |
 | [second-brain](./second-brain/) | Personal knowledge management system with Notion and Calendar | Persistent workspace, Notion integration, Google Calendar, Telegram bot, Dynamic skillsets |
@@ -108,6 +110,23 @@ Defines an autonomous agent as a project of files (`instructions.md`, `skills/*/
 - Two kinds of schedules: timed triggers and a frequent heartbeat whose instructions come from `heartbeat.md` (the trigger description)
 
 **Use when:** You want an agent-framework developer experience managed as infrastructure-as-code, with the agent, its project files, and all its surfaces created and torn down reproducibly.
+
+### Multi-Tenant Agents Examples
+A pair of examples deploying a separate, isolated agent for each customer in that
+customer's own ChatBotKit sub-account (a "partner user"). Both use **one** master
+token plus the provider's `run_as` attribute (the `X-RunAs-UserId` header) to
+target each customer's sub-account — no per-customer tokens, no `for_each`.
+
+- **[multi-tenant-agents-shared](./multi-tenant-agents-shared/)** — the same agent for every customer, from one module, via provider aliases.
+- **[multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/)** — a bespoke agent per customer, each in its own folder.
+
+**What you'll learn:**
+- The platform's sub-account (partner user) model for multi-tenant SaaS
+- Using one master token + `run_as` to operate on many sub-accounts (like the AWS provider's `assume_role`)
+- Provider aliases composing one reused module (shared) vs. a distinct module per customer (per-customer)
+- Per-customer isolation via separate sub-accounts (`run_as`), all from a single shared state and one apply — no `for_each`
+
+**Use when:** You are building a multi-tenant product where each customer needs their own isolated agent and resources, not a shared account.
 
 ### Dual-Agent Programmable Workflows Example
 Two-agent architecture where a Workflow Architect programs custom scripts and a Task Runner executes them.

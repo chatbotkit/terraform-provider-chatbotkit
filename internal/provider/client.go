@@ -18,6 +18,7 @@ const defaultBaseURL = "https://api.chatbotkit.com/graphql"
 type Client struct {
 	APIKey     string
 	BaseURL    string
+	RunAs      string
 	HTTPClient *http.Client
 }
 
@@ -69,6 +70,12 @@ func (c *Client) doRequest(ctx context.Context, query string, variables map[stri
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.APIKey)
+
+	// When set, act on behalf of a sub-account (partner user). This lets a single
+	// api_key manage many sub-accounts by selecting one per provider configuration.
+	if c.RunAs != "" {
+		req.Header.Set("X-RunAs-UserId", c.RunAs)
+	}
 
 	resp, err := c.HTTPClient.Do(req)
 	if err != nil {
