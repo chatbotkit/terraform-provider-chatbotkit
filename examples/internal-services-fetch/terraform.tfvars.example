@@ -1,0 +1,22 @@
+# Secret values for the internal-services-fetch example.
+#
+# The ChatBotKit API key itself is supplied separately via the environment:
+#
+#   export CHATBOTKIT_API_KEY="sk-...your-api-key..."
+#
+# Copy this file to terraform.tfvars and fill in the real values. Do not commit
+# terraform.tfvars — it contains secrets.
+
+# (1) SHARED service-account token — the machine identity the agent uses to call
+# read-only internal platform APIs.
+internal_service_token = "svc-REPLACE-with-internal-service-token"
+
+# (2) PERSONAL OAuth client credentials — the app registration in your SSO that
+# employees sign in through. Only the client id/secret are configured here; each
+# employee's individual token is obtained interactively at first use.
+acme_sso_client_id     = "REPLACE-with-oauth-client-id"
+acme_sso_client_secret = "REPLACE-with-oauth-client-secret"
+
+# (optional) Slack channel — leave empty to skip deploying the Slack integration.
+slack_bot_token      = ""
+slack_signing_secret = ""
