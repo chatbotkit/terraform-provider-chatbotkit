@@ -1,0 +1,27 @@
+# Secret values for the two-sided-marketplace example.
+#
+# The ChatBotKit API key itself is supplied separately via the environment:
+#
+#   export CHATBOTKIT_API_KEY="sk-...your-api-key..."
+#
+# Copy this file to terraform.tfvars and fill in the real values. Do not commit
+# terraform.tfvars — it contains secrets.
+
+# SHARED service-account token — the machine identity both desks present to the
+# marketplace gateway.
+marketplace_service_token = "svc-REPLACE-with-marketplace-service-token"
+
+# PERSONAL OAuth client credentials — the supply side. The app registration
+# candidates sign in through; each candidate's individual token is obtained
+# interactively at first use.
+talent_oauth_client_id     = "REPLACE-with-talent-oauth-client-id"
+talent_oauth_client_secret = "REPLACE-with-talent-oauth-client-secret"
+
+# PERSONAL OAuth client credentials — the demand side. The app registration
+# employer contacts sign in through.
+client_oauth_client_id     = "REPLACE-with-client-oauth-client-id"
+client_oauth_client_secret = "REPLACE-with-client-oauth-client-secret"
+
+# (optional) Slack channel for the Client Partner — leave empty to skip it.
+client_slack_bot_token      = ""
+client_slack_signing_secret = ""
