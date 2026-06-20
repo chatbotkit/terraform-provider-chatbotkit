@@ -13,9 +13,9 @@ two-sided-marketplace/
 
 ## The two sides
 
-| Agent | Side | Works for | Does |
-|-------|------|-----------|------|
-| **Talent Partner** | supply | the candidate | browse open roles, submit candidacy, track submissions |
+| Agent              | Side   | Works for          | Does                                                        |
+| ------------------ | ------ | ------------------ | ----------------------------------------------------------- |
+| **Talent Partner** | supply | the candidate      | browse open roles, submit candidacy, track submissions      |
 | **Client Partner** | demand | the hiring company | post roles, search talent, review & **advance** submissions |
 
 The two agents have **opposite loyalties** and never talk to each other. They
@@ -34,10 +34,10 @@ shared system of record.
    candidate ──► Talent Partner ─┐                        ┌─ Client Partner ◄── employer
                   (supply side)   │  fetch                 │   (demand side)
                                   ▼                        ▼
-                       ┌──────────────────────────────────────────┐
+                       ┌───────────────────────────────────────────┐
                        │        YOUR MARKETPLACE API (core)        │
                        │  roles · talent pool · submissions · fee  │
-                       └──────────────────────────────────────────┘
+                       └───────────────────────────────────────────┘
 ```
 
 ## The market clears through shared state
@@ -49,18 +49,18 @@ There is no agent-to-agent message. The loop runs through the core's data:
 3. Client Partner calls `advance_submission` → the core records the stage change
    (interview / offer / placement) and any fee, **server-side**.
 
-`advance_submission` is the market-clearing transaction. The agent *requests*
-it; the API *decides and records* it. A placement is never something a model
+`advance_submission` is the market-clearing transaction. The agent _requests_
+it; the API _decides and records_ it. A placement is never something a model
 does on its own — that keeps consent, auditability, and billing in the core
 where they belong.
 
 ## Identity: one shared gateway token + per-side on-behalf OAuth
 
-| Secret | `kind` | `type` | Represents | Used by |
-|--------|--------|--------|------------|---------|
-| `Marketplace Service Token` | `shared` | `bearer` | the platform, as a service | both desks (gateway auth) |
-| `Talent Identity` | `personal` | `oauth` | the signed-in candidate | Talent Desk actions |
-| `Client Identity` | `personal` | `oauth` | the signed-in employer contact | Client Desk actions |
+| Secret                      | `kind`     | `type`   | Represents                     | Used by                   |
+| --------------------------- | ---------- | -------- | ------------------------------ | ------------------------- |
+| `Marketplace Service Token` | `shared`   | `bearer` | the platform, as a service     | both desks (gateway auth) |
+| `Talent Identity`           | `personal` | `oauth`  | the signed-in candidate        | Talent Desk actions       |
+| `Client Identity`           | `personal` | `oauth`  | the signed-in employer contact | Client Desk actions       |
 
 Both desks present the **same** shared token to get past the marketplace
 gateway, so the core sees one stable caller. Each desk attributes actions to a
@@ -72,22 +72,22 @@ identity story of a two-sided market in two secrets.
 
 Every ability reads the same way, on both sides:
 
-| Header | Value | Meaning |
-|--------|-------|---------|
-| `Authorization` | `!reference SECRET_MARKETPLACE_SERVICE_TOKEN` | always the shared gateway token, by name |
-| `X-On-Behalf-Of` | `!reference SECRET_DEFAULT` | this desk's human — present only on actions attributed to a person |
+| Header           | Value                                         | Meaning                                                            |
+| ---------------- | --------------------------------------------- | ------------------------------------------------------------------ |
+| `Authorization`  | `!reference SECRET_MARKETPLACE_SERVICE_TOKEN` | always the shared gateway token, by name                           |
+| `X-On-Behalf-Of` | `!reference SECRET_DEFAULT`                   | this desk's human — present only on actions attributed to a person |
 
 `SECRET_DEFAULT` is the secret linked to the ability via `secret_id`. On the
 Talent Desk that is the candidate; on the Client Desk it is the employer. Within
 one skillset it always means the same person, so the convention never flips. An
-ability links exactly one secret (its `SECRET_DEFAULT`); to use a *second* secret
+ability links exactly one secret (its `SECRET_DEFAULT`); to use a _second_ secret
 in the same request you reference it **by name** (`SECRET_<NAME>`, upper-cased
 with non-word characters collapsed to `_`) — which is why the action abilities
 link the personal identity and name the shared token, while the read-only browse
 ability links only the shared token.
 
 > **No `Bearer` prefix.** A `bearer`/`oauth` secret resolves to a complete
-> Authorization value *including* its scheme, so the header is just
+> Authorization value _including_ its scheme, so the header is just
 > `Authorization: !reference SECRET_...`.
 
 ## Usage
@@ -105,13 +105,13 @@ channel and just create the bots, skillsets and secrets.
 
 ## Trying it
 
-- **As a candidate** (Talent Partner): *"find me remote senior backend roles"* →
-  `search_open_roles` (shared token only, no sign-in). Then *"apply me to role
-  R-128"* → first time, you sign in; `submit_candidacy` puts you forward **as
+- **As a candidate** (Talent Partner): _"find me remote senior backend roles"_ →
+  `search_open_roles` (shared token only, no sign-in). Then _"apply me to role
+  R-128"_ → first time, you sign in; `submit_candidacy` puts you forward **as
   you**.
-- **As an employer** (Client Partner): *"show submissions for role R-128"* →
+- **As an employer** (Client Partner): _"show submissions for role R-128"_ →
   `review_submissions` returns the candidate the Talent Partner just submitted.
-  Then *"move them to interview"* → `advance_submission` clears that side of the
+  Then _"move them to interview"_ → `advance_submission` clears that side of the
   market.
 
 ## Adapting it
