@@ -20,6 +20,7 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 | [agent-framework](./agent-framework/) | An agent framework architecture (instructions, abilities, workspace, file-based skills, channels, schedules, heartbeat) — authored as a project of files that Terraform uploads and wires up | Bot, Skillset, Ability packs (shell + space skills), Space + file uploads, Slack integration, Scheduled triggers, Heartbeat |
 | [deep-researcher](./deep-researcher/) | An orchestrator-worker deep-research agent: a big-brain orchestrator decomposes a question, fans out worker tasks in parallel, supervises and adapts, then synthesizes a cited report — orchestration is emergent agent behavior, not a hard-coded graph | Multi-agent (intake/orchestrator/worker), Runtime task fan-out (`task/create`+`run`+`list`+`fetch`), Parallel workers, Shared workspace blackboard, Per-bot model tiering, Widget entry surface |
 | [soc-investigator](./soc-investigator/) | An autonomous security-operations agent that runs on a cycle: pull SIEM alerts, correlate into cases, triage, investigate, enrich, and accumulate knowledge — showing the deterministic-scripts vs agentic-skills split | File-based skills (`SKILL.md`) + stdlib scripts, `pack/shell` + space skills, Workspace case store + knowledge base, Correlation/dedup, Scheduled cycle triggers, Human approval gate |
+| [community-scout](./community-scout/) | A product-led-growth agent that monitors Reddit on a cycle for threads where the product genuinely helps, scores relevance, drafts a disclosed reply, and suggests it to the team on Slack — it has no Reddit-post tool, so a human posts | Read-only Reddit (`pack/reddit[read-only]`), Slack hand-off (`slack/conversation/start`), File-based skills + dedup script, Workspace mention store, Scheduled cycle triggers, Structural human-in-the-loop gate |
 | [internal-services-fetch](./internal-services-fetch/) | An agent that reaches internal corporate services with the `fetch` action, authenticated by a shared service token (machine-to-machine) and a personal OAuth secret (acting on behalf of the signed-in employee) | Fetch action, Shared bearer secret, Personal OAuth secret, `${SECRET_DEFAULT}` vs named references, Both secrets in one request, Slack integration |
 | [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's own sub-account, from one module. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
 | [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer (each its own module/folder), composed into one shared state and deployed in a single apply. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
@@ -139,6 +140,20 @@ An autonomous security-operations agent that runs on a cycle to pull SIEM alerts
 - Knowledge accumulation from resolved cases so the agent improves over time
 
 **Use when:** You want to automate tier-1/2 security operations (or any cyclic ingest → triage → investigate → learn pipeline) where the high-volume mechanics must be deterministic and reliable while the judgment stays agentic. Upgrades to the orchestrator-worker pattern (see deep-researcher) for parallel case investigation at volume.
+
+### Community Scout Example
+A product-led-growth agent that runs on a cycle to watch public conversations (Reddit today) for threads where your product genuinely helps, drafts a useful disclosed reply, and suggests it to the team on Slack for a human to post. It applies the monitor-on-a-cycle pattern to social listening, built on ChatBotKit's first-class Reddit abilities.
+
+**What you'll learn:**
+- Using the first-class Reddit catalogue for read-only monitoring over RSS with no auth (`pack/reddit[read-only]` — search and feeds)
+- A proactive Slack hand-off with `slack/conversation/start` — the agent starts a conversation in the team channel to suggest a thread, draft, and owner
+- A **structural** human-in-the-loop gate: the scout has no Reddit-post tool at all, so it physically cannot reply — the human-in-the-loop is enforced by the toolset, not a prompt (the stronger form of the gate seen in soc-investigator)
+- The same deterministic/agentic split: the fetch is a tool call, a stdlib script dedups discovered threads (idempotent monitoring), and the judgment — relevance scoring, reply drafting — lives in `SKILL.md` playbooks
+- A `watchlist.md` config (product, keywords, subreddits, team/Slack routing, engagement rules) the agent reads each cycle
+- Responsible engagement by design — a high relevance bar, one tailored reply per thread, affiliation disclosed, subreddit rules respected
+- Other sources (LinkedIn, a news API, or X via the X API) feeding the same mention pipeline
+
+**Use when:** You want an agent that finds relevant public conversations for product-led growth and routes them to a human to act on, without spamming — the mechanics deterministic, the judgment agentic, and posting kept out of the agent's hands by construction.
 
 ### Multi-Tenant Agents Examples
 A pair of examples deploying a separate, isolated agent for each customer in that
