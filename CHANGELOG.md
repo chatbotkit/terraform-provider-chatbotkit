@@ -4,6 +4,20 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-06-20
+
+### Added
+
+- `chatbotkit_context` resource for managing a Context — a binding between an
+  account (or, under `run_as`, a partner sub-account) and platform resources
+  (`blueprint_id`, `bot_id`, `dataset_id`, `skillset_id`) plus a free-form
+  `payload` map and `meta`. Useful for scoping a sub-account to a pre-defined
+  configuration, or for attaching per-account data (such as a repository or
+  project id) that an agent reads at runtime — for example, telling a per-user
+  coding agent which repository it is allowed to work on instead of hard-coding
+  it. Backed by the newly added GraphQL context query and mutations; `payload`
+  and `meta` are string maps.
+
 ## [1.5.0] - 2026-06-18
 
 ### Added
