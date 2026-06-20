@@ -1,0 +1,20 @@
+# Copy to terraform.tfvars and fill in. The partner/master token comes from the
+# CHATBOTKIT_API_KEY environment variable (not a variable here).
+#
+# Accounts (partner users) are created out of band (dashboard or partner API).
+# The shared account MUST have the alias `shared`.
+
+shared_account_id = "user_xxxxxxxxxxxx" # the shared "tools" account (alias: shared)
+alice_account_id  = "user_aaaaaaaaaaaa"
+bob_account_id    = "user_bbbbbbbbbbbb"
+
+github_app_id = "3555413"
+git_email     = "agents@example.com"
+
+# The GitHub App private key (PEM). Prefer an env var:
+#   export TF_VAR_github_app_private_key="$(cat github-app.pem)"
+# github_app_private_key = <<-EOT
+# -----BEGIN RSA PRIVATE KEY-----
+# ...
+# -----END RSA PRIVATE KEY-----
+# EOT

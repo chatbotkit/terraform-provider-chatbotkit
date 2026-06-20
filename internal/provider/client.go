@@ -482,6 +482,187 @@ func (c *Client) GetBot(ctx context.Context, id string) (*GetBotResponse, error)
 	return nil, fmt.Errorf("bot with ID %s not found", id)
 }
 
+// CreateContextInput represents the input for creating a context.
+type CreateContextInput struct {
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Payload     map[string]interface{} `json:"payload,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+}
+
+// CreateContextResponse represents the response from creating a context.
+type CreateContextResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateContext creates a new context.
+func (c *Client) CreateContext(ctx context.Context, input CreateContextInput) (*CreateContextResponse, error) {
+	query := `
+		mutation CreateContext($input: ContextCreateRequest!) {
+			createContext(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateContext *CreateContextResponse `json:"createContext"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateContext, nil
+}
+
+// UpdateContextInput represents the input for updating a context.
+type UpdateContextInput struct {
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Payload     map[string]interface{} `json:"payload,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+}
+
+// UpdateContextResponse represents the response from updating a context.
+type UpdateContextResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateContext updates an existing context.
+func (c *Client) UpdateContext(ctx context.Context, id string, input UpdateContextInput) (*UpdateContextResponse, error) {
+	query := `
+		mutation UpdateContext($contextId: ID!, $input: ContextUpdateRequest!) {
+			updateContext(contextId: $contextId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"contextId": id,
+		"input":     input,
+	}
+
+	var response struct {
+		UpdateContext *UpdateContextResponse `json:"updateContext"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateContext, nil
+}
+
+// DeleteContextResponse represents the response from deleting a context.
+type DeleteContextResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteContext deletes a context.
+func (c *Client) DeleteContext(ctx context.Context, id string) (*DeleteContextResponse, error) {
+	query := `
+		mutation DeleteContext($contextId: ID!) {
+			deleteContext(contextId: $contextId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"contextId": id,
+	}
+
+	var response struct {
+		DeleteContext *DeleteContextResponse `json:"deleteContext"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteContext, nil
+}
+
+// GetContextResponse represents the response from fetching a context.
+type GetContextResponse struct {
+	ID          *string                `json:"id"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	BotId       *string                `json:"botId,omitempty"`
+	DatasetId   *string                `json:"datasetId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	Payload     map[string]interface{} `json:"payload,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetContext fetches a context by ID.
+func (c *Client) GetContext(ctx context.Context, id string) (*GetContextResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetContext($cursor: ID) {
+			contexts(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						blueprintId
+						botId
+						datasetId
+						description
+						meta
+						name
+						payload
+						skillsetId
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		Contexts struct {
+			Edges []struct {
+				Node *GetContextResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"contexts"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.Contexts.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("context with ID %s not found", id)
+}
+
 // CreateDatasetInput represents the input for creating a dataset.
 type CreateDatasetInput struct {
 	Alias               *string                `json:"alias,omitempty"`

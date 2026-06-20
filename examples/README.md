@@ -24,6 +24,7 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 | [internal-services-fetch](./internal-services-fetch/) | An agent that reaches internal corporate services with the `fetch` action, authenticated by a shared service token (machine-to-machine) and a personal OAuth secret (acting on behalf of the signed-in employee) | Fetch action, Shared bearer secret, Personal OAuth secret, `${SECRET_DEFAULT}` vs named references, Both secrets in one request, Slack integration |
 | [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's own sub-account, from one module. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
 | [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer (each its own module/folder), composed into one shared state and deployed in a single apply. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
+| [code-foundry](./code-foundry/) | An autonomous code foundry on a multi-account architecture: a shared "tools" account (GitHub token-minter, an exported `global-coding-tools` skillset, design/coding spaces) that per-user sub-accounts install cross-account; each user's Coding Agent has a heartbeat and a per-user context (repo + Vercel) | Multi-account (`run_as` + provider aliases), Shared account + reusable per-user module, Cross-account skillset install (`@shared@global-coding-tools`), GitHub App JWT secret, `bot/apply` token minting, Per-user context, Heartbeat |
 | [dual-agent-programmable-workflows](./dual-agent-programmable-workflows/) | Two-agent architecture for workflow programming and execution | Multi-agent collaboration, Shared resources, Asymmetric access patterns, Scheduled triggers |
 | [system-diagnostics-agent](./system-diagnostics-agent/) | Self-monitoring agent that reports on its own capabilities | Self-introspection, Blueprint resource discovery, Scheduled diagnostics, Automated reporting |
 | [second-brain](./second-brain/) | Personal knowledge management system with Notion and Calendar | Persistent workspace, Notion integration, Google Calendar, Telegram bot, Dynamic skillsets |
@@ -171,6 +172,18 @@ target each customer's sub-account — no per-customer tokens, no `for_each`.
 - Per-customer isolation via separate sub-accounts (`run_as`), all from a single shared state and one apply — no `for_each`
 
 **Use when:** You are building a multi-tenant product where each customer needs their own isolated agent and resources, not a shared account.
+
+### Code Foundry Example (multi-account)
+An autonomous code foundry on a multi-account architecture. A single shared "tools" account holds the expensive, sensitive machinery once — a GitHub bot that mints repository-scoped App tokens (JWT secret), a Coding Tools skillset exported account-wide as `global-coding-tools`, shared Design/Coding spaces, and a Designs Manager with a Sync trigger. Each user gets a thin, isolated sub-account whose Coding Agent installs the shared toolset cross-account (`@shared@global-coding-tools`) and works on that user's own repo.
+
+**What you'll learn:**
+- A shared-account + per-user-sub-account architecture on one partner token, using provider aliases + `run_as` (building on the multi-tenant examples)
+- Exporting a skillset account-wide (`visibility = protected` + alias) and installing it cross-account from a sub-account with `conversation/skillset/install` and an `@shared@<alias>` reference
+- Minting repository-scoped GitHub App tokens without putting the App key in each sub-account: the agent `bot/apply`s a shared GitHub bot that holds the JWT secret
+- Driving "which repo" from a per-user **context** rather than hard-coding it (a security boundary, since agents belong to users) — set via the partner-user context API, now exposed via GraphQL (and a future native `chatbotkit_context` resource)
+- A **heartbeat** trigger that keeps a coding agent making the next step on a long-running task across ticks
+
+**Use when:** You are productising an autonomous agent to many users and want the heavy/sensitive tooling defined once and borrowed cross-account, with each user isolated and scoped to their own repo by context.
 
 ### Dual-Agent Programmable Workflows Example
 Two-agent architecture where a Workflow Architect programs custom scripts and a Task Runner executes them.

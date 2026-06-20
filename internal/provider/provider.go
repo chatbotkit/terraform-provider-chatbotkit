@@ -97,6 +97,7 @@ func (p *ChatBotKitProvider) Resources(ctx context.Context) []func() resource.Re
 
 		NewBlueprintResource,
 		NewBotResource,
+		NewContextResource,
 		NewDatasetResource,
 		NewDiscordIntegrationResource,
 		NewEmailIntegrationResource,
