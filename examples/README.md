@@ -18,6 +18,7 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 | Example | Description | Key Features |
 |---------|-------------|--------------|
 | [agent-framework](./agent-framework/) | An agent framework architecture (instructions, abilities, workspace, file-based skills, channels, schedules, heartbeat) — authored as a project of files that Terraform uploads and wires up | Bot, Skillset, Ability packs (shell + space skills), Space + file uploads, Slack integration, Scheduled triggers, Heartbeat |
+| [deep-researcher](./deep-researcher/) | An orchestrator-worker deep-research agent: a big-brain orchestrator decomposes a question, fans out worker tasks in parallel, supervises and adapts, then synthesizes a cited report — orchestration is emergent agent behavior, not a hard-coded graph | Multi-agent (intake/orchestrator/worker), Runtime task fan-out (`task/create`+`run`+`list`+`fetch`), Parallel workers, Shared workspace blackboard, Per-bot model tiering, Widget entry surface |
 | [internal-services-fetch](./internal-services-fetch/) | An agent that reaches internal corporate services with the `fetch` action, authenticated by a shared service token (machine-to-machine) and a personal OAuth secret (acting on behalf of the signed-in employee) | Fetch action, Shared bearer secret, Personal OAuth secret, `${SECRET_DEFAULT}` vs named references, Both secrets in one request, Slack integration |
 | [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's own sub-account, from one module. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
 | [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer (each its own module/folder), composed into one shared state and deployed in a single apply. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
@@ -111,6 +112,19 @@ Defines an autonomous agent as a project of files (`instructions.md`, `skills/*/
 - Two kinds of schedules: timed triggers and a frequent heartbeat whose instructions come from `heartbeat.md` (the trigger description)
 
 **Use when:** You want an agent-framework developer experience managed as infrastructure-as-code, with the agent, its project files, and all its surfaces created and torn down reproducibly.
+
+### Deep Researcher Example
+An autonomous deep-research agent in the orchestrator-worker shape (the same architecture as systems like gpt-researcher). A small **intake** agent turns a request into a commissioned task; a big-brain **orchestrator** decomposes the question, fans out **worker** tasks that run in parallel, supervises and adapts as findings return, then synthesizes a single cited report. Each role is authored as instructions under `agent/`, and the three bots are wired together with `templatefile()` (bot ids injected so each agent knows who to dispatch to).
+
+**What you'll learn:**
+- The orchestrator-worker pattern expressed without a hard-coded workflow graph: the fan-out, wait, join, and synthesize are the orchestrator *agent* calling tools at runtime
+- Runtime task dispatch as abilities — `task/create` + `task/run` + `task/list` + `task/fetch` (the `[by-bot-id]` variants) — so tasks are spawned on demand, never predefined in Terraform
+- Parallel workers via immediate `task/run`, joined by the orchestrator introspecting task status/results on its own rhythm
+- A shared `chatbotkit_space` used as a findings "blackboard": workers write `findings/*.md`, the orchestrator reads them and writes `report.md`
+- Per-bot **model tiering** (opus to orchestrate, a lighter model for the legwork)
+- Wiring bot ids between agents with `templatefile()` and letting Terraform resolve dependency order
+
+**Use when:** You want an open-ended research agent that adapts its plan to the question, and you want the agents — not a static pipeline — to own the orchestration. (For *enforced* gates like mandatory review-before-publish, add a deterministic step; that guarantee shouldn't live in a prompt.)
 
 ### Multi-Tenant Agents Examples
 A pair of examples deploying a separate, isolated agent for each customer in that
