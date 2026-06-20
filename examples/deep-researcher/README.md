@@ -40,11 +40,11 @@ are.
               │   │   │  task/create + task/run  (parallel)
        ┌──────┘   │   └──────┐
        ▼          ▼          ▼
-   ┌────────┐ ┌────────┐ ┌──────────┐
-   │researcher│researcher│researcher│  workers: one sub-question each;
-   └────┬───┘ └────┬───┘ └────┬─────┘  search + fetch + cite
-        │          │          │
-        └──────────┼──────────┘
+   ┌──────────┐ ┌──────────┐ ┌──────────┐
+   │researcher│ │researcher│ │researcher│  workers: one sub-question each;
+   └────┬─────┘ └──┬───────┘ └────┬─────┘  search + fetch + cite
+        │          │              │
+        └──────────┼──────────────┘
                    ▼
             shared workspace        findings/*.md  ← workers write
             (chatbotkit_space)      report.md      ← orchestrator writes
