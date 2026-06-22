@@ -4,6 +4,38 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-06-22
+
+### Added
+
+- `chatbotkit_skillserver_integration` resource for managing a Skill Server
+  integration — exposes a skillset's abilities as a text-first HTTP API instead
+  of over MCP. A `GET` to the endpoint returns a human- and agent-readable manual
+  describing the available abilities and how to call them; a `POST` invokes an
+  ability. The endpoint is authenticated by a single static access token (like a
+  trigger), so an agent that holds the token can discover and call the abilities
+  directly. Supports `skillset_id` (the abilities to expose), `blueprint_id`,
+  `name`, `description`, `alias`, and `meta`. Backed by the GraphQL skillserver
+  create/update/delete mutations added alongside the existing integration
+  resources.
+- `chatbotkit_space_site` resource for managing a Site within a Space — binds a
+  `<label>.chatbotkit.space` subdomain to static content served from the space's
+  storage. A nested resource keyed by its parent `space_id` (like
+  `chatbotkit_skillset_ability`). Supports the required `domain` plus optional
+  `prefix` (folder inside the space to serve from), `index` (directory index
+  filename, defaults to `index.html`), `not_found` (defaults to `404.html`),
+  `name`, `description`, `alias`, and `meta`. Backed by the GraphQL space site
+  create/update/delete mutations and the new `sites` connection on the space.
+- `chatbotkit_task` resource for managing a Task — an autonomous, bounded run of a
+  bot, optionally on a schedule. Supports `bot_id`, `description` (the objective),
+  `schedule` (`now`, a cron expression, a date-time, or an interval keyword such as
+  `daily`), `timezone`, the execution bounds `max_iterations` / `max_time` /
+  `session_duration`, `contact_id`, and `meta`. This is the durable unit of agent
+  execution behind background work and heartbeats; declare one when you want a
+  recurring scheduled job for a bot as versioned infrastructure. Backed by the
+  GraphQL task create/update/delete mutations added alongside the existing task
+  query.
+
 ## [1.6.0] - 2026-06-20
 
 ### Added

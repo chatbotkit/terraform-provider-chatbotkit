@@ -3502,6 +3502,179 @@ func (c *Client) GetSitemapIntegration(ctx context.Context, id string) (*GetSite
 	return nil, fmt.Errorf("sitemapintegration with ID %s not found", id)
 }
 
+// CreateSkillserverIntegrationInput represents the input for creating a skillserverintegration.
+type CreateSkillserverIntegrationInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+}
+
+// CreateSkillserverIntegrationResponse represents the response from creating a skillserverintegration.
+type CreateSkillserverIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateSkillserverIntegration creates a new skillserverintegration.
+func (c *Client) CreateSkillserverIntegration(ctx context.Context, input CreateSkillserverIntegrationInput) (*CreateSkillserverIntegrationResponse, error) {
+	query := `
+		mutation CreateSkillserverIntegration($input: SkillserverIntegrationCreateRequest!) {
+			createSkillserverIntegration(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateSkillserverIntegration *CreateSkillserverIntegrationResponse `json:"createSkillserverIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateSkillserverIntegration, nil
+}
+
+// UpdateSkillserverIntegrationInput represents the input for updating a skillserverintegration.
+type UpdateSkillserverIntegrationInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+}
+
+// UpdateSkillserverIntegrationResponse represents the response from updating a skillserverintegration.
+type UpdateSkillserverIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateSkillserverIntegration updates an existing skillserverintegration.
+func (c *Client) UpdateSkillserverIntegration(ctx context.Context, id string, input UpdateSkillserverIntegrationInput) (*UpdateSkillserverIntegrationResponse, error) {
+	query := `
+		mutation UpdateSkillserverIntegration($skillserverIntegrationId: ID!, $input: SkillserverIntegrationUpdateRequest!) {
+			updateSkillserverIntegration(skillserverIntegrationId: $skillserverIntegrationId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"skillserverIntegrationId": id,
+		"input":                    input,
+	}
+
+	var response struct {
+		UpdateSkillserverIntegration *UpdateSkillserverIntegrationResponse `json:"updateSkillserverIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateSkillserverIntegration, nil
+}
+
+// DeleteSkillserverIntegrationResponse represents the response from deleting a skillserverintegration.
+type DeleteSkillserverIntegrationResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteSkillserverIntegration deletes a skillserverintegration.
+func (c *Client) DeleteSkillserverIntegration(ctx context.Context, id string) (*DeleteSkillserverIntegrationResponse, error) {
+	query := `
+		mutation DeleteSkillserverIntegration($skillserverIntegrationId: ID!) {
+			deleteSkillserverIntegration(skillserverIntegrationId: $skillserverIntegrationId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"skillserverIntegrationId": id,
+	}
+
+	var response struct {
+		DeleteSkillserverIntegration *DeleteSkillserverIntegrationResponse `json:"deleteSkillserverIntegration"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteSkillserverIntegration, nil
+}
+
+// GetSkillserverIntegrationResponse represents the response from fetching a skillserverintegration.
+type GetSkillserverIntegrationResponse struct {
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	BlueprintId *string                `json:"blueprintId,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	SkillsetId  *string                `json:"skillsetId,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetSkillserverIntegration fetches a skillserverintegration by ID.
+func (c *Client) GetSkillserverIntegration(ctx context.Context, id string) (*GetSkillserverIntegrationResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetSkillserverIntegration($cursor: ID) {
+			skillserverIntegrations(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						alias
+						blueprintId
+						description
+						meta
+						name
+						skillsetId
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		SkillserverIntegrations struct {
+			Edges []struct {
+				Node *GetSkillserverIntegrationResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"skillserverIntegrations"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.SkillserverIntegrations.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("skillserverintegration with ID %s not found", id)
+}
+
 // CreateSkillsetAbilityInput represents the input for creating a skillsetability.
 type CreateSkillsetAbilityInput struct {
 	BlueprintId *string                `json:"blueprintId,omitempty"`
@@ -4265,6 +4438,206 @@ func (c *Client) GetSpace(ctx context.Context, id string) (*GetSpaceResponse, er
 	return nil, fmt.Errorf("space with ID %s not found", id)
 }
 
+// CreateSpaceSiteInput represents the input for creating a spacesite.
+type CreateSpaceSiteInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Domain      string                 `json:"domain,omitempty"`
+	Index       *string                `json:"index,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	NotFound    *string                `json:"notFound,omitempty"`
+	Prefix      *string                `json:"prefix,omitempty"`
+}
+
+// CreateSpaceSiteResponse represents the response from creating a spacesite.
+type CreateSpaceSiteResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateSpaceSite creates a new spacesite.
+func (c *Client) CreateSpaceSite(ctx context.Context, spaceId string, input CreateSpaceSiteInput) (*CreateSpaceSiteResponse, error) {
+	query := `
+		mutation CreateSpaceSite($spaceId: ID!, $input: SpaceSiteCreateRequest!) {
+			createSpaceSite(spaceId: $spaceId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceId": spaceId,
+		"input":   input,
+	}
+
+	var response struct {
+		CreateSpaceSite *CreateSpaceSiteResponse `json:"createSpaceSite"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateSpaceSite, nil
+}
+
+// UpdateSpaceSiteInput represents the input for updating a spacesite.
+type UpdateSpaceSiteInput struct {
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Domain      string                 `json:"domain,omitempty"`
+	Index       *string                `json:"index,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	NotFound    *string                `json:"notFound,omitempty"`
+	Prefix      *string                `json:"prefix,omitempty"`
+}
+
+// UpdateSpaceSiteResponse represents the response from updating a spacesite.
+type UpdateSpaceSiteResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateSpaceSite updates an existing spacesite.
+func (c *Client) UpdateSpaceSite(ctx context.Context, spaceId string, siteId string, input UpdateSpaceSiteInput) (*UpdateSpaceSiteResponse, error) {
+	query := `
+		mutation UpdateSpaceSite($spaceId: ID!, $siteId: ID!, $input: SpaceSiteUpdateRequest!) {
+			updateSpaceSite(spaceId: $spaceId, siteId: $siteId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceId": spaceId,
+		"siteId":  siteId,
+		"input":   input,
+	}
+
+	var response struct {
+		UpdateSpaceSite *UpdateSpaceSiteResponse `json:"updateSpaceSite"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateSpaceSite, nil
+}
+
+// DeleteSpaceSiteResponse represents the response from deleting a spacesite.
+type DeleteSpaceSiteResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteSpaceSite deletes a spacesite.
+func (c *Client) DeleteSpaceSite(ctx context.Context, spaceId string, siteId string) (*DeleteSpaceSiteResponse, error) {
+	query := `
+		mutation DeleteSpaceSite($spaceId: ID!, $siteId: ID!) {
+			deleteSpaceSite(spaceId: $spaceId, siteId: $siteId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceId": spaceId,
+		"siteId":  siteId,
+	}
+
+	var response struct {
+		DeleteSpaceSite *DeleteSpaceSiteResponse `json:"deleteSpaceSite"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteSpaceSite, nil
+}
+
+// GetSpaceSiteResponse represents the response from fetching a spacesite.
+type GetSpaceSiteResponse struct {
+	ID          *string                `json:"id"`
+	Alias       *string                `json:"alias,omitempty"`
+	Description *string                `json:"description,omitempty"`
+	Domain      string                 `json:"domain,omitempty"`
+	Index       *string                `json:"index,omitempty"`
+	Meta        map[string]interface{} `json:"meta,omitempty"`
+	Name        *string                `json:"name,omitempty"`
+	NotFound    *string                `json:"notFound,omitempty"`
+	Prefix      *string                `json:"prefix,omitempty"`
+	CreatedAt   *string                `json:"createdAt,omitempty"`
+	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+}
+
+// GetSpaceSite fetches a spacesite by ID.
+func (c *Client) GetSpaceSite(ctx context.Context, spaceId string, id string) (*GetSpaceSiteResponse, error) {
+	// Query sites through the space connection
+	query := `
+		query GetSpaceSite($spaceIds: [ID!]) {
+			spaces(first: 1, spaceIds: $spaceIds) {
+				edges {
+					node {
+						id
+						sites(first: 100) {
+							edges {
+								node {
+									id
+									alias
+									description
+									domain
+									index
+									meta
+									name
+									notFound
+									prefix
+									createdAt
+									updatedAt
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"spaceIds": []string{spaceId},
+	}
+
+	var response struct {
+		Spaces struct {
+			Edges []struct {
+				Node struct {
+					ID    string `json:"id"`
+					Sites struct {
+						Edges []struct {
+							Node *GetSpaceSiteResponse `json:"node"`
+						} `json:"edges"`
+					} `json:"sites"`
+				} `json:"node"`
+			} `json:"edges"`
+		} `json:"spaces"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the ability with matching ID
+	for _, parentEdge := range response.Spaces.Edges {
+		for _, abilityEdge := range parentEdge.Node.Sites.Edges {
+			if abilityEdge.Node != nil && abilityEdge.Node.ID != nil && *abilityEdge.Node.ID == id {
+				return abilityEdge.Node, nil
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("spacesite with ID %s not found in space %s", id, spaceId)
+}
+
 // CreateSupportIntegrationInput represents the input for creating a supportintegration.
 type CreateSupportIntegrationInput struct {
 	Alias       *string                `json:"alias,omitempty"`
@@ -4440,6 +4813,195 @@ func (c *Client) GetSupportIntegration(ctx context.Context, id string) (*GetSupp
 	}
 
 	return nil, fmt.Errorf("supportintegration with ID %s not found", id)
+}
+
+// CreateTaskInput represents the input for creating a task.
+type CreateTaskInput struct {
+	BotId           *string                `json:"botId,omitempty"`
+	ContactId       *string                `json:"contactId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
+	MaxTime         *float64               `json:"maxTime,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *float64               `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
+}
+
+// CreateTaskResponse represents the response from creating a task.
+type CreateTaskResponse struct {
+	ID *string `json:"id"`
+}
+
+// CreateTask creates a new task.
+func (c *Client) CreateTask(ctx context.Context, input CreateTaskInput) (*CreateTaskResponse, error) {
+	query := `
+		mutation CreateTask($input: TaskCreateRequest!) {
+			createTask(input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"input": input,
+	}
+
+	var response struct {
+		CreateTask *CreateTaskResponse `json:"createTask"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.CreateTask, nil
+}
+
+// UpdateTaskInput represents the input for updating a task.
+type UpdateTaskInput struct {
+	BotId           *string                `json:"botId,omitempty"`
+	ContactId       *string                `json:"contactId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
+	MaxTime         *float64               `json:"maxTime,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *float64               `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
+}
+
+// UpdateTaskResponse represents the response from updating a task.
+type UpdateTaskResponse struct {
+	ID *string `json:"id"`
+}
+
+// UpdateTask updates an existing task.
+func (c *Client) UpdateTask(ctx context.Context, id string, input UpdateTaskInput) (*UpdateTaskResponse, error) {
+	query := `
+		mutation UpdateTask($taskId: ID!, $input: TaskUpdateRequest!) {
+			updateTask(taskId: $taskId, input: $input) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"taskId": id,
+		"input":  input,
+	}
+
+	var response struct {
+		UpdateTask *UpdateTaskResponse `json:"updateTask"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.UpdateTask, nil
+}
+
+// DeleteTaskResponse represents the response from deleting a task.
+type DeleteTaskResponse struct {
+	ID *string `json:"id"`
+}
+
+// DeleteTask deletes a task.
+func (c *Client) DeleteTask(ctx context.Context, id string) (*DeleteTaskResponse, error) {
+	query := `
+		mutation DeleteTask($taskId: ID!) {
+			deleteTask(taskId: $taskId) {
+				id
+			}
+		}
+	`
+
+	variables := map[string]interface{}{
+		"taskId": id,
+	}
+
+	var response struct {
+		DeleteTask *DeleteTaskResponse `json:"deleteTask"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	return response.DeleteTask, nil
+}
+
+// GetTaskResponse represents the response from fetching a task.
+type GetTaskResponse struct {
+	ID              *string                `json:"id"`
+	BotId           *string                `json:"botId,omitempty"`
+	ContactId       *string                `json:"contactId,omitempty"`
+	Description     *string                `json:"description,omitempty"`
+	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
+	MaxTime         *float64               `json:"maxTime,omitempty"`
+	Meta            map[string]interface{} `json:"meta,omitempty"`
+	Name            *string                `json:"name,omitempty"`
+	Schedule        *string                `json:"schedule,omitempty"`
+	SessionDuration *float64               `json:"sessionDuration,omitempty"`
+	Timezone        *string                `json:"timezone,omitempty"`
+	CreatedAt       *string                `json:"createdAt,omitempty"`
+	UpdatedAt       *string                `json:"updatedAt,omitempty"`
+}
+
+// GetTask fetches a task by ID.
+func (c *Client) GetTask(ctx context.Context, id string) (*GetTaskResponse, error) {
+	// Note: The GraphQL API uses connection-based queries, so we filter by ID
+	query := `
+		query GetTask($cursor: ID) {
+			tasks(first: 1, after: $cursor) {
+				edges {
+					node {
+						id
+						botId
+						contactId
+						description
+						maxIterations
+						maxTime
+						meta
+						name
+						schedule
+						sessionDuration
+						timezone
+						createdAt
+						updatedAt
+					}
+				}
+			}
+		}
+	`
+
+	// For read operations, we need to iterate through results to find by ID
+	// This is a simplified implementation - in production, you'd want proper pagination
+	variables := map[string]interface{}{}
+
+	var response struct {
+		Tasks struct {
+			Edges []struct {
+				Node *GetTaskResponse `json:"node"`
+			} `json:"edges"`
+		} `json:"tasks"`
+	}
+
+	if err := c.doRequest(ctx, query, variables, &response); err != nil {
+		return nil, err
+	}
+
+	// Find the resource with matching ID
+	for _, edge := range response.Tasks.Edges {
+		if edge.Node != nil && edge.Node.ID != nil && *edge.Node.ID == id {
+			return edge.Node, nil
+		}
+	}
+
+	return nil, fmt.Errorf("task with ID %s not found", id)
 }
 
 // CreateTelegramIntegrationInput represents the input for creating a telegramintegration.
