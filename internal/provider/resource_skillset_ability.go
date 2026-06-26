@@ -42,6 +42,7 @@ type SkillsetAbilityResourceModel struct {
 	Name        types.String `tfsdk:"name"`
 	SecretId    types.String `tfsdk:"secret_id"`
 	SpaceId     types.String `tfsdk:"space_id"`
+	State       types.String `tfsdk:"state"`
 	CreatedAt   types.String `tfsdk:"created_at"`
 	UpdatedAt   types.String `tfsdk:"updated_at"`
 }
@@ -109,6 +110,10 @@ func (r *SkillsetAbilityResource) Schema(ctx context.Context, req resource.Schem
 				MarkdownDescription: "The ID of the space to use",
 				Optional:            true,
 			},
+			"state": schema.StringAttribute{
+				MarkdownDescription: "The lifecycle state of the ability (enabled/disabled)",
+				Optional:            true,
+			},
 			"created_at": schema.StringAttribute{
 				MarkdownDescription: "Timestamp when the resource was created",
 				Computed:            true,
@@ -162,6 +167,7 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 		Name:        data.Name.ValueStringPointer(),
 		SecretId:    data.SecretId.ValueStringPointer(),
 		SpaceId:     data.SpaceId.ValueStringPointer(),
+		State:       data.State.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillsetability: %s", err))
@@ -232,6 +238,9 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 	if result.SpaceId != nil {
 		data.SpaceId = types.StringPointerValue(result.SpaceId)
 	}
+	if result.State != nil {
+		data.State = types.StringPointerValue(result.State)
+	}
 	if result.CreatedAt != nil {
 		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
 	}
@@ -266,6 +275,7 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 		Name:        data.Name.ValueStringPointer(),
 		SecretId:    data.SecretId.ValueStringPointer(),
 		SpaceId:     data.SpaceId.ValueStringPointer(),
+		State:       data.State.ValueStringPointer(),
 	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillsetability: %s", err))

@@ -4,6 +4,18 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-06-26
+
+### Added
+
+- `state` attribute on the `chatbotkit_skillset` and
+  `chatbotkit_skillset_ability` resources — an optional lifecycle field
+  (`enabled` / `disabled`) that lets a skillset or ability be toggled off
+  without deleting it. A disabled ability or skillset is kept and configured but
+  not exposed to the agent at runtime. Omit it to keep the default (`enabled`).
+  Backed by the `state` field added to the GraphQL skillset/ability
+  create/update inputs.
+
 ## [1.7.0] - 2026-06-22
 
 ### Added

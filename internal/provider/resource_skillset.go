@@ -37,6 +37,7 @@ type SkillsetResourceModel struct {
 	Description types.String `tfsdk:"description"`
 	Meta        types.Map    `tfsdk:"meta"`
 	Name        types.String `tfsdk:"name"`
+	State       types.String `tfsdk:"state"`
 	Visibility  types.String `tfsdk:"visibility"`
 	CreatedAt   types.String `tfsdk:"created_at"`
 	UpdatedAt   types.String `tfsdk:"updated_at"`
@@ -79,6 +80,10 @@ func (r *SkillsetResource) Schema(ctx context.Context, req resource.SchemaReques
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the skillset",
+				Optional:            true,
+			},
+			"state": schema.StringAttribute{
+				MarkdownDescription: "The lifecycle state of the skillset (enabled/disabled)",
 				Optional:            true,
 			},
 			"visibility": schema.StringAttribute{
@@ -134,6 +139,7 @@ func (r *SkillsetResource) Create(ctx context.Context, req resource.CreateReques
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),
 		Name:        data.Name.ValueStringPointer(),
+		State:       data.State.ValueStringPointer(),
 		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {
@@ -193,6 +199,9 @@ func (r *SkillsetResource) Read(ctx context.Context, req resource.ReadRequest, r
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
 	}
+	if result.State != nil {
+		data.State = types.StringPointerValue(result.State)
+	}
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
 	}
@@ -226,6 +235,7 @@ func (r *SkillsetResource) Update(ctx context.Context, req resource.UpdateReques
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),
 		Name:        data.Name.ValueStringPointer(),
+		State:       data.State.ValueStringPointer(),
 		Visibility:  data.Visibility.ValueStringPointer(),
 	})
 	if err != nil {

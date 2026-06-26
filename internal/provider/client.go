@@ -486,6 +486,7 @@ func (c *Client) GetBot(ctx context.Context, id string) (*GetBotResponse, error)
 type CreateContextInput struct {
 	BlueprintId *string                `json:"blueprintId,omitempty"`
 	BotId       *string                `json:"botId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
 	DatasetId   *string                `json:"datasetId,omitempty"`
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
@@ -528,6 +529,7 @@ func (c *Client) CreateContext(ctx context.Context, input CreateContextInput) (*
 type UpdateContextInput struct {
 	BlueprintId *string                `json:"blueprintId,omitempty"`
 	BotId       *string                `json:"botId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
 	DatasetId   *string                `json:"datasetId,omitempty"`
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
@@ -602,6 +604,7 @@ type GetContextResponse struct {
 	ID          *string                `json:"id"`
 	BlueprintId *string                `json:"blueprintId,omitempty"`
 	BotId       *string                `json:"botId,omitempty"`
+	ContactId   *string                `json:"contactId,omitempty"`
 	DatasetId   *string                `json:"datasetId,omitempty"`
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
@@ -623,6 +626,7 @@ func (c *Client) GetContext(ctx context.Context, id string) (*GetContextResponse
 						id
 						blueprintId
 						botId
+						contactId
 						datasetId
 						description
 						meta
@@ -3686,6 +3690,7 @@ type CreateSkillsetAbilityInput struct {
 	Name        *string                `json:"name,omitempty"`
 	SecretId    *string                `json:"secretId,omitempty"`
 	SpaceId     *string                `json:"spaceId,omitempty"`
+	State       *string                `json:"state,omitempty"`
 }
 
 // CreateSkillsetAbilityResponse represents the response from creating a skillsetability.
@@ -3730,6 +3735,7 @@ type UpdateSkillsetAbilityInput struct {
 	Name        *string                `json:"name,omitempty"`
 	SecretId    *string                `json:"secretId,omitempty"`
 	SpaceId     *string                `json:"spaceId,omitempty"`
+	State       *string                `json:"state,omitempty"`
 }
 
 // UpdateSkillsetAbilityResponse represents the response from updating a skillsetability.
@@ -3807,6 +3813,7 @@ type GetSkillsetAbilityResponse struct {
 	Name        *string                `json:"name,omitempty"`
 	SecretId    *string                `json:"secretId,omitempty"`
 	SpaceId     *string                `json:"spaceId,omitempty"`
+	State       *string                `json:"state,omitempty"`
 	CreatedAt   *string                `json:"createdAt,omitempty"`
 	UpdatedAt   *string                `json:"updatedAt,omitempty"`
 }
@@ -3833,6 +3840,7 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, id s
 									name
 									secretId
 									spaceId
+									state
 									createdAt
 									updatedAt
 								}
@@ -3886,6 +3894,7 @@ type CreateSkillsetInput struct {
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
 	Name        *string                `json:"name,omitempty"`
+	State       *string                `json:"state,omitempty"`
 	Visibility  *string                `json:"visibility,omitempty"`
 }
 
@@ -3926,6 +3935,7 @@ type UpdateSkillsetInput struct {
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
 	Name        *string                `json:"name,omitempty"`
+	State       *string                `json:"state,omitempty"`
 	Visibility  *string                `json:"visibility,omitempty"`
 }
 
@@ -3998,6 +4008,7 @@ type GetSkillsetResponse struct {
 	Description *string                `json:"description,omitempty"`
 	Meta        map[string]interface{} `json:"meta,omitempty"`
 	Name        *string                `json:"name,omitempty"`
+	State       *string                `json:"state,omitempty"`
 	Visibility  *string                `json:"visibility,omitempty"`
 	CreatedAt   *string                `json:"createdAt,omitempty"`
 	UpdatedAt   *string                `json:"updatedAt,omitempty"`
@@ -4017,6 +4028,7 @@ func (c *Client) GetSkillset(ctx context.Context, id string) (*GetSkillsetRespon
 						description
 						meta
 						name
+						state
 						visibility
 						createdAt
 						updatedAt
@@ -4820,6 +4832,7 @@ type CreateTaskInput struct {
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
+	MaxCalls        *int64                 `json:"maxCalls,omitempty"`
 	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
 	MaxTime         *float64               `json:"maxTime,omitempty"`
 	Meta            map[string]interface{} `json:"meta,omitempty"`
@@ -4864,6 +4877,7 @@ type UpdateTaskInput struct {
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
+	MaxCalls        *int64                 `json:"maxCalls,omitempty"`
 	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
 	MaxTime         *float64               `json:"maxTime,omitempty"`
 	Meta            map[string]interface{} `json:"meta,omitempty"`
@@ -4940,6 +4954,7 @@ type GetTaskResponse struct {
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
+	MaxCalls        *int64                 `json:"maxCalls,omitempty"`
 	MaxIterations   *int64                 `json:"maxIterations,omitempty"`
 	MaxTime         *float64               `json:"maxTime,omitempty"`
 	Meta            map[string]interface{} `json:"meta,omitempty"`
@@ -4963,6 +4978,7 @@ func (c *Client) GetTask(ctx context.Context, id string) (*GetTaskResponse, erro
 						botId
 						contactId
 						description
+						maxCalls
 						maxIterations
 						maxTime
 						meta

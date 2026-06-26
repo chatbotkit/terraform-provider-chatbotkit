@@ -35,6 +35,7 @@ type TaskResourceModel struct {
 	BotId           types.String  `tfsdk:"bot_id"`
 	ContactId       types.String  `tfsdk:"contact_id"`
 	Description     types.String  `tfsdk:"description"`
+	MaxCalls        types.Int64   `tfsdk:"max_calls"`
 	MaxIterations   types.Int64   `tfsdk:"max_iterations"`
 	MaxTime         types.Float64 `tfsdk:"max_time"`
 	Meta            types.Map     `tfsdk:"meta"`
@@ -74,6 +75,10 @@ func (r *TaskResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "The description of the task",
+				Optional:            true,
+			},
+			"max_calls": schema.Int64Attribute{
+				MarkdownDescription: "Maximum tool calls across the whole task run (0 or null for unbounded)",
 				Optional:            true,
 			},
 			"max_iterations": schema.Int64Attribute{
@@ -152,6 +157,7 @@ func (r *TaskResource) Create(ctx context.Context, req resource.CreateRequest, r
 		BotId:           data.BotId.ValueStringPointer(),
 		ContactId:       data.ContactId.ValueStringPointer(),
 		Description:     data.Description.ValueStringPointer(),
+		MaxCalls:        data.MaxCalls.ValueInt64Pointer(),
 		MaxIterations:   data.MaxIterations.ValueInt64Pointer(),
 		MaxTime:         data.MaxTime.ValueFloat64Pointer(),
 		Meta:            convertMapToInterface(ctx, data.Meta),
@@ -209,6 +215,9 @@ func (r *TaskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	if result.Description != nil {
 		data.Description = types.StringPointerValue(result.Description)
 	}
+	if result.MaxCalls != nil {
+		data.MaxCalls = types.Int64PointerValue(result.MaxCalls)
+	}
 	if result.MaxIterations != nil {
 		data.MaxIterations = types.Int64PointerValue(result.MaxIterations)
 	}
@@ -260,6 +269,7 @@ func (r *TaskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		BotId:           data.BotId.ValueStringPointer(),
 		ContactId:       data.ContactId.ValueStringPointer(),
 		Description:     data.Description.ValueStringPointer(),
+		MaxCalls:        data.MaxCalls.ValueInt64Pointer(),
 		MaxIterations:   data.MaxIterations.ValueInt64Pointer(),
 		MaxTime:         data.MaxTime.ValueFloat64Pointer(),
 		Meta:            convertMapToInterface(ctx, data.Meta),

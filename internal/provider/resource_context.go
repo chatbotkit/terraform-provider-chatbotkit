@@ -34,6 +34,7 @@ type ContextResourceModel struct {
 
 	BlueprintId types.String `tfsdk:"blueprint_id"`
 	BotId       types.String `tfsdk:"bot_id"`
+	ContactId   types.String `tfsdk:"contact_id"`
 	DatasetId   types.String `tfsdk:"dataset_id"`
 	Description types.String `tfsdk:"description"`
 	Meta        types.Map    `tfsdk:"meta"`
@@ -68,6 +69,10 @@ func (r *ContextResource) Schema(ctx context.Context, req resource.SchemaRequest
 			},
 			"bot_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the bot to link",
+				Optional:            true,
+			},
+			"contact_id": schema.StringAttribute{
+				MarkdownDescription: "The ID of the contact to link",
 				Optional:            true,
 			},
 			"dataset_id": schema.StringAttribute{
@@ -142,6 +147,7 @@ func (r *ContextResource) Create(ctx context.Context, req resource.CreateRequest
 	result, err := r.client.CreateContext(ctx, CreateContextInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId:       data.BotId.ValueStringPointer(),
+		ContactId:   data.ContactId.ValueStringPointer(),
 		DatasetId:   data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),
@@ -195,6 +201,9 @@ func (r *ContextResource) Read(ctx context.Context, req resource.ReadRequest, re
 	if result.BotId != nil {
 		data.BotId = types.StringPointerValue(result.BotId)
 	}
+	if result.ContactId != nil {
+		data.ContactId = types.StringPointerValue(result.ContactId)
+	}
 	if result.DatasetId != nil {
 		data.DatasetId = types.StringPointerValue(result.DatasetId)
 	}
@@ -244,6 +253,7 @@ func (r *ContextResource) Update(ctx context.Context, req resource.UpdateRequest
 	_, err := r.client.UpdateContext(ctx, data.ID.ValueString(), UpdateContextInput{
 		BlueprintId: data.BlueprintId.ValueStringPointer(),
 		BotId:       data.BotId.ValueStringPointer(),
+		ContactId:   data.ContactId.ValueStringPointer(),
 		DatasetId:   data.DatasetId.ValueStringPointer(),
 		Description: data.Description.ValueStringPointer(),
 		Meta:        convertMapToInterface(ctx, data.Meta),

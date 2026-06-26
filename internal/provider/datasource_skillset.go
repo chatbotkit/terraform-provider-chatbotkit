@@ -30,6 +30,7 @@ type SkillsetDataSourceModel struct {
 	Description types.String `tfsdk:"description"`
 	Meta        types.Map    `tfsdk:"meta"`
 	Name        types.String `tfsdk:"name"`
+	State       types.String `tfsdk:"state"`
 	Visibility  types.String `tfsdk:"visibility"`
 	CreatedAt   types.String `tfsdk:"created_at"`
 	UpdatedAt   types.String `tfsdk:"updated_at"`
@@ -69,6 +70,10 @@ func (d *SkillsetDataSource) Schema(ctx context.Context, req datasource.SchemaRe
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "The name of the skillset",
+				Computed:            true,
+			},
+			"state": schema.StringAttribute{
+				MarkdownDescription: "The lifecycle state of the skillset (enabled/disabled)",
 				Computed:            true,
 			},
 			"visibility": schema.StringAttribute{
@@ -141,6 +146,9 @@ func (d *SkillsetDataSource) Read(ctx context.Context, req datasource.ReadReques
 	}
 	if result.Name != nil {
 		data.Name = types.StringPointerValue(result.Name)
+	}
+	if result.State != nil {
+		data.State = types.StringPointerValue(result.State)
 	}
 	if result.Visibility != nil {
 		data.Visibility = types.StringPointerValue(result.Visibility)
