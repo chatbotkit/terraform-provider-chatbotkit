@@ -52,6 +52,7 @@ The following arguments are supported:
 - `name` - (Optional) The name of the task.
 - `description` - (Optional) The task's objective — what the bot should do when it runs.
 - `bot_id` - (Optional) The ID of the bot the task runs.
+- `blueprint_id` - (Optional) The ID of a blueprint to associate this task with.
 - `contact_id` - (Optional) The ID of a contact to scope the task to.
 - `schedule` - (Optional) When the task runs: `now`, a cron expression, a date-time, or an interval keyword such as `daily`. Omit (or `never`) for a manual task.
 - `timezone` - (Optional) The IANA timezone the schedule is evaluated in (e.g. `Europe/London`).

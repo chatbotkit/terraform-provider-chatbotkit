@@ -32,6 +32,7 @@ type TaskResource struct {
 type TaskResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
+	BlueprintId     types.String  `tfsdk:"blueprint_id"`
 	BotId           types.String  `tfsdk:"bot_id"`
 	ContactId       types.String  `tfsdk:"contact_id"`
 	Description     types.String  `tfsdk:"description"`
@@ -65,6 +66,10 @@ func (r *TaskResource) Schema(ctx context.Context, req resource.SchemaRequest, r
 				},
 			},
 
+			"blueprint_id": schema.StringAttribute{
+				MarkdownDescription: "The ID of the blueprint to assign the task to",
+				Optional:            true,
+			},
 			"bot_id": schema.StringAttribute{
 				MarkdownDescription: "The ID of the bot the task runs",
 				Optional:            true,
@@ -154,6 +159,7 @@ func (r *TaskResource) Create(ctx context.Context, req resource.CreateRequest, r
 	// Call the ChatBotKit GraphQL API to create task
 
 	result, err := r.client.CreateTask(ctx, CreateTaskInput{
+		BlueprintId:     data.BlueprintId.ValueStringPointer(),
 		BotId:           data.BotId.ValueStringPointer(),
 		ContactId:       data.ContactId.ValueStringPointer(),
 		Description:     data.Description.ValueStringPointer(),
@@ -206,6 +212,9 @@ func (r *TaskResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	// Update data model with response values
 
+	if result.BlueprintId != nil {
+		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	}
 	if result.BotId != nil {
 		data.BotId = types.StringPointerValue(result.BotId)
 	}
@@ -266,6 +275,7 @@ func (r *TaskResource) Update(ctx context.Context, req resource.UpdateRequest, r
 	// Call the ChatBotKit GraphQL API to update task
 
 	_, err := r.client.UpdateTask(ctx, data.ID.ValueString(), UpdateTaskInput{
+		BlueprintId:     data.BlueprintId.ValueStringPointer(),
 		BotId:           data.BotId.ValueStringPointer(),
 		ContactId:       data.ContactId.ValueStringPointer(),
 		Description:     data.Description.ValueStringPointer(),
