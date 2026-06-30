@@ -7,18 +7,18 @@ package types
 type BlueprintVisibility string
 
 const (
-	BlueprintVisibilityPrivate   BlueprintVisibility = "private"
+	BlueprintVisibilityPrivate BlueprintVisibility = "private"
 	BlueprintVisibilityProtected BlueprintVisibility = "protected"
-	BlueprintVisibilityPublic    BlueprintVisibility = "public"
+	BlueprintVisibilityPublic BlueprintVisibility = "public"
 )
 
 // BotVisibility Visibility options for bots
 type BotVisibility string
 
 const (
-	BotVisibilityPrivate   BotVisibility = "private"
+	BotVisibilityPrivate BotVisibility = "private"
 	BotVisibilityProtected BotVisibility = "protected"
-	BotVisibilityPublic    BotVisibility = "public"
+	BotVisibilityPublic BotVisibility = "public"
 )
 
 // ContextBlueprintVisibility Visibility options for blueprints in the context of a user
@@ -26,7 +26,7 @@ type ContextBlueprintVisibility string
 
 const (
 	ContextBlueprintVisibilityProtected ContextBlueprintVisibility = "protected"
-	ContextBlueprintVisibilityPublic    ContextBlueprintVisibility = "public"
+	ContextBlueprintVisibilityPublic ContextBlueprintVisibility = "public"
 )
 
 // ContextBotVisibility Visibility options for bots in the context of a user
@@ -34,7 +34,7 @@ type ContextBotVisibility string
 
 const (
 	ContextBotVisibilityProtected ContextBotVisibility = "protected"
-	ContextBotVisibilityPublic    ContextBotVisibility = "public"
+	ContextBotVisibilityPublic ContextBotVisibility = "public"
 )
 
 // ContextDatasetVisibility Visibility options for datasets in the context of a user
@@ -42,7 +42,7 @@ type ContextDatasetVisibility string
 
 const (
 	ContextDatasetVisibilityProtected ContextDatasetVisibility = "protected"
-	ContextDatasetVisibilityPublic    ContextDatasetVisibility = "public"
+	ContextDatasetVisibilityPublic ContextDatasetVisibility = "public"
 )
 
 // ContextFileVisibility Visibility options for files in the context of a user
@@ -50,7 +50,7 @@ type ContextFileVisibility string
 
 const (
 	ContextFileVisibilityProtected ContextFileVisibility = "protected"
-	ContextFileVisibilityPublic    ContextFileVisibility = "public"
+	ContextFileVisibilityPublic ContextFileVisibility = "public"
 )
 
 // ContextSecretKind Kinds of secrets in the context of a user
@@ -64,13 +64,13 @@ const (
 type ContextSecretType string
 
 const (
-	ContextSecretTypeBasic     ContextSecretType = "basic"
-	ContextSecretTypeBearer    ContextSecretType = "bearer"
-	ContextSecretTypeJwt       ContextSecretType = "jwt"
-	ContextSecretTypeOauth     ContextSecretType = "oauth"
-	ContextSecretTypePlain     ContextSecretType = "plain"
+	ContextSecretTypeBasic ContextSecretType = "basic"
+	ContextSecretTypeBearer ContextSecretType = "bearer"
+	ContextSecretTypeJwt ContextSecretType = "jwt"
+	ContextSecretTypeOauth ContextSecretType = "oauth"
+	ContextSecretTypePlain ContextSecretType = "plain"
 	ContextSecretTypeReference ContextSecretType = "reference"
-	ContextSecretTypeTemplate  ContextSecretType = "template"
+	ContextSecretTypeTemplate ContextSecretType = "template"
 )
 
 // ContextSecretVisibility Visibility options for secrets in the context of a user
@@ -78,7 +78,7 @@ type ContextSecretVisibility string
 
 const (
 	ContextSecretVisibilityProtected ContextSecretVisibility = "protected"
-	ContextSecretVisibilityPublic    ContextSecretVisibility = "public"
+	ContextSecretVisibilityPublic ContextSecretVisibility = "public"
 )
 
 // ContextSkillsetVisibility Visibility options for skillsets in the context of a user
@@ -86,39 +86,39 @@ type ContextSkillsetVisibility string
 
 const (
 	ContextSkillsetVisibilityProtected ContextSkillsetVisibility = "protected"
-	ContextSkillsetVisibilityPublic    ContextSkillsetVisibility = "public"
+	ContextSkillsetVisibilityPublic ContextSkillsetVisibility = "public"
 )
 
 // DatasetVisibility Visibility options for datasets
 type DatasetVisibility string
 
 const (
-	DatasetVisibilityPrivate   DatasetVisibility = "private"
+	DatasetVisibilityPrivate DatasetVisibility = "private"
 	DatasetVisibilityProtected DatasetVisibility = "protected"
-	DatasetVisibilityPublic    DatasetVisibility = "public"
+	DatasetVisibilityPublic DatasetVisibility = "public"
 )
 
 // FileVisibility Visibility options for files
 type FileVisibility string
 
 const (
-	FileVisibilityPrivate   FileVisibility = "private"
+	FileVisibilityPrivate FileVisibility = "private"
 	FileVisibilityProtected FileVisibility = "protected"
-	FileVisibilityPublic    FileVisibility = "public"
+	FileVisibilityPublic FileVisibility = "public"
 )
 
 // MessageType Types of messages in a conversation
 type MessageType string
 
 const (
-	MessageTypeActivity    MessageType = "activity"
-	MessageTypeBackstory   MessageType = "backstory"
-	MessageTypeBot         MessageType = "bot"
-	MessageTypeCheckpoint  MessageType = "checkpoint"
-	MessageTypeContext     MessageType = "context"
+	MessageTypeActivity MessageType = "activity"
+	MessageTypeBackstory MessageType = "backstory"
+	MessageTypeBot MessageType = "bot"
+	MessageTypeCheckpoint MessageType = "checkpoint"
+	MessageTypeContext MessageType = "context"
 	MessageTypeInstruction MessageType = "instruction"
-	MessageTypeReasoning   MessageType = "reasoning"
-	MessageTypeUser        MessageType = "user"
+	MessageTypeReasoning MessageType = "reasoning"
+	MessageTypeUser MessageType = "user"
 )
 
 // PolicyType Types of policies that can be used in the system
@@ -126,7 +126,7 @@ type PolicyType string
 
 const (
 	PolicyTypeRetention PolicyType = "retention"
-	PolicyTypeUsage     PolicyType = "usage"
+	PolicyTypeUsage PolicyType = "usage"
 )
 
 // ResourceState Lifecycle state for resources that can be toggled on/off without deletion
@@ -134,23 +134,23 @@ type ResourceState string
 
 const (
 	ResourceStateDisabled ResourceState = "disabled"
-	ResourceStateEnabled  ResourceState = "enabled"
+	ResourceStateEnabled ResourceState = "enabled"
 )
 
 // Schedule Schedule options for trigger integrations
 type Schedule string
 
 const (
-	ScheduleDaily         Schedule = "daily"
-	ScheduleHalfhourly    Schedule = "halfhourly"
-	ScheduleHourly        Schedule = "hourly"
-	ScheduleMonthly       Schedule = "monthly"
-	ScheduleNever         Schedule = "never"
+	ScheduleDaily Schedule = "daily"
+	ScheduleHalfhourly Schedule = "halfhourly"
+	ScheduleHourly Schedule = "hourly"
+	ScheduleMonthly Schedule = "monthly"
+	ScheduleNever Schedule = "never"
 	ScheduleQuarterhourly Schedule = "quarterhourly"
-	ScheduleTwicedaily    Schedule = "twicedaily"
-	ScheduleTwicemonthly  Schedule = "twicemonthly"
-	ScheduleTwiceweekly   Schedule = "twiceweekly"
-	ScheduleWeekly        Schedule = "weekly"
+	ScheduleTwicedaily Schedule = "twicedaily"
+	ScheduleTwicemonthly Schedule = "twicemonthly"
+	ScheduleTwiceweekly Schedule = "twiceweekly"
+	ScheduleWeekly Schedule = "weekly"
 )
 
 // SecretContactVerificationActionType The type of action that can be performed for contact verification
@@ -164,7 +164,7 @@ const (
 type SecretContactVerificationStatus string
 
 const (
-	SecretContactVerificationStatusAuthenticated   SecretContactVerificationStatus = "authenticated"
+	SecretContactVerificationStatusAuthenticated SecretContactVerificationStatus = "authenticated"
 	SecretContactVerificationStatusUnauthenticated SecretContactVerificationStatus = "unauthenticated"
 )
 
@@ -173,20 +173,20 @@ type SecretKind string
 
 const (
 	SecretKindPersonal SecretKind = "personal"
-	SecretKindShared   SecretKind = "shared"
+	SecretKindShared SecretKind = "shared"
 )
 
 // SecretType Types of secrets that can be used in the system
 type SecretType string
 
 const (
-	SecretTypeBasic     SecretType = "basic"
-	SecretTypeBearer    SecretType = "bearer"
-	SecretTypeJwt       SecretType = "jwt"
-	SecretTypeOauth     SecretType = "oauth"
-	SecretTypePlain     SecretType = "plain"
+	SecretTypeBasic SecretType = "basic"
+	SecretTypeBearer SecretType = "bearer"
+	SecretTypeJwt SecretType = "jwt"
+	SecretTypeOauth SecretType = "oauth"
+	SecretTypePlain SecretType = "plain"
 	SecretTypeReference SecretType = "reference"
-	SecretTypeTemplate  SecretType = "template"
+	SecretTypeTemplate SecretType = "template"
 )
 
 // SecretVerificationActionType The type of action that can be performed for verification
@@ -200,7 +200,7 @@ const (
 type SecretVerificationStatus string
 
 const (
-	SecretVerificationStatusAuthenticated   SecretVerificationStatus = "authenticated"
+	SecretVerificationStatusAuthenticated SecretVerificationStatus = "authenticated"
 	SecretVerificationStatusUnauthenticated SecretVerificationStatus = "unauthenticated"
 )
 
@@ -208,18 +208,18 @@ const (
 type SecretVisibility string
 
 const (
-	SecretVisibilityPrivate   SecretVisibility = "private"
+	SecretVisibilityPrivate SecretVisibility = "private"
 	SecretVisibilityProtected SecretVisibility = "protected"
-	SecretVisibilityPublic    SecretVisibility = "public"
+	SecretVisibilityPublic SecretVisibility = "public"
 )
 
 // SkillsetVisibility Visibility options for skillsets
 type SkillsetVisibility string
 
 const (
-	SkillsetVisibilityPrivate   SkillsetVisibility = "private"
+	SkillsetVisibilityPrivate SkillsetVisibility = "private"
 	SkillsetVisibilityProtected SkillsetVisibility = "protected"
-	SkillsetVisibilityPublic    SkillsetVisibility = "public"
+	SkillsetVisibilityPublic SkillsetVisibility = "public"
 )
 
 // TaskOutcome Outcome of task execution
@@ -236,8 +236,8 @@ type TaskStatus string
 
 const (
 	TaskStatusCanceled TaskStatus = "canceled"
-	TaskStatusIdle     TaskStatus = "idle"
-	TaskStatusRunning  TaskStatus = "running"
+	TaskStatusIdle TaskStatus = "idle"
+	TaskStatusRunning TaskStatus = "running"
 )
 
 type Ability struct {
@@ -355,6 +355,8 @@ type Blueprint struct {
 	Skillsets interface{} `json:"skillsets,omitempty"`
 	// The spaces associated with the blueprint
 	Spaces interface{} `json:"spaces,omitempty"`
+	// The tasks associated with the blueprint
+	Tasks interface{} `json:"tasks,omitempty"`
 	// The date and time when the blueprint was last updated
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 	// The visibility setting of the blueprint
@@ -1796,101 +1798,101 @@ type MicrosoftteamsIntegrationUpdateResponse struct {
 }
 
 type Mutation struct {
-	ClonePlatformExample            *ClonePlatformExampleResult              `json:"clonePlatformExample,omitempty"`
-	CreateBlueprint                 *BlueprintCreateResponse                 `json:"createBlueprint,omitempty"`
-	CreateBot                       *BotCreateResponse                       `json:"createBot,omitempty"`
-	CreateContext                   *ContextCreateResponse                   `json:"createContext,omitempty"`
-	CreateDataset                   *DatasetCreateResponse                   `json:"createDataset,omitempty"`
-	CreateDiscordIntegration        *DiscordIntegrationCreateResponse        `json:"createDiscordIntegration,omitempty"`
-	CreateEmailIntegration          *EmailIntegrationCreateResponse          `json:"createEmailIntegration,omitempty"`
-	CreateExtractIntegration        *ExtractIntegrationCreateResponse        `json:"createExtractIntegration,omitempty"`
-	CreateFile                      *FileCreateResponse                      `json:"createFile,omitempty"`
-	CreateGooglechatIntegration     *GooglechatIntegrationCreateResponse     `json:"createGooglechatIntegration,omitempty"`
-	CreateInstagramIntegration      *InstagramIntegrationCreateResponse      `json:"createInstagramIntegration,omitempty"`
-	CreateMcpserverIntegration      *McpserverIntegrationCreateResponse      `json:"createMcpserverIntegration,omitempty"`
-	CreateMessengerIntegration      *MessengerIntegrationCreateResponse      `json:"createMessengerIntegration,omitempty"`
+	ClonePlatformExample *ClonePlatformExampleResult `json:"clonePlatformExample,omitempty"`
+	CreateBlueprint *BlueprintCreateResponse `json:"createBlueprint,omitempty"`
+	CreateBot *BotCreateResponse `json:"createBot,omitempty"`
+	CreateContext *ContextCreateResponse `json:"createContext,omitempty"`
+	CreateDataset *DatasetCreateResponse `json:"createDataset,omitempty"`
+	CreateDiscordIntegration *DiscordIntegrationCreateResponse `json:"createDiscordIntegration,omitempty"`
+	CreateEmailIntegration *EmailIntegrationCreateResponse `json:"createEmailIntegration,omitempty"`
+	CreateExtractIntegration *ExtractIntegrationCreateResponse `json:"createExtractIntegration,omitempty"`
+	CreateFile *FileCreateResponse `json:"createFile,omitempty"`
+	CreateGooglechatIntegration *GooglechatIntegrationCreateResponse `json:"createGooglechatIntegration,omitempty"`
+	CreateInstagramIntegration *InstagramIntegrationCreateResponse `json:"createInstagramIntegration,omitempty"`
+	CreateMcpserverIntegration *McpserverIntegrationCreateResponse `json:"createMcpserverIntegration,omitempty"`
+	CreateMessengerIntegration *MessengerIntegrationCreateResponse `json:"createMessengerIntegration,omitempty"`
 	CreateMicrosoftteamsIntegration *MicrosoftteamsIntegrationCreateResponse `json:"createMicrosoftteamsIntegration,omitempty"`
-	CreateNotionIntegration         *NotionIntegrationCreateResponse         `json:"createNotionIntegration,omitempty"`
-	CreatePolicy                    *PolicyCreateResponse                    `json:"createPolicy,omitempty"`
-	CreatePortal                    *PortalCreateResponse                    `json:"createPortal,omitempty"`
-	CreateSecret                    *SecretCreateResponse                    `json:"createSecret,omitempty"`
-	CreateSitemapIntegration        *SitemapIntegrationCreateResponse        `json:"createSitemapIntegration,omitempty"`
-	CreateSkillserverIntegration    *SkillserverIntegrationCreateResponse    `json:"createSkillserverIntegration,omitempty"`
-	CreateSkillset                  *SkillsetCreateResponse                  `json:"createSkillset,omitempty"`
-	CreateSkillsetAbility           *SkillsetAbilityCreateResponse           `json:"createSkillsetAbility,omitempty"`
-	CreateSlackIntegration          *SlackIntegrationCreateResponse          `json:"createSlackIntegration,omitempty"`
-	CreateSpace                     *SpaceCreateResponse                     `json:"createSpace,omitempty"`
-	CreateSpaceSite                 *SpaceSiteCreateResponse                 `json:"createSpaceSite,omitempty"`
-	CreateSupportIntegration        *SupportIntegrationCreateResponse        `json:"createSupportIntegration,omitempty"`
-	CreateTask                      *TaskCreateResponse                      `json:"createTask,omitempty"`
-	CreateTelegramIntegration       *TelegramIntegrationCreateResponse       `json:"createTelegramIntegration,omitempty"`
-	CreateTriggerIntegration        *TriggerIntegrationCreateResponse        `json:"createTriggerIntegration,omitempty"`
-	CreateTwilioIntegration         *TwilioIntegrationCreateResponse         `json:"createTwilioIntegration,omitempty"`
-	CreateWhatsAppIntegration       *WhatsAppIntegrationCreateResponse       `json:"createWhatsAppIntegration,omitempty"`
-	CreateWidgetIntegration         *WidgetIntegrationCreateResponse         `json:"createWidgetIntegration,omitempty"`
-	DeleteBlueprint                 *BlueprintDeleteResponse                 `json:"deleteBlueprint,omitempty"`
-	DeleteBot                       *BotDeleteResponse                       `json:"deleteBot,omitempty"`
-	DeleteContext                   *ContextDeleteResponse                   `json:"deleteContext,omitempty"`
-	DeleteDataset                   *DatasetDeleteResponse                   `json:"deleteDataset,omitempty"`
-	DeleteDiscordIntegration        *DiscordIntegrationDeleteResponse        `json:"deleteDiscordIntegration,omitempty"`
-	DeleteEmailIntegration          *EmailIntegrationDeleteResponse          `json:"deleteEmailIntegration,omitempty"`
-	DeleteExtractIntegration        *ExtractIntegrationDeleteResponse        `json:"deleteExtractIntegration,omitempty"`
-	DeleteFile                      *FileDeleteResponse                      `json:"deleteFile,omitempty"`
-	DeleteGooglechatIntegration     *GooglechatIntegrationDeleteResponse     `json:"deleteGooglechatIntegration,omitempty"`
-	DeleteInstagramIntegration      *InstagramIntegrationDeleteResponse      `json:"deleteInstagramIntegration,omitempty"`
-	DeleteMcpserverIntegration      *McpserverIntegrationDeleteResponse      `json:"deleteMcpserverIntegration,omitempty"`
-	DeleteMessengerIntegration      *MessengerIntegrationDeleteResponse      `json:"deleteMessengerIntegration,omitempty"`
+	CreateNotionIntegration *NotionIntegrationCreateResponse `json:"createNotionIntegration,omitempty"`
+	CreatePolicy *PolicyCreateResponse `json:"createPolicy,omitempty"`
+	CreatePortal *PortalCreateResponse `json:"createPortal,omitempty"`
+	CreateSecret *SecretCreateResponse `json:"createSecret,omitempty"`
+	CreateSitemapIntegration *SitemapIntegrationCreateResponse `json:"createSitemapIntegration,omitempty"`
+	CreateSkillserverIntegration *SkillserverIntegrationCreateResponse `json:"createSkillserverIntegration,omitempty"`
+	CreateSkillset *SkillsetCreateResponse `json:"createSkillset,omitempty"`
+	CreateSkillsetAbility *SkillsetAbilityCreateResponse `json:"createSkillsetAbility,omitempty"`
+	CreateSlackIntegration *SlackIntegrationCreateResponse `json:"createSlackIntegration,omitempty"`
+	CreateSpace *SpaceCreateResponse `json:"createSpace,omitempty"`
+	CreateSpaceSite *SpaceSiteCreateResponse `json:"createSpaceSite,omitempty"`
+	CreateSupportIntegration *SupportIntegrationCreateResponse `json:"createSupportIntegration,omitempty"`
+	CreateTask *TaskCreateResponse `json:"createTask,omitempty"`
+	CreateTelegramIntegration *TelegramIntegrationCreateResponse `json:"createTelegramIntegration,omitempty"`
+	CreateTriggerIntegration *TriggerIntegrationCreateResponse `json:"createTriggerIntegration,omitempty"`
+	CreateTwilioIntegration *TwilioIntegrationCreateResponse `json:"createTwilioIntegration,omitempty"`
+	CreateWhatsAppIntegration *WhatsAppIntegrationCreateResponse `json:"createWhatsAppIntegration,omitempty"`
+	CreateWidgetIntegration *WidgetIntegrationCreateResponse `json:"createWidgetIntegration,omitempty"`
+	DeleteBlueprint *BlueprintDeleteResponse `json:"deleteBlueprint,omitempty"`
+	DeleteBot *BotDeleteResponse `json:"deleteBot,omitempty"`
+	DeleteContext *ContextDeleteResponse `json:"deleteContext,omitempty"`
+	DeleteDataset *DatasetDeleteResponse `json:"deleteDataset,omitempty"`
+	DeleteDiscordIntegration *DiscordIntegrationDeleteResponse `json:"deleteDiscordIntegration,omitempty"`
+	DeleteEmailIntegration *EmailIntegrationDeleteResponse `json:"deleteEmailIntegration,omitempty"`
+	DeleteExtractIntegration *ExtractIntegrationDeleteResponse `json:"deleteExtractIntegration,omitempty"`
+	DeleteFile *FileDeleteResponse `json:"deleteFile,omitempty"`
+	DeleteGooglechatIntegration *GooglechatIntegrationDeleteResponse `json:"deleteGooglechatIntegration,omitempty"`
+	DeleteInstagramIntegration *InstagramIntegrationDeleteResponse `json:"deleteInstagramIntegration,omitempty"`
+	DeleteMcpserverIntegration *McpserverIntegrationDeleteResponse `json:"deleteMcpserverIntegration,omitempty"`
+	DeleteMessengerIntegration *MessengerIntegrationDeleteResponse `json:"deleteMessengerIntegration,omitempty"`
 	DeleteMicrosoftteamsIntegration *MicrosoftteamsIntegrationDeleteResponse `json:"deleteMicrosoftteamsIntegration,omitempty"`
-	DeleteNotionIntegration         *NotionIntegrationDeleteResponse         `json:"deleteNotionIntegration,omitempty"`
-	DeletePolicy                    *PolicyDeleteResponse                    `json:"deletePolicy,omitempty"`
-	DeletePortal                    *PortalDeleteResponse                    `json:"deletePortal,omitempty"`
-	DeleteSecret                    *SecretDeleteResponse                    `json:"deleteSecret,omitempty"`
-	DeleteSitemapIntegration        *SitemapIntegrationDeleteResponse        `json:"deleteSitemapIntegration,omitempty"`
-	DeleteSkillserverIntegration    *SkillserverIntegrationDeleteResponse    `json:"deleteSkillserverIntegration,omitempty"`
-	DeleteSkillset                  *SkillsetDeleteResponse                  `json:"deleteSkillset,omitempty"`
-	DeleteSkillsetAbility           *SkillsetAbilityDeleteResponse           `json:"deleteSkillsetAbility,omitempty"`
-	DeleteSlackIntegration          *SlackIntegrationDeleteResponse          `json:"deleteSlackIntegration,omitempty"`
-	DeleteSpace                     *SpaceDeleteResponse                     `json:"deleteSpace,omitempty"`
-	DeleteSpaceSite                 *SpaceSiteDeleteResponse                 `json:"deleteSpaceSite,omitempty"`
-	DeleteSupportIntegration        *SupportIntegrationDeleteResponse        `json:"deleteSupportIntegration,omitempty"`
-	DeleteTask                      *TaskDeleteResponse                      `json:"deleteTask,omitempty"`
-	DeleteTelegramIntegration       *TelegramIntegrationDeleteResponse       `json:"deleteTelegramIntegration,omitempty"`
-	DeleteTriggerIntegration        *TriggerIntegrationDeleteResponse        `json:"deleteTriggerIntegration,omitempty"`
-	DeleteTwilioIntegration         *TwilioIntegrationDeleteResponse         `json:"deleteTwilioIntegration,omitempty"`
-	DeleteWhatsAppIntegration       *WhatsAppIntegrationDeleteResponse       `json:"deleteWhatsAppIntegration,omitempty"`
-	DeleteWidgetIntegration         *WidgetIntegrationDeleteResponse         `json:"deleteWidgetIntegration,omitempty"`
-	RevokeSecret                    *SecretRevokeResponse                    `json:"revokeSecret,omitempty"`
-	UpdateBlueprint                 *BlueprintUpdateResponse                 `json:"updateBlueprint,omitempty"`
-	UpdateBot                       *BotUpdateResponse                       `json:"updateBot,omitempty"`
-	UpdateContext                   *ContextUpdateResponse                   `json:"updateContext,omitempty"`
-	UpdateDataset                   *DatasetUpdateResponse                   `json:"updateDataset,omitempty"`
-	UpdateDiscordIntegration        *DiscordIntegrationUpdateResponse        `json:"updateDiscordIntegration,omitempty"`
-	UpdateEmailIntegration          *EmailIntegrationUpdateResponse          `json:"updateEmailIntegration,omitempty"`
-	UpdateExtractIntegration        *ExtractIntegrationUpdateResponse        `json:"updateExtractIntegration,omitempty"`
-	UpdateFile                      *FileUpdateResponse                      `json:"updateFile,omitempty"`
-	UpdateGooglechatIntegration     *GooglechatIntegrationUpdateResponse     `json:"updateGooglechatIntegration,omitempty"`
-	UpdateInstagramIntegration      *InstagramIntegrationUpdateResponse      `json:"updateInstagramIntegration,omitempty"`
-	UpdateMcpserverIntegration      *McpserverIntegrationUpdateResponse      `json:"updateMcpserverIntegration,omitempty"`
-	UpdateMessengerIntegration      *MessengerIntegrationUpdateResponse      `json:"updateMessengerIntegration,omitempty"`
+	DeleteNotionIntegration *NotionIntegrationDeleteResponse `json:"deleteNotionIntegration,omitempty"`
+	DeletePolicy *PolicyDeleteResponse `json:"deletePolicy,omitempty"`
+	DeletePortal *PortalDeleteResponse `json:"deletePortal,omitempty"`
+	DeleteSecret *SecretDeleteResponse `json:"deleteSecret,omitempty"`
+	DeleteSitemapIntegration *SitemapIntegrationDeleteResponse `json:"deleteSitemapIntegration,omitempty"`
+	DeleteSkillserverIntegration *SkillserverIntegrationDeleteResponse `json:"deleteSkillserverIntegration,omitempty"`
+	DeleteSkillset *SkillsetDeleteResponse `json:"deleteSkillset,omitempty"`
+	DeleteSkillsetAbility *SkillsetAbilityDeleteResponse `json:"deleteSkillsetAbility,omitempty"`
+	DeleteSlackIntegration *SlackIntegrationDeleteResponse `json:"deleteSlackIntegration,omitempty"`
+	DeleteSpace *SpaceDeleteResponse `json:"deleteSpace,omitempty"`
+	DeleteSpaceSite *SpaceSiteDeleteResponse `json:"deleteSpaceSite,omitempty"`
+	DeleteSupportIntegration *SupportIntegrationDeleteResponse `json:"deleteSupportIntegration,omitempty"`
+	DeleteTask *TaskDeleteResponse `json:"deleteTask,omitempty"`
+	DeleteTelegramIntegration *TelegramIntegrationDeleteResponse `json:"deleteTelegramIntegration,omitempty"`
+	DeleteTriggerIntegration *TriggerIntegrationDeleteResponse `json:"deleteTriggerIntegration,omitempty"`
+	DeleteTwilioIntegration *TwilioIntegrationDeleteResponse `json:"deleteTwilioIntegration,omitempty"`
+	DeleteWhatsAppIntegration *WhatsAppIntegrationDeleteResponse `json:"deleteWhatsAppIntegration,omitempty"`
+	DeleteWidgetIntegration *WidgetIntegrationDeleteResponse `json:"deleteWidgetIntegration,omitempty"`
+	RevokeSecret *SecretRevokeResponse `json:"revokeSecret,omitempty"`
+	UpdateBlueprint *BlueprintUpdateResponse `json:"updateBlueprint,omitempty"`
+	UpdateBot *BotUpdateResponse `json:"updateBot,omitempty"`
+	UpdateContext *ContextUpdateResponse `json:"updateContext,omitempty"`
+	UpdateDataset *DatasetUpdateResponse `json:"updateDataset,omitempty"`
+	UpdateDiscordIntegration *DiscordIntegrationUpdateResponse `json:"updateDiscordIntegration,omitempty"`
+	UpdateEmailIntegration *EmailIntegrationUpdateResponse `json:"updateEmailIntegration,omitempty"`
+	UpdateExtractIntegration *ExtractIntegrationUpdateResponse `json:"updateExtractIntegration,omitempty"`
+	UpdateFile *FileUpdateResponse `json:"updateFile,omitempty"`
+	UpdateGooglechatIntegration *GooglechatIntegrationUpdateResponse `json:"updateGooglechatIntegration,omitempty"`
+	UpdateInstagramIntegration *InstagramIntegrationUpdateResponse `json:"updateInstagramIntegration,omitempty"`
+	UpdateMcpserverIntegration *McpserverIntegrationUpdateResponse `json:"updateMcpserverIntegration,omitempty"`
+	UpdateMessengerIntegration *MessengerIntegrationUpdateResponse `json:"updateMessengerIntegration,omitempty"`
 	UpdateMicrosoftteamsIntegration *MicrosoftteamsIntegrationUpdateResponse `json:"updateMicrosoftteamsIntegration,omitempty"`
-	UpdateNotionIntegration         *NotionIntegrationUpdateResponse         `json:"updateNotionIntegration,omitempty"`
-	UpdatePolicy                    *PolicyUpdateResponse                    `json:"updatePolicy,omitempty"`
-	UpdatePortal                    *PortalUpdateResponse                    `json:"updatePortal,omitempty"`
-	UpdateSecret                    *SecretUpdateResponse                    `json:"updateSecret,omitempty"`
-	UpdateSitemapIntegration        *SitemapIntegrationUpdateResponse        `json:"updateSitemapIntegration,omitempty"`
-	UpdateSkillserverIntegration    *SkillserverIntegrationUpdateResponse    `json:"updateSkillserverIntegration,omitempty"`
-	UpdateSkillset                  *SkillsetUpdateResponse                  `json:"updateSkillset,omitempty"`
-	UpdateSkillsetAbility           *SkillsetAbilityUpdateResponse           `json:"updateSkillsetAbility,omitempty"`
-	UpdateSlackIntegration          *SlackIntegrationUpdateResponse          `json:"updateSlackIntegration,omitempty"`
-	UpdateSpace                     *SpaceUpdateResponse                     `json:"updateSpace,omitempty"`
-	UpdateSpaceSite                 *SpaceSiteUpdateResponse                 `json:"updateSpaceSite,omitempty"`
-	UpdateSupportIntegration        *SupportIntegrationUpdateResponse        `json:"updateSupportIntegration,omitempty"`
-	UpdateTask                      *TaskUpdateResponse                      `json:"updateTask,omitempty"`
-	UpdateTelegramIntegration       *TelegramIntegrationUpdateResponse       `json:"updateTelegramIntegration,omitempty"`
-	UpdateTriggerIntegration        *TriggerIntegrationUpdateResponse        `json:"updateTriggerIntegration,omitempty"`
-	UpdateTwilioIntegration         *TwilioIntegrationUpdateResponse         `json:"updateTwilioIntegration,omitempty"`
-	UpdateWhatsAppIntegration       *WhatsAppIntegrationUpdateResponse       `json:"updateWhatsAppIntegration,omitempty"`
-	UpdateWidgetIntegration         *WidgetIntegrationUpdateResponse         `json:"updateWidgetIntegration,omitempty"`
+	UpdateNotionIntegration *NotionIntegrationUpdateResponse `json:"updateNotionIntegration,omitempty"`
+	UpdatePolicy *PolicyUpdateResponse `json:"updatePolicy,omitempty"`
+	UpdatePortal *PortalUpdateResponse `json:"updatePortal,omitempty"`
+	UpdateSecret *SecretUpdateResponse `json:"updateSecret,omitempty"`
+	UpdateSitemapIntegration *SitemapIntegrationUpdateResponse `json:"updateSitemapIntegration,omitempty"`
+	UpdateSkillserverIntegration *SkillserverIntegrationUpdateResponse `json:"updateSkillserverIntegration,omitempty"`
+	UpdateSkillset *SkillsetUpdateResponse `json:"updateSkillset,omitempty"`
+	UpdateSkillsetAbility *SkillsetAbilityUpdateResponse `json:"updateSkillsetAbility,omitempty"`
+	UpdateSlackIntegration *SlackIntegrationUpdateResponse `json:"updateSlackIntegration,omitempty"`
+	UpdateSpace *SpaceUpdateResponse `json:"updateSpace,omitempty"`
+	UpdateSpaceSite *SpaceSiteUpdateResponse `json:"updateSpaceSite,omitempty"`
+	UpdateSupportIntegration *SupportIntegrationUpdateResponse `json:"updateSupportIntegration,omitempty"`
+	UpdateTask *TaskUpdateResponse `json:"updateTask,omitempty"`
+	UpdateTelegramIntegration *TelegramIntegrationUpdateResponse `json:"updateTelegramIntegration,omitempty"`
+	UpdateTriggerIntegration *TriggerIntegrationUpdateResponse `json:"updateTriggerIntegration,omitempty"`
+	UpdateTwilioIntegration *TwilioIntegrationUpdateResponse `json:"updateTwilioIntegration,omitempty"`
+	UpdateWhatsAppIntegration *WhatsAppIntegrationUpdateResponse `json:"updateWhatsAppIntegration,omitempty"`
+	UpdateWidgetIntegration *WidgetIntegrationUpdateResponse `json:"updateWidgetIntegration,omitempty"`
 }
 
 type NotionIntegration struct {
@@ -3231,6 +3233,8 @@ type SupportIntegrationUpdateResponse struct {
 }
 
 type Task struct {
+	// The ID of the blueprint the task belongs to
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The bot associated with the task
 	Bot *Bot `json:"bot,omitempty"`
 	// The ID of the bot the task runs
@@ -3275,6 +3279,8 @@ type Task struct {
 
 // TaskCreateRequest Input parameters for creating a new task
 type TaskCreateRequest struct {
+	// The ID of the blueprint to assign the task to
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot the task runs
 	BotId *string `json:"botId,omitempty"`
 	// The ID of the contact to scope the task to
@@ -3340,6 +3346,8 @@ type TaskExecution struct {
 
 // TaskUpdateRequest Input parameters for updating an existing task
 type TaskUpdateRequest struct {
+	// The ID of the blueprint to assign the task to
+	BlueprintId *string `json:"blueprintId,omitempty"`
 	// The ID of the bot the task runs
 	BotId *string `json:"botId,omitempty"`
 	// The ID of the contact to scope the task to

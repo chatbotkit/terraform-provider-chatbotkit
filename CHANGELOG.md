@@ -4,6 +4,16 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-06-30
+
+### Added
+
+- `blueprint_id` attribute on the `chatbotkit_task` resource — associates a task
+  with a blueprint so a scheduled or on-demand task can be grouped and cloned as
+  part of a blueprint alongside the bot it runs, mirroring trigger integrations.
+  Backed by the `blueprintId` field added to the GraphQL task create/update
+  inputs.
+
 ## [1.8.0] - 2026-06-26
 
 ### Added

@@ -4829,6 +4829,7 @@ func (c *Client) GetSupportIntegration(ctx context.Context, id string) (*GetSupp
 
 // CreateTaskInput represents the input for creating a task.
 type CreateTaskInput struct {
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
@@ -4874,6 +4875,7 @@ func (c *Client) CreateTask(ctx context.Context, input CreateTaskInput) (*Create
 
 // UpdateTaskInput represents the input for updating a task.
 type UpdateTaskInput struct {
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
@@ -4951,6 +4953,7 @@ func (c *Client) DeleteTask(ctx context.Context, id string) (*DeleteTaskResponse
 // GetTaskResponse represents the response from fetching a task.
 type GetTaskResponse struct {
 	ID              *string                `json:"id"`
+	BlueprintId     *string                `json:"blueprintId,omitempty"`
 	BotId           *string                `json:"botId,omitempty"`
 	ContactId       *string                `json:"contactId,omitempty"`
 	Description     *string                `json:"description,omitempty"`
@@ -4975,6 +4978,7 @@ func (c *Client) GetTask(ctx context.Context, id string) (*GetTaskResponse, erro
 				edges {
 					node {
 						id
+						blueprintId
 						botId
 						contactId
 						description
