@@ -1,5 +1,7 @@
 # golangci-lint configuration
-# https://golangci-lint.run/usage/configuration/
+# https://golangci-lint.run/docs/configuration/
+
+version: "2"
 
 run:
   timeout: 5m
@@ -8,19 +10,29 @@ run:
 linters:
   enable:
     - errcheck
-    - gosimple
     - govet
     - ineffassign
     - staticcheck
     - unused
 
-linters-settings:
-  errcheck:
-    # Check for ignored error returns in tests too
-    check-blank: false
-  gosimple:
-    # S1039: unnecessary use of fmt.Sprintf
-    checks: ["all"]
+  settings:
+    errcheck:
+      # Check for ignored error returns in tests too
+      check-blank: false
+    staticcheck:
+      # @note v2 folds gosimple (S1*) and stylecheck (ST1*) into staticcheck.
+      # Keep what v1 ran here: staticcheck and every gosimple check, without
+      # the style checks that were never enabled.
+      checks: ["SA*", "S1*"]
+
+  # @note v1 applied these exclusions by default, which is why idioms such as
+  # `defer resp.Body.Close()` passed. v2 makes them opt-in presets.
+  exclusions:
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
 
 issues:
   # Don't limit the number of issues
