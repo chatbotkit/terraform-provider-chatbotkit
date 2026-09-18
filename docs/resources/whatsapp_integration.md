@@ -38,6 +38,7 @@ resource "chatbotkit_whatsapp_integration" "advanced" {
   bot_id      = chatbotkit_bot.assistant.id
   
   access_token       = var.whatsapp_access_token
+  app_secret         = var.whatsapp_app_secret
   phone_number_id    = var.whatsapp_phone_number_id
   session_duration   = 3600000  # 1 hour in milliseconds
   contact_collection = true
@@ -70,7 +71,8 @@ The following arguments are supported:
 - `name` - (Optional) The name of the integration. This is displayed in the ChatBotKit dashboard.
 - `description` - (Optional) A description of the integration's purpose.
 - `bot_id` - (Optional) The ID of the ChatBotKit bot to connect.
-- `access_token` - (Optional, Sensitive) The WhatsApp Business API access token.
+- `access_token` - (Optional, Sensitive) The WhatsApp Business API access token. Removing `access_token` from your configuration sends an explicit null on update, which clears the access token on the platform.
+- `app_secret` - (Optional, Sensitive) The WhatsApp Business app secret used to verify webhook signatures. The API never returns the configured value (it is masked on read), so the value from your configuration is kept in state. Removing `app_secret` from your configuration sends an explicit null on update, which clears the app secret on the platform.
 - `phone_number_id` - (Optional) The WhatsApp Business phone number ID.
 - `session_duration` - (Optional) The duration of a conversation session in milliseconds.
 - `contact_collection` - (Optional) Whether to collect contact information from users.

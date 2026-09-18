@@ -21,7 +21,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  api_key = var.chatbotkit_api_key
+  api_token = var.chatbotkit_api_token
 }
 
 # Create a knowledge base dataset
@@ -50,7 +50,7 @@ resource "chatbotkit_bot" "assistant" {
 
 ## Authentication
 
-The ChatBotKit provider requires an API key for authentication. You can obtain an API key from the [ChatBotKit Dashboard](https://chatbotkit.com).
+The ChatBotKit provider requires a API token for authentication. You can obtain a API token from the [ChatBotKit Dashboard](https://chatbotkit.com).
 
 ### Configuration Options
 
@@ -59,13 +59,13 @@ You can configure authentication in two ways:
 1. **Provider Configuration** (recommended for variables):
    ```terraform
    provider "chatbotkit" {
-     api_key = var.chatbotkit_api_key
+     api_token = var.chatbotkit_api_token
    }
    ```
 
 2. **Environment Variable**:
    ```bash
-   export CHATBOTKIT_API_KEY="your-api-key"
+   export CHATBOTKIT_API_TOKEN="your-api-token"
    ```
 
 When both are set, the provider configuration takes precedence.
@@ -74,18 +74,19 @@ When both are set, the provider configuration takes precedence.
 
 ### Optional
 
-- `api_key` (String, Sensitive) - The API key for authenticating with the ChatBotKit API. Can also be set via the `CHATBOTKIT_API_KEY` environment variable.
-- `base_url` (String) - Custom API endpoint URL. Defaults to `https://api.chatbotkit.com/graphql`. This is typically only needed for testing or enterprise deployments.
-- `run_as` (String) - The ID of a sub-account (partner user) to operate on behalf of. When set, requests include the `X-RunAs-UserId` header, so a single `api_key` (a partner/master token) can manage many sub-accounts — configure one provider alias per sub-account. Can also be set via the `CHATBOTKIT_RUN_AS` environment variable.
+- `api_token` (String, Sensitive) - The API token for authenticating with the ChatBotKit API. Can also be set via the `CHATBOTKIT_API_TOKEN` environment variable, or `CBK_API_TOKEN` for short.
+- `api_key` (String, Sensitive, Deprecated) - The former name of `api_token`. It is used when `api_token` is not set.
+- `base_url` (String) - The GraphQL endpoint URL. Defaults to `https://api.chatbotkit.com/graphql`. For a self-hosted platform use its GraphQL endpoint, e.g. `http://localhost:3000/api/v1/graphql`, or set the platform origin in the `CHATBOTKIT_API_URL` environment variable. Plain `http` works for local use.
+- `run_as` (String) - The ID of a child User to operate on behalf of. When set, requests include the `X-RunAs-UserId` header, so one `api_token` belonging to the parent User can manage many child Users. Configure one provider alias per child User. Can also be set via the `CHATBOTKIT_API_RUNAS_USERID` environment variable (or `CBK_API_RUNAS_USERID` for short); `CHATBOTKIT_RUN_AS` and `CBK_RUN_AS` are still read.
 
-### Operating on sub-accounts (multi-tenancy)
+### Operating on child Users (multi-tenancy)
 
-A partner/master token combined with `run_as` lets one configuration manage many isolated sub-accounts — the standard Terraform multi-account pattern (provider aliases, like the AWS provider's `assume_role`):
+A API token belonging to a parent User, combined with `run_as`, lets one configuration manage many isolated child Users. This follows the standard Terraform multi-account pattern of provider aliases, similar to the AWS provider's `assume_role`:
 
 ```hcl
 provider "chatbotkit" {
   alias  = "acme"
-  run_as = var.acme_account_id # api_key from CHATBOTKIT_API_KEY
+  run_as = var.acme_account_id # api_token from CHATBOTKIT_API_TOKEN
 }
 
 provider "chatbotkit" {

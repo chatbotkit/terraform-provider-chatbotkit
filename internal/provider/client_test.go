@@ -3,8 +3,10 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -26,10 +28,113 @@ func TestNewClient(t *testing.T) {
 	})
 
 	t.Run("uses default base URL when empty", func(t *testing.T) {
+		t.Setenv("CHATBOTKIT_API_URL", "")
+		t.Setenv("CBK_API_URL", "")
+
 		client := NewClient("test-api-key", "")
 
 		if client.BaseURL != defaultBaseURL {
 			t.Errorf("expected BaseURL to be '%s', got '%s'", defaultBaseURL, client.BaseURL)
+		}
+	})
+
+	t.Run("derives the GraphQL endpoint from the platform origin in the environment", func(t *testing.T) {
+		for origin, want := range map[string]string{
+			"http://localhost:3000":     "http://localhost:3000/api/v1/graphql",
+			"http://127.0.0.1:4300/":    "http://127.0.0.1:4300/api/v1/graphql",
+			"https://corp.example/cbk":  "https://corp.example/cbk/api/v1/graphql",
+			"https://corp.example/cbk/": "https://corp.example/cbk/api/v1/graphql",
+		} {
+			t.Setenv("CHATBOTKIT_API_URL", origin)
+
+			if client := NewClient("test-api-key", ""); client.BaseURL != want {
+				t.Errorf("origin %s: expected BaseURL '%s', got '%s'", origin, want, client.BaseURL)
+			}
+		}
+	})
+
+	t.Run("reads the token from the environment under every supported name", func(t *testing.T) {
+		names := []string{
+			"CHATBOTKIT_API_TOKEN", "CBK_API_TOKEN",
+			"CHATBOTKIT_API_SECRET", "CBK_API_SECRET",
+			"CHATBOTKIT_API_KEY", "CBK_API_KEY",
+		}
+
+		clear := func() {
+			for _, name := range names {
+				t.Setenv(name, "")
+			}
+		}
+
+		for _, name := range names {
+			clear()
+			t.Setenv(name, "from-"+name)
+
+			if client := NewClient("", ""); client.APIKey != "from-"+name {
+				t.Errorf("%s: expected the token to be read, got '%s'", name, client.APIKey)
+			}
+		}
+
+		// @note names earlier in the list win: TOKEN over SECRET over KEY, and a
+		// long name over its CBK_ shorthand
+		for i := 0; i < len(names)-1; i++ {
+			clear()
+			t.Setenv(names[i], "winner")
+			t.Setenv(names[i+1], "loser")
+
+			if client := NewClient("", ""); client.APIKey != "winner" {
+				t.Errorf("expected %s to win over %s, got '%s'", names[i], names[i+1], client.APIKey)
+			}
+		}
+
+		clear()
+		t.Setenv("CHATBOTKIT_API_TOKEN", "from-env")
+
+		if client := NewClient("configured", ""); client.APIKey != "configured" {
+			t.Errorf("expected the configured token to win over the environment, got '%s'", client.APIKey)
+		}
+	})
+
+	t.Run("reads the run-as user under the CLI names and the original one", func(t *testing.T) {
+		names := []string{"CHATBOTKIT_API_RUNAS_USERID", "CBK_API_RUNAS_USERID", "CHATBOTKIT_RUN_AS", "CBK_RUN_AS"}
+
+		for i, name := range names {
+			for _, other := range names {
+				t.Setenv(other, "")
+			}
+
+			t.Setenv(name, "user-"+name)
+
+			if got := runAsFromEnv(); got != "user-"+name {
+				t.Errorf("%s: expected the run-as user to be read, got '%s'", name, got)
+			}
+
+			if i+1 < len(names) {
+				t.Setenv(names[i+1], "loser")
+
+				if got := runAsFromEnv(); got != "user-"+name {
+					t.Errorf("expected %s to win over %s, got '%s'", name, names[i+1], got)
+				}
+			}
+		}
+	})
+
+	t.Run("reads the platform origin from the CBK_API_URL shorthand", func(t *testing.T) {
+		t.Setenv("CHATBOTKIT_API_URL", "")
+		t.Setenv("CBK_API_URL", "http://localhost:3000")
+
+		if client := NewClient("test-api-key", ""); client.BaseURL != "http://localhost:3000/api/v1/graphql" {
+			t.Errorf("expected the shorthand origin to be used, got '%s'", client.BaseURL)
+		}
+	})
+
+	t.Run("prefers the configured base URL over the environment", func(t *testing.T) {
+		t.Setenv("CHATBOTKIT_API_URL", "http://localhost:3000")
+
+		client := NewClient("test-api-key", "http://localhost:9000/graphql")
+
+		if client.BaseURL != "http://localhost:9000/graphql" {
+			t.Errorf("expected the configured BaseURL to win, got '%s'", client.BaseURL)
 		}
 	})
 }
@@ -367,6 +472,127 @@ func TestDoRequest_HTTPError(t *testing.T) {
 		// The error will be about unmarshalling the response
 		if err.Error() == "" {
 			t.Error("expected non-empty error message")
+		}
+	})
+}
+
+// fakeGraphQLRequester serves canned JSON pages keyed by the `after` cursor
+// and records the variables it was asked for.
+type fakeGraphQLRequester struct {
+	pages map[string]string // key: after cursor ("" for the first page)
+	calls []map[string]interface{}
+}
+
+func (f *fakeGraphQLRequester) doRequest(_ context.Context, _ string, variables map[string]interface{}, result interface{}) error {
+	f.calls = append(f.calls, variables)
+
+	key := ""
+	if after, ok := variables["after"].(*string); ok && after != nil {
+		key = *after
+	}
+
+	page, ok := f.pages[key]
+	if !ok {
+		return fmt.Errorf("no page for cursor %q", key)
+	}
+
+	return json.Unmarshal([]byte(page), result)
+}
+
+func abilityPage(hasNext bool, endCursor string, ids ...string) string {
+	edges := make([]string, 0, len(ids))
+	for _, id := range ids {
+		edges = append(edges, fmt.Sprintf(`{"node":{"id":%q,"name":"n-%s","linkedSecret":{"id":"secret-%s"}}}`, id, id, id))
+	}
+	cursor := "null"
+	if endCursor != "" {
+		cursor = fmt.Sprintf("%q", endCursor)
+	}
+	return fmt.Sprintf(`{"skillsets":{"edges":[{"node":{"id":"skillset-1","abilities":{"pageInfo":{"hasNextPage":%t,"endCursor":%s},"edges":[%s]}}}]}}`,
+		hasNext, cursor, strings.Join(edges, ","))
+}
+
+func TestFindSkillsetAbility(t *testing.T) {
+	ctx := context.Background()
+
+	t.Run("finds an ability on the first page without paginating", func(t *testing.T) {
+		fake := &fakeGraphQLRequester{pages: map[string]string{
+			"": abilityPage(true, "c1", "a1", "a2"),
+		}}
+
+		got, err := findSkillsetAbility(ctx, fake, "skillset-1", "a2")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got.ID == nil || *got.ID != "a2" || got.LinkedSecretId == nil || *got.LinkedSecretId != "secret-a2" {
+			t.Fatalf("unexpected result: %+v", got)
+		}
+		if len(fake.calls) != 1 {
+			t.Fatalf("expected a single request, got %d", len(fake.calls))
+		}
+		if fake.calls[0]["first"] != skillsetAbilityPageSize {
+			t.Fatalf("expected page size %d, got %v", skillsetAbilityPageSize, fake.calls[0]["first"])
+		}
+	})
+
+	t.Run("follows endCursor to later pages", func(t *testing.T) {
+		fake := &fakeGraphQLRequester{pages: map[string]string{
+			"":   abilityPage(true, "c1", "a1"),
+			"c1": abilityPage(true, "c2", "a2"),
+			"c2": abilityPage(false, "", "a3"),
+		}}
+
+		got, err := findSkillsetAbility(ctx, fake, "skillset-1", "a3")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got.ID == nil || *got.ID != "a3" {
+			t.Fatalf("unexpected result: %+v", got)
+		}
+		if len(fake.calls) != 3 {
+			t.Fatalf("expected three requests, got %d", len(fake.calls))
+		}
+		if after, _ := fake.calls[2]["after"].(*string); after == nil || *after != "c2" {
+			t.Fatalf("expected third request to use cursor c2, got %v", fake.calls[2]["after"])
+		}
+	})
+
+	t.Run("reports not found after exhausting the connection", func(t *testing.T) {
+		fake := &fakeGraphQLRequester{pages: map[string]string{
+			"":   abilityPage(true, "c1", "a1"),
+			"c1": abilityPage(false, "", "a2"),
+		}}
+
+		_, err := findSkillsetAbility(ctx, fake, "skillset-1", "missing")
+		if err == nil || !strings.Contains(err.Error(), "not found") {
+			t.Fatalf("expected a not found error, got %v", err)
+		}
+		if len(fake.calls) != 2 {
+			t.Fatalf("expected two requests, got %d", len(fake.calls))
+		}
+	})
+
+	t.Run("stops when the cursor does not advance", func(t *testing.T) {
+		fake := &fakeGraphQLRequester{pages: map[string]string{
+			"":   abilityPage(true, "c1", "a1"),
+			"c1": abilityPage(true, "c1", "a1"),
+		}}
+
+		_, err := findSkillsetAbility(ctx, fake, "skillset-1", "missing")
+		if err == nil || !strings.Contains(err.Error(), "not found") {
+			t.Fatalf("expected a not found error, got %v", err)
+		}
+		if len(fake.calls) != 2 {
+			t.Fatalf("expected the loop to stop on a repeated cursor, got %d requests", len(fake.calls))
+		}
+	})
+
+	t.Run("reports a missing skillset", func(t *testing.T) {
+		fake := &fakeGraphQLRequester{pages: map[string]string{"": `{"skillsets":{"edges":[]}}`}}
+
+		_, err := findSkillsetAbility(ctx, fake, "skillset-x", "a1")
+		if err == nil || !strings.Contains(err.Error(), "skillset with ID skillset-x not found") {
+			t.Fatalf("expected a skillset not found error, got %v", err)
 		}
 	})
 }

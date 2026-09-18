@@ -62,9 +62,11 @@ jobs:
           cache: true
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: latest
+          # @note pinned: v1 releases are built with Go 1.24 and refuse this
+          # module's Go 1.25 target, and `latest` has broken the job before
+          version: v2.13.2
 
   validate-examples:
     name: Validate Examples
@@ -105,5 +107,5 @@ jobs:
 
       - name: Run acceptance tests
         env:
-          CHATBOTKIT_API_KEY: ${{ secrets.CHATBOTKIT_API_KEY }}
+          CHATBOTKIT_API_TOKEN: ${{ secrets.CHATBOTKIT_API_KEY }}
         run: go test -v ./internal/provider/ -run "^TestAcc"

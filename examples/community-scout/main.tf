@@ -27,7 +27,7 @@
 #   heartbeat.md            -> the cycle tick (the trigger description)
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable
+# - Set the CHATBOTKIT_API_TOKEN environment variable
 # - Provide Slack credentials (variables below) so the scout can suggest to the team
 
 terraform {
@@ -39,7 +39,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================

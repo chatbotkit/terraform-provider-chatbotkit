@@ -4,6 +4,43 @@ All notable changes to the ChatBotKit Terraform Provider are documented in this
 file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.10.0] - 2026-09-18
+
+### Added
+
+- `api_token` is the new name for the provider credential. `api_key` is
+  deprecated and still read when `api_token` is not set. The token is read
+  from `CHATBOTKIT_API_TOKEN` (or `CBK_API_TOKEN`); the older
+  `CHATBOTKIT_API_SECRET` and `CHATBOTKIT_API_KEY` names, and their `CBK_`
+  forms, still work. `CBK_API_URL` is accepted as a shorthand for
+  `CHATBOTKIT_API_URL`. The run-as user is also read from
+  `CHATBOTKIT_API_RUNAS_USERID` (or `CBK_API_RUNAS_USERID`), the names the CLI
+  uses; `CHATBOTKIT_RUN_AS` still works and gains a `CBK_RUN_AS` shorthand.
+- The provider reads the platform origin from the `CHATBOTKIT_API_URL`
+  environment variable when `base_url` is not set, and derives the GraphQL
+  endpoint from it (`http://localhost:3000` becomes
+  `http://localhost:3000/api/v1/graphql`). This is the same variable the SDKs'
+  CLI reads, so one setting points every tool at a self-hosted platform. Plain
+  `http` works for local use, and `base_url` still wins when configured.
+
+### Changed
+
+- **BREAKING (behaviour):** `chatbotkit_instagram_integration`, `chatbotkit_messenger_integration` and `chatbotkit_whatsapp_integration` gain an `app_secret` attribute (sensitive; reads are masked so the configured value is kept), and on update a missing `access_token` / `app_secret` is now sent as an explicit `null`, which clears the credential on the platform. Previously an omitted credential was silently kept - configurations that relied on that must set the value explicitly. Requires the platform release that passes credential nulls through the GraphQL update mutations.
+- `chatbotkit_skillset_ability` import now takes `<skillset_id>/<ability_id>`; a bare ability id is rejected with a clear message. Reads paginate the skillset's abilities instead of stopping at the first 100.
+- **BREAKING (API wire format):** the `chatbotkit_skillset_ability` resource
+  now sends and reads the renamed platform link fields `linkedSecretId` /
+  `linkedFileId` / `linkedBotId` / `linkedSpaceId` (previously `secretId` /
+  `fileId` / `botId` / `spaceId`) on create/update/read, and the GraphQL
+  `Ability` relations `linkedSecret` / `linkedFile` / `linkedBot` /
+  `linkedSpace` (previously `secret` / `file` / `bot` / `space`). The HCL
+  attribute names `secret_id`, `bot_id`, `file_id` and `space_id` are
+  unchanged, so existing configurations need no edits. There are no
+  compatibility aliases on the platform side; upgrade the provider together
+  with the platform deploy. A link removed outside Terraform is now cleared to
+  `null` in state on read.
+
 ## [1.9.0] - 2026-06-30
 
 ### Added

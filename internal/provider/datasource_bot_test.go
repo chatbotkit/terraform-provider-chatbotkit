@@ -7,7 +7,7 @@ import (
 )
 
 // TestAccBotDataSource_basic tests reading an existing bot via data source.
-// This test requires CHATBOTKIT_API_KEY to be set in the environment
+// This test requires CHATBOTKIT_API_TOKEN to be set in the environment
 // and an existing bot to be available.
 func TestAccBotDataSource_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{

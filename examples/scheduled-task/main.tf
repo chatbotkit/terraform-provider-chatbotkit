@@ -7,7 +7,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set the CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set the CHATBOTKIT_API_TOKEN env var
 }
 
 # ----------------------------------------------------------------------------

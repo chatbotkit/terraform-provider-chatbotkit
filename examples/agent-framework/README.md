@@ -110,10 +110,10 @@ the integration (and its variables) and supply credentials to activate them.
 
 ## Usage
 
-1. Set your ChatBotKit API key:
+1. Set your ChatBotKit API token:
 
    ```bash
-   export CHATBOTKIT_API_KEY="your-api-key"
+   export CHATBOTKIT_API_TOKEN="your-api-token"
    ```
 
 2. (Optional) Provide Slack credentials to activate the channel:

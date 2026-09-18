@@ -83,7 +83,7 @@ agent/skills/extract-knowledge/      SKILL.md                            (judgme
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="..."
+export CHATBOTKIT_API_TOKEN="..."
 terraform init
 terraform apply
 ```

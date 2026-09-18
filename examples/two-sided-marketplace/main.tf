@@ -57,7 +57,7 @@
 # including its scheme (`Bearer <token>`), so never add your own `Bearer ` prefix.
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable
+# - Set the CHATBOTKIT_API_TOKEN environment variable
 # - Provide the secret/OAuth values in terraform.tfvars (see the .example file)
 
 terraform {
@@ -69,7 +69,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================

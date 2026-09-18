@@ -13,7 +13,7 @@
 # - Telegram integration for mobile access
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable
+# - Set the CHATBOTKIT_API_TOKEN environment variable
 # - Configure Notion OAuth2 (platform secret: notion)
 # - Configure Google Calendar OAuth2 (platform secret: google/calendar)
 # - Configure Telegram bot token for the integration
@@ -27,7 +27,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================
@@ -47,7 +47,7 @@ resource "chatbotkit_space" "mind" {
 
 resource "chatbotkit_secret" "notion" {
   name        = "Notion API Key"
-  description = "The API key for accessing Notion."
+  description = "The API token for accessing Notion."
   type        = "template"
   kind        = "personal"
 

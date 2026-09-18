@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -157,18 +158,7 @@ func (r *SkillsetAbilityResource) Create(ctx context.Context, req resource.Creat
 
 	// Call the ChatBotKit GraphQL API to create skillsetability
 
-	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), CreateSkillsetAbilityInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId:       data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		FileId:      data.FileId.ValueStringPointer(),
-		Instruction: data.Instruction.ValueStringPointer(),
-		Meta:        convertMapToInterface(ctx, data.Meta),
-		Name:        data.Name.ValueStringPointer(),
-		SecretId:    data.SecretId.ValueStringPointer(),
-		SpaceId:     data.SpaceId.ValueStringPointer(),
-		State:       data.State.ValueStringPointer(),
-	})
+	result, err := r.client.CreateSkillsetAbility(ctx, data.SkillsetId.ValueString(), skillsetAbilityCreateInputFromModel(ctx, data))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create skillsetability: %s", err))
 		return
@@ -209,44 +199,7 @@ func (r *SkillsetAbilityResource) Read(ctx context.Context, req resource.ReadReq
 
 	// Update data model with response values
 
-	if result.BlueprintId != nil {
-		data.BlueprintId = types.StringPointerValue(result.BlueprintId)
-	}
-	if result.BotId != nil {
-		data.BotId = types.StringPointerValue(result.BotId)
-	}
-	if result.Description != nil {
-		data.Description = types.StringPointerValue(result.Description)
-	}
-	if result.FileId != nil {
-		data.FileId = types.StringPointerValue(result.FileId)
-	}
-	if result.Instruction != nil {
-		data.Instruction = types.StringPointerValue(result.Instruction)
-	}
-	if result.Meta != nil {
-		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
-		resp.Diagnostics.Append(diags...)
-		data.Meta = mapValue
-	}
-	if result.Name != nil {
-		data.Name = types.StringPointerValue(result.Name)
-	}
-	if result.SecretId != nil {
-		data.SecretId = types.StringPointerValue(result.SecretId)
-	}
-	if result.SpaceId != nil {
-		data.SpaceId = types.StringPointerValue(result.SpaceId)
-	}
-	if result.State != nil {
-		data.State = types.StringPointerValue(result.State)
-	}
-	if result.CreatedAt != nil {
-		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
-	}
-	if result.UpdatedAt != nil {
-		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
-	}
+	resp.Diagnostics.Append(applySkillsetAbilityResultToModel(ctx, &data, result)...)
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -265,18 +218,7 @@ func (r *SkillsetAbilityResource) Update(ctx context.Context, req resource.Updat
 
 	// Call the ChatBotKit GraphQL API to update skillsetability
 
-	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), UpdateSkillsetAbilityInput{
-		BlueprintId: data.BlueprintId.ValueStringPointer(),
-		BotId:       data.BotId.ValueStringPointer(),
-		Description: data.Description.ValueStringPointer(),
-		FileId:      data.FileId.ValueStringPointer(),
-		Instruction: data.Instruction.ValueStringPointer(),
-		Meta:        convertMapToInterface(ctx, data.Meta),
-		Name:        data.Name.ValueStringPointer(),
-		SecretId:    data.SecretId.ValueStringPointer(),
-		SpaceId:     data.SpaceId.ValueStringPointer(),
-		State:       data.State.ValueStringPointer(),
-	})
+	_, err := r.client.UpdateSkillsetAbility(ctx, data.SkillsetId.ValueString(), data.ID.ValueString(), skillsetAbilityUpdateInputFromModel(ctx, data))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update skillsetability: %s", err))
 		return
@@ -308,5 +250,99 @@ func (r *SkillsetAbilityResource) Delete(ctx context.Context, req resource.Delet
 
 // ImportState imports the resource state from Terraform.
 func (r *SkillsetAbilityResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	skillsetId, abilityId, err := parseSkillsetAbilityImportID(req.ID)
+	if err != nil {
+		resp.Diagnostics.AddError("Invalid Import ID", err.Error())
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("skillset_id"), skillsetId)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), abilityId)...)
+}
+
+// parseSkillsetAbilityImportID splits a `<skillset_id>/<ability_id>` import
+// ID into its parts. An ability can only be read through its skillset, so a
+// bare ability ID is rejected with guidance on the expected format.
+func parseSkillsetAbilityImportID(importID string) (skillsetId string, abilityId string, err error) {
+	parts := strings.Split(importID, "/")
+	if len(parts) != 2 || strings.TrimSpace(parts[0]) == "" || strings.TrimSpace(parts[1]) == "" {
+		return "", "", fmt.Errorf("expected import ID in the format <skillset_id>/<ability_id> (for example skillset_abc123/ability_def456), got %q", importID)
+	}
+
+	return strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]), nil
+}
+
+// skillsetAbilityCreateInputFromModel maps the HCL model to the GraphQL create
+// input. The HCL attributes `secret_id`, `bot_id`, `file_id` and `space_id`
+// correspond to the API's `linkedSecretId`, `linkedBotId`, `linkedFileId` and
+// `linkedSpaceId` fields.
+func skillsetAbilityCreateInputFromModel(ctx context.Context, data SkillsetAbilityResourceModel) CreateSkillsetAbilityInput {
+	return CreateSkillsetAbilityInput{
+		BlueprintId:    data.BlueprintId.ValueStringPointer(),
+		LinkedBotId:    data.BotId.ValueStringPointer(),
+		Description:    data.Description.ValueStringPointer(),
+		LinkedFileId:   data.FileId.ValueStringPointer(),
+		Instruction:    data.Instruction.ValueStringPointer(),
+		Meta:           convertMapToInterface(ctx, data.Meta),
+		Name:           data.Name.ValueStringPointer(),
+		LinkedSecretId: data.SecretId.ValueStringPointer(),
+		LinkedSpaceId:  data.SpaceId.ValueStringPointer(),
+		State:          data.State.ValueStringPointer(),
+	}
+}
+
+// skillsetAbilityUpdateInputFromModel maps the HCL model to the GraphQL update
+// input. See skillsetAbilityCreateInputFromModel for the linked field mapping.
+func skillsetAbilityUpdateInputFromModel(ctx context.Context, data SkillsetAbilityResourceModel) UpdateSkillsetAbilityInput {
+	return UpdateSkillsetAbilityInput{
+		BlueprintId:    data.BlueprintId.ValueStringPointer(),
+		LinkedBotId:    data.BotId.ValueStringPointer(),
+		Description:    data.Description.ValueStringPointer(),
+		LinkedFileId:   data.FileId.ValueStringPointer(),
+		Instruction:    data.Instruction.ValueStringPointer(),
+		Meta:           convertMapToInterface(ctx, data.Meta),
+		Name:           data.Name.ValueStringPointer(),
+		LinkedSecretId: data.SecretId.ValueStringPointer(),
+		LinkedSpaceId:  data.SpaceId.ValueStringPointer(),
+		State:          data.State.ValueStringPointer(),
+	}
+}
+
+// applySkillsetAbilityResultToModel copies an ability read from the API into
+// the HCL model. Linked relations (`linkedBotId`, `linkedFileId`,
+// `linkedSecretId`, `linkedSpaceId`) and `blueprintId` are always written so a
+// link removed outside Terraform clears the state attribute to null.
+func applySkillsetAbilityResultToModel(ctx context.Context, data *SkillsetAbilityResourceModel, result *GetSkillsetAbilityResponse) diag.Diagnostics {
+	var diagnostics diag.Diagnostics
+
+	data.BlueprintId = types.StringPointerValue(result.BlueprintId)
+	data.BotId = types.StringPointerValue(result.LinkedBotId)
+	if result.Description != nil {
+		data.Description = types.StringPointerValue(result.Description)
+	}
+	data.FileId = types.StringPointerValue(result.LinkedFileId)
+	if result.Instruction != nil {
+		data.Instruction = types.StringPointerValue(result.Instruction)
+	}
+	if result.Meta != nil {
+		mapValue, diags := types.MapValueFrom(ctx, types.StringType, result.Meta)
+		diagnostics.Append(diags...)
+		data.Meta = mapValue
+	}
+	if result.Name != nil {
+		data.Name = types.StringPointerValue(result.Name)
+	}
+	data.SecretId = types.StringPointerValue(result.LinkedSecretId)
+	data.SpaceId = types.StringPointerValue(result.LinkedSpaceId)
+	if result.State != nil {
+		data.State = types.StringPointerValue(result.State)
+	}
+	if result.CreatedAt != nil {
+		data.CreatedAt = types.StringPointerValue(result.CreatedAt)
+	}
+	if result.UpdatedAt != nil {
+		data.UpdatedAt = types.StringPointerValue(result.UpdatedAt)
+	}
+
+	return diagnostics
 }

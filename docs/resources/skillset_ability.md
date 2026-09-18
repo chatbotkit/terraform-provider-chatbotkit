@@ -118,8 +118,10 @@ In addition to all arguments above, the following attributes are exported:
 
 ## Import
 
-Skillset abilities can be imported using their ID:
+Skillset abilities can only be looked up through their skillset, so the import ID must combine both IDs as `<skillset_id>/<ability_id>`:
 
 ```bash
-terraform import chatbotkit_skillset_ability.example ability_abc123def456
+terraform import chatbotkit_skillset_ability.example skillset_abc123def456/ability_abc123def456
 ```
+
+Importing with a bare ability ID is rejected with an error explaining the expected format.

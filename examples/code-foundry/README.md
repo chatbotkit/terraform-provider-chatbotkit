@@ -1,20 +1,19 @@
-# Code Foundry (multi-account)
+# Code Foundry (multi-User)
 
-An autonomous code foundry built on a **multi-account architecture**: one
-**shared "tools" account** holds the expensive, sensitive machinery once, and each
-**user gets a thin, isolated sub-account** with a Coding Agent that borrows the
-shared tools cross-account and works on that user's own repository.
+An autonomous code foundry built on a **multi-User architecture**: one shared
+tools User holds the expensive, sensitive machinery once, and each customer
+gets a thin, isolated child User with a Coding Agent that borrows those tools
+across Users and works on that customer's repository.
 
-This is the pattern for productising agents to many users without duplicating the
-toolbox per user and without putting credentials (a GitHub App key) in each
-sub-account.
+This pattern supports productising agents for many customers without duplicating
+the toolbox or putting credentials such as a GitHub App key in each child User.
 
 ## Architecture
 
 ```
-  shared account (partner-user alias: "shared")        per-user sub-accounts
+  shared User (alias: "shared")               child Users
   ┌──────────────────────────────────────────┐         ┌───────────────────────────┐
-  │ GitHub bot — mints repo-scoped tokens    │ install │ alice/                    │
+  │ GitHub bot - mints repo-scoped tokens    │ install │ alice/                    │
   │   (github/repository/token/create + JWT) │◀────────│   Coding Agent            │
   │ Coding Tools skillset                    │ @shared@│   + install shared tools  │
   │   = global-coding-tools (protected)      │ global- │   + heartbeat             │
@@ -25,21 +24,23 @@ sub-account.
   └──────────────────────────────────────────┘
 ```
 
-One partner/master token (`CHATBOTKIT_API_KEY`) operates on every account; each is
-selected with a provider alias + `run_as` (the `X-RunAs-UserId` header) — the same
-multi-account mechanism as the [`multi-tenant-agents-shared`](../multi-tenant-agents-shared)
+One API token belonging to the parent User (`CHATBOTKIT_API_TOKEN`) operates on every
+child User. Each is selected with a provider alias and `run_as` (the
+`X-RunAs-UserId` header), using the same multi-User mechanism as the
+[`multi-tenant-agents-shared`](../multi-tenant-agents-shared)
 example.
 
 ## The two halves
 
-- **`modules/shared`** — the shared account. A GitHub bot that mints
+- **`modules/shared`** - the shared User. A GitHub bot that mints
   repository-scoped GitHub App tokens (JWT secret), a **Coding Tools** skillset
-  exported account-wide as `global-coding-tools` (`visibility = protected` + a
+  exposed to child Users as `global-coding-tools` (`visibility = protected` plus a
   stable `alias`), shared Design and Coding spaces, and a Designs Manager bot with
-  a Sync trigger. The shared account's partner user **must have the alias `shared`**.
-- **`modules/coder`** — one per user. A Coding Agent whose only built-in ability is
-  to install the shared toolset cross-account (`conversation/skillset/install` with
-  `@shared@global-coding-tools`). Plus a **heartbeat** and the user's **context**.
+  a Sync trigger. The shared User **must have the alias `shared`**.
+- **`modules/coder`** - one per child User. A Coding Agent whose only built-in ability is
+  to install the shared toolset across Users (`conversation/skillset/install` with
+  `@shared@global-coding-tools`), plus a **heartbeat** and the child User's
+  **context**.
 
 ## How a token gets minted (and why context matters)
 
@@ -48,48 +49,48 @@ The coding agent never holds the GitHub App key. To touch a repo it calls
 bot signs an App JWT (from the shared secret) and returns a short-lived,
 repository-scoped token.
 
-But _which_ repository? It can't be hard-coded — each agent belongs to a different
-user, and they may interact with the agent, so a hard-coded repo would be a
-security risk. The repo comes from the sub-user's **context** (`githubOwner` /
-`githubRepo` / `vercelProjectId`). That's why setting context per sub-user is part
+But _which_ repository? It cannot be hard-coded because each agent belongs to a
+different child User. The repository comes from the User's **context**
+(`githubOwner` / `githubRepo` / `vercelProjectId`). That is why setting context
+per child User is part
 of the setup, and why the context API needed a programmatic surface (see below).
 
 ## The two gaps this example closes
 
-1. **Context via GraphQL → a native Terraform resource.** The partner-user context
-   API (`/api/v1/partner/user/{userId}/context/...`) was REST-only. It is now also
+1. **Context via GraphQL to a native Terraform resource.** The User context
+   API (`/api/v1/user/{userId}/context/...`) was REST-only. It is now also
    exposed via GraphQL (`contexts` query; `createContext` / `updateContext` /
-   `deleteContext` mutations, scoped to the run_as'd sub-user), and the Terraform
-   provider has been regenerated from the updated schema — so context is a native
-   **`chatbotkit_context`** resource. The coder module uses it directly; created in
-   the user's sub-account (the module's provider is run_as'd to it), so each agent is
-   scoped to its own repo with no hard-coding.
+   `deleteContext` mutations, scoped to the selected child User), and the
+   Terraform provider has been regenerated from the updated schema. Context is
+   therefore a native **`chatbotkit_context`** resource. The coder module creates
+   it for the child User selected by its provider, so each agent is scoped to its
+   own repository without hard-coding.
 2. **A coding-agent heartbeat.** Coding tasks span many steps. Each coder
-   sub-account has a recurring heartbeat trigger that nudges the agent to make the
+   child User has a recurring heartbeat trigger that nudges the agent to make the
    next concrete step on its active task, reusing one conversation within the
    session window so it keeps its place across ticks.
 
 ## Files
 
 ```
-main.tf                       provider aliases (shared + per-user) + module calls
-modules/shared/main.tf        the shared "tools" account (GitHub, Coding Tools, spaces, Designs Manager)
-modules/coder/main.tf         one user's coding agent + install-shared-tools + heartbeat + context
-terraform.tfvars.example      account IDs, GitHub App id/key, git email
+main.tf                       provider aliases (shared + per-User) + module calls
+modules/shared/main.tf        the shared tools User (GitHub, Coding Tools, spaces, Designs Manager)
+modules/coder/main.tf         one child User's coding agent + shared tools + heartbeat + context
+terraform.tfvars.example      User IDs, GitHub App ID/key, git email
 ```
 
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="<partner/master token>"
+export CHATBOTKIT_API_TOKEN="<parent User API token>"
 export TF_VAR_github_app_private_key="$(cat github-app.pem)"
-cp terraform.tfvars.example terraform.tfvars   # fill in account IDs + app id
+cp terraform.tfvars.example terraform.tfvars   # fill in User IDs + App ID
 terraform init
 terraform apply
 ```
 
-Accounts (partner users) are created out of band; the shared one must be aliased
-`shared`. To add a user: add an account-id variable, a provider alias, and a
+Child Users are created out of band; the shared User must be aliased `shared`.
+To add a customer: add a User ID variable, a provider alias, and a
 `./modules/coder` call (mirroring `alice`/`bob`).
 
 ## Notes and seams
@@ -100,12 +101,12 @@ Accounts (partner users) are created out of band; the shared one must be aliased
   shape differs.
 - **Context resource.** `chatbotkit_context` is generated from the GraphQL schema;
   its `payload` is `map(string)`, so values (repo owner/name, repo URL, Vercel
-  project id) are flat strings. Regenerate the provider (the GraphQL → stubs
+  project ID) are flat strings. Regenerate the provider (the GraphQL-to-stubs
   pipeline) if you change the schema again.
 - **Designs Manager** Sync trigger is `schedule = "never"` (run on demand) and syncs
   an upstream design repo into the shared Design space.
 
 ## Related examples
 
-- [`multi-tenant-agents-shared`](../multi-tenant-agents-shared) — the provider-alias + `run_as` multi-account pattern this builds on.
-- [`agent-framework`](../agent-framework) — the single agent as a project of files.
+- [`multi-tenant-agents-shared`](../multi-tenant-agents-shared) - the provider-alias plus `run_as` multi-User pattern this builds on.
+- [`agent-framework`](../agent-framework) - the single agent as a project of files.

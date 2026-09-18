@@ -8,7 +8,7 @@ import (
 )
 
 // TestAccBotResource_basic tests the basic lifecycle of a bot resource.
-// This test requires CHATBOTKIT_API_KEY to be set in the environment.
+// This test requires CHATBOTKIT_API_TOKEN to be set in the environment.
 // See the README.md for instructions on obtaining an API key.
 func TestAccBotResource_basic(t *testing.T) {
 	resource.Test(t, resource.TestCase{

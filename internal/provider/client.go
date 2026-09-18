@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -22,13 +23,52 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
+// envFirst returns the first non-empty value among the named environment
+// variables.
+func envFirst(names ...string) string {
+	for _, name := range names {
+		if value := os.Getenv(name); value != "" {
+			return value
+		}
+	}
+
+	return ""
+}
+
+// tokenFromEnv reads the API token from the environment. CHATBOTKIT_API_TOKEN
+// is the name to use, or CBK_API_TOKEN for short. SECRET and KEY are older
+// names that are still read so existing setups keep working.
+func tokenFromEnv() string {
+	return envFirst(
+		"CHATBOTKIT_API_TOKEN", "CBK_API_TOKEN",
+		"CHATBOTKIT_API_SECRET", "CBK_API_SECRET",
+		"CHATBOTKIT_API_KEY", "CBK_API_KEY",
+	)
+}
+
+// runAsFromEnv reads the child User to operate on behalf of. The first pair are
+// the names the CLI introduced and CHATBOTKIT_RUN_AS is this provider's
+// original name; both tools read all of them, each with its CBK_ shorthand.
+func runAsFromEnv() string {
+	return envFirst(
+		"CHATBOTKIT_API_RUNAS_USERID", "CBK_API_RUNAS_USERID",
+		"CHATBOTKIT_RUN_AS", "CBK_RUN_AS",
+	)
+}
+
 // NewClient creates a new ChatBotKit API client.
 func NewClient(apiKey, baseURL string) *Client {
 	if apiKey == "" {
-		apiKey = os.Getenv("CHATBOTKIT_API_KEY")
+		apiKey = tokenFromEnv()
 	}
 	if baseURL == "" {
-		baseURL = defaultBaseURL
+		// @note CHATBOTKIT_API_URL is the platform origin, as in the SDKs and the
+		// CLI; the GraphQL endpoint is derived from it
+		if origin := envFirst("CHATBOTKIT_API_URL", "CBK_API_URL"); origin != "" {
+			baseURL = strings.TrimRight(origin, "/") + "/api/v1/graphql"
+		} else {
+			baseURL = defaultBaseURL
+		}
 	}
 	return &Client{
 		APIKey:     apiKey,
@@ -71,8 +111,8 @@ func (c *Client) doRequest(ctx context.Context, query string, variables map[stri
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+c.APIKey)
 
-	// When set, act on behalf of a sub-account (partner user). This lets a single
-	// api_key manage many sub-accounts by selecting one per provider configuration.
+	// When set, act on behalf of a child User. This lets one API key manage many
+	// child Users by selecting one per provider configuration.
 	if c.RunAs != "" {
 		req.Header.Set("X-RunAs-UserId", c.RunAs)
 	}
@@ -114,6 +154,29 @@ func convertMapToInterface(ctx context.Context, m types.Map) map[string]interfac
 	result := make(map[string]interface{})
 	m.ElementsAs(ctx, &result, false)
 	return result
+}
+
+// maskedSecretValue is what the platform returns in place of a configured
+// secret (access tokens, app secrets, ...) on read.
+const maskedSecretValue = "********"
+
+// isMaskedSecret reports whether an API value is the platform's secret mask.
+func isMaskedSecret(value string) bool {
+	if value == "" {
+		return false
+	}
+	return strings.Trim(value, "*") == ""
+}
+
+// sensitiveStringFromAPI maps a sensitive API field onto state. The platform
+// never echoes a configured secret back; it returns a mask instead. In that
+// case (or when the field is absent) the value already in state is kept so
+// the mask never overwrites the configured value and causes a perpetual diff.
+func sensitiveStringFromAPI(current types.String, apiValue *string) types.String {
+	if apiValue == nil || isMaskedSecret(*apiValue) {
+		return current
+	}
+	return types.StringPointerValue(apiValue)
 }
 
 // CreateBlueprintInput represents the input for creating a blueprint.
@@ -1828,6 +1891,7 @@ func (c *Client) GetGooglechatIntegration(ctx context.Context, id string) (*GetG
 // CreateInstagramIntegrationInput represents the input for creating a instagramintegration.
 type CreateInstagramIntegrationInput struct {
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -1870,8 +1934,14 @@ func (c *Client) CreateInstagramIntegration(ctx context.Context, input CreateIns
 }
 
 // UpdateInstagramIntegrationInput represents the input for updating a instagramintegration.
+// UpdateInstagramIntegrationInput is authoritative for the credentials: a nil
+// AccessToken/AppSecret is serialised as an explicit JSON null so the platform
+// clears the credential, rather than being omitted (which would keep it). This
+// depends on the platform's updateInstagramIntegration mutation passing nulls
+// through for those fields (being fixed platform-side in the same change).
 type UpdateInstagramIntegrationInput struct {
-	AccessToken       *string                `json:"accessToken,omitempty"`
+	AccessToken       *string                `json:"accessToken"`
+	AppSecret         *string                `json:"appSecret"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -1948,6 +2018,7 @@ func (c *Client) DeleteInstagramIntegration(ctx context.Context, id string) (*De
 type GetInstagramIntegrationResponse struct {
 	ID                *string                `json:"id"`
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -1971,6 +2042,7 @@ func (c *Client) GetInstagramIntegration(ctx context.Context, id string) (*GetIn
 					node {
 						id
 						accessToken
+						appSecret
 						alias
 						attachments
 						blueprintId
@@ -2194,6 +2266,7 @@ func (c *Client) GetMcpserverIntegration(ctx context.Context, id string) (*GetMc
 // CreateMessengerIntegrationInput represents the input for creating a messengerintegration.
 type CreateMessengerIntegrationInput struct {
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -2236,8 +2309,14 @@ func (c *Client) CreateMessengerIntegration(ctx context.Context, input CreateMes
 }
 
 // UpdateMessengerIntegrationInput represents the input for updating a messengerintegration.
+// UpdateMessengerIntegrationInput is authoritative for the credentials: a nil
+// AccessToken/AppSecret is serialised as an explicit JSON null so the platform
+// clears the credential, rather than being omitted (which would keep it). This
+// depends on the platform's updateMessengerIntegration mutation passing nulls
+// through for those fields (being fixed platform-side in the same change).
 type UpdateMessengerIntegrationInput struct {
-	AccessToken       *string                `json:"accessToken,omitempty"`
+	AccessToken       *string                `json:"accessToken"`
+	AppSecret         *string                `json:"appSecret"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -2314,6 +2393,7 @@ func (c *Client) DeleteMessengerIntegration(ctx context.Context, id string) (*De
 type GetMessengerIntegrationResponse struct {
 	ID                *string                `json:"id"`
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
 	BlueprintId       *string                `json:"blueprintId,omitempty"`
@@ -2337,6 +2417,7 @@ func (c *Client) GetMessengerIntegration(ctx context.Context, id string) (*GetMe
 					node {
 						id
 						accessToken
+						appSecret
 						alias
 						attachments
 						blueprintId
@@ -3681,16 +3762,16 @@ func (c *Client) GetSkillserverIntegration(ctx context.Context, id string) (*Get
 
 // CreateSkillsetAbilityInput represents the input for creating a skillsetability.
 type CreateSkillsetAbilityInput struct {
-	BlueprintId *string                `json:"blueprintId,omitempty"`
-	BotId       *string                `json:"botId,omitempty"`
-	Description *string                `json:"description,omitempty"`
-	FileId      *string                `json:"fileId,omitempty"`
-	Instruction *string                `json:"instruction,omitempty"`
-	Meta        map[string]interface{} `json:"meta,omitempty"`
-	Name        *string                `json:"name,omitempty"`
-	SecretId    *string                `json:"secretId,omitempty"`
-	SpaceId     *string                `json:"spaceId,omitempty"`
-	State       *string                `json:"state,omitempty"`
+	BlueprintId    *string                `json:"blueprintId,omitempty"`
+	LinkedBotId    *string                `json:"linkedBotId,omitempty"`
+	Description    *string                `json:"description,omitempty"`
+	LinkedFileId   *string                `json:"linkedFileId,omitempty"`
+	Instruction    *string                `json:"instruction,omitempty"`
+	Meta           map[string]interface{} `json:"meta,omitempty"`
+	Name           *string                `json:"name,omitempty"`
+	LinkedSecretId *string                `json:"linkedSecretId,omitempty"`
+	LinkedSpaceId  *string                `json:"linkedSpaceId,omitempty"`
+	State          *string                `json:"state,omitempty"`
 }
 
 // CreateSkillsetAbilityResponse represents the response from creating a skillsetability.
@@ -3725,17 +3806,22 @@ func (c *Client) CreateSkillsetAbility(ctx context.Context, skillsetId string, i
 }
 
 // UpdateSkillsetAbilityInput represents the input for updating a skillsetability.
+// UpdateSkillsetAbilityInput is authoritative for the linked relations: a nil
+// BlueprintId/Linked*Id is serialised as an explicit JSON null so the platform
+// clears the link, rather than being omitted (which would keep it). This
+// depends on the platform's updateSkillsetAbility mutation passing nulls
+// through for those fields (being fixed platform-side in the same change).
 type UpdateSkillsetAbilityInput struct {
-	BlueprintId *string                `json:"blueprintId,omitempty"`
-	BotId       *string                `json:"botId,omitempty"`
-	Description *string                `json:"description,omitempty"`
-	FileId      *string                `json:"fileId,omitempty"`
-	Instruction *string                `json:"instruction,omitempty"`
-	Meta        map[string]interface{} `json:"meta,omitempty"`
-	Name        *string                `json:"name,omitempty"`
-	SecretId    *string                `json:"secretId,omitempty"`
-	SpaceId     *string                `json:"spaceId,omitempty"`
-	State       *string                `json:"state,omitempty"`
+	BlueprintId    *string                `json:"blueprintId"`
+	LinkedBotId    *string                `json:"linkedBotId"`
+	Description    *string                `json:"description,omitempty"`
+	LinkedFileId   *string                `json:"linkedFileId"`
+	Instruction    *string                `json:"instruction,omitempty"`
+	Meta           map[string]interface{} `json:"meta,omitempty"`
+	Name           *string                `json:"name,omitempty"`
+	LinkedSecretId *string                `json:"linkedSecretId"`
+	LinkedSpaceId  *string                `json:"linkedSpaceId"`
+	State          *string                `json:"state,omitempty"`
 }
 
 // UpdateSkillsetAbilityResponse represents the response from updating a skillsetability.
@@ -3803,43 +3889,65 @@ func (c *Client) DeleteSkillsetAbility(ctx context.Context, skillsetId string, a
 
 // GetSkillsetAbilityResponse represents the response from fetching a skillsetability.
 type GetSkillsetAbilityResponse struct {
-	ID          *string                `json:"id"`
-	BlueprintId *string                `json:"blueprintId,omitempty"`
-	BotId       *string                `json:"botId,omitempty"`
-	Description *string                `json:"description,omitempty"`
-	FileId      *string                `json:"fileId,omitempty"`
-	Instruction *string                `json:"instruction,omitempty"`
-	Meta        map[string]interface{} `json:"meta,omitempty"`
-	Name        *string                `json:"name,omitempty"`
-	SecretId    *string                `json:"secretId,omitempty"`
-	SpaceId     *string                `json:"spaceId,omitempty"`
-	State       *string                `json:"state,omitempty"`
-	CreatedAt   *string                `json:"createdAt,omitempty"`
-	UpdatedAt   *string                `json:"updatedAt,omitempty"`
+	ID             *string                `json:"id"`
+	BlueprintId    *string                `json:"blueprintId,omitempty"`
+	LinkedBotId    *string                `json:"linkedBotId,omitempty"`
+	Description    *string                `json:"description,omitempty"`
+	LinkedFileId   *string                `json:"linkedFileId,omitempty"`
+	Instruction    *string                `json:"instruction,omitempty"`
+	Meta           map[string]interface{} `json:"meta,omitempty"`
+	Name           *string                `json:"name,omitempty"`
+	LinkedSecretId *string                `json:"linkedSecretId,omitempty"`
+	LinkedSpaceId  *string                `json:"linkedSpaceId,omitempty"`
+	State          *string                `json:"state,omitempty"`
+	CreatedAt      *string                `json:"createdAt,omitempty"`
+	UpdatedAt      *string                `json:"updatedAt,omitempty"`
 }
+
+// graphqlRequester is the slice of *Client used by lookup helpers so they can
+// be exercised against a fake transport in unit tests.
+type graphqlRequester interface {
+	doRequest(ctx context.Context, query string, variables map[string]interface{}, result interface{}) error
+}
+
+// skillsetAbilityPageSize is the number of abilities fetched per page while
+// looking an ability up through its skillset connection.
+const skillsetAbilityPageSize = 100
 
 // GetSkillsetAbility fetches a skillsetability by ID.
 func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, id string) (*GetSkillsetAbilityResponse, error) {
-	// Query abilities through the skillset connection
+	return findSkillsetAbility(ctx, c, skillsetId, id)
+}
+
+// findSkillsetAbility walks the skillset's abilities connection page by page
+// until the ability with the given id is found or the connection is exhausted.
+//
+// The platform schema has no direct `ability(id:)` query and the skillset
+// `abilities` connection takes no id filter, so the lookup has to paginate.
+func findSkillsetAbility(ctx context.Context, requester graphqlRequester, skillsetId string, id string) (*GetSkillsetAbilityResponse, error) {
 	query := `
-		query GetSkillsetAbility($skillsetIds: [ID!]) {
+		query GetSkillsetAbility($skillsetIds: [ID!], $first: Int!, $after: String) {
 			skillsets(first: 1, skillsetIds: $skillsetIds) {
 				edges {
 					node {
 						id
-						abilities(first: 100) {
+						abilities(first: $first, after: $after) {
+							pageInfo {
+								hasNextPage
+								endCursor
+							}
 							edges {
 								node {
 									id
-									blueprintId
-									botId
+									blueprint { id }
+									linkedBot { id }
 									description
-									fileId
+									linkedFile { id }
 									instruction
 									meta
 									name
-									secretId
-									spaceId
+									linkedSecret { id }
+									linkedSpace { id }
 									state
 									createdAt
 									updatedAt
@@ -3852,36 +3960,103 @@ func (c *Client) GetSkillsetAbility(ctx context.Context, skillsetId string, id s
 		}
 	`
 
-	variables := map[string]interface{}{
-		"skillsetIds": []string{skillsetId},
+	// The Ability type exposes its links as relations (blueprint, linkedBot,
+	// linkedFile, linkedSecret, linkedSpace) rather than scalar IDs, so the
+	// node is decoded into an intermediate shape and flattened below.
+	type idRef struct {
+		ID *string `json:"id"`
+	}
+	type abilityNode struct {
+		ID           *string                `json:"id"`
+		Blueprint    *idRef                 `json:"blueprint"`
+		LinkedBot    *idRef                 `json:"linkedBot"`
+		Description  *string                `json:"description,omitempty"`
+		LinkedFile   *idRef                 `json:"linkedFile"`
+		Instruction  *string                `json:"instruction,omitempty"`
+		Meta         map[string]interface{} `json:"meta,omitempty"`
+		Name         *string                `json:"name,omitempty"`
+		LinkedSecret *idRef                 `json:"linkedSecret"`
+		LinkedSpace  *idRef                 `json:"linkedSpace"`
+		State        *string                `json:"state,omitempty"`
+		CreatedAt    *string                `json:"createdAt,omitempty"`
+		UpdatedAt    *string                `json:"updatedAt,omitempty"`
 	}
 
-	var response struct {
-		Skillsets struct {
-			Edges []struct {
-				Node struct {
-					ID        string `json:"id"`
-					Abilities struct {
-						Edges []struct {
-							Node *GetSkillsetAbilityResponse `json:"node"`
-						} `json:"edges"`
-					} `json:"abilities"`
-				} `json:"node"`
-			} `json:"edges"`
-		} `json:"skillsets"`
+	refId := func(ref *idRef) *string {
+		if ref == nil {
+			return nil
+		}
+		return ref.ID
 	}
 
-	if err := c.doRequest(ctx, query, variables, &response); err != nil {
-		return nil, err
-	}
+	var after *string
+	seen := map[string]bool{}
 
-	// Find the ability with matching ID
-	for _, parentEdge := range response.Skillsets.Edges {
-		for _, abilityEdge := range parentEdge.Node.Abilities.Edges {
-			if abilityEdge.Node != nil && abilityEdge.Node.ID != nil && *abilityEdge.Node.ID == id {
-				return abilityEdge.Node, nil
+	for {
+		variables := map[string]interface{}{
+			"skillsetIds": []string{skillsetId},
+			"first":       skillsetAbilityPageSize,
+			"after":       after,
+		}
+
+		var response struct {
+			Skillsets struct {
+				Edges []struct {
+					Node struct {
+						ID        string `json:"id"`
+						Abilities struct {
+							PageInfo struct {
+								HasNextPage bool    `json:"hasNextPage"`
+								EndCursor   *string `json:"endCursor"`
+							} `json:"pageInfo"`
+							Edges []struct {
+								Node *abilityNode `json:"node"`
+							} `json:"edges"`
+						} `json:"abilities"`
+					} `json:"node"`
+				} `json:"edges"`
+			} `json:"skillsets"`
+		}
+
+		if err := requester.doRequest(ctx, query, variables, &response); err != nil {
+			return nil, err
+		}
+
+		if len(response.Skillsets.Edges) == 0 {
+			return nil, fmt.Errorf("skillset with ID %s not found", skillsetId)
+		}
+
+		abilities := response.Skillsets.Edges[0].Node.Abilities
+
+		for _, abilityEdge := range abilities.Edges {
+			node := abilityEdge.Node
+			if node != nil && node.ID != nil && *node.ID == id {
+				return &GetSkillsetAbilityResponse{
+					ID:             node.ID,
+					BlueprintId:    refId(node.Blueprint),
+					LinkedBotId:    refId(node.LinkedBot),
+					Description:    node.Description,
+					LinkedFileId:   refId(node.LinkedFile),
+					Instruction:    node.Instruction,
+					Meta:           node.Meta,
+					Name:           node.Name,
+					LinkedSecretId: refId(node.LinkedSecret),
+					LinkedSpaceId:  refId(node.LinkedSpace),
+					State:          node.State,
+					CreatedAt:      node.CreatedAt,
+					UpdatedAt:      node.UpdatedAt,
+				}, nil
 			}
 		}
+
+		// Stop on the last page, a missing cursor, or a cursor we have already
+		// used (guards against a server that never advances).
+		cursor := abilities.PageInfo.EndCursor
+		if !abilities.PageInfo.HasNextPage || cursor == nil || *cursor == "" || seen[*cursor] {
+			break
+		}
+		seen[*cursor] = true
+		after = cursor
 	}
 
 	return nil, fmt.Errorf("skillsetability with ID %s not found in skillset %s", id, skillsetId)
@@ -5606,6 +5781,7 @@ func (c *Client) GetTwilioIntegration(ctx context.Context, id string) (*GetTwili
 // CreateWhatsAppIntegrationInput represents the input for creating a whatsappintegration.
 type CreateWhatsAppIntegrationInput struct {
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	AllowFrom         *string                `json:"allowFrom,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
@@ -5650,8 +5826,14 @@ func (c *Client) CreateWhatsAppIntegration(ctx context.Context, input CreateWhat
 }
 
 // UpdateWhatsAppIntegrationInput represents the input for updating a whatsappintegration.
+// UpdateWhatsAppIntegrationInput is authoritative for the credentials: a nil
+// AccessToken/AppSecret is serialised as an explicit JSON null so the platform
+// clears the credential, rather than being omitted (which would keep it). This
+// depends on the platform's updateWhatsAppIntegration mutation passing nulls
+// through for those fields (being fixed platform-side in the same change).
 type UpdateWhatsAppIntegrationInput struct {
-	AccessToken       *string                `json:"accessToken,omitempty"`
+	AccessToken       *string                `json:"accessToken"`
+	AppSecret         *string                `json:"appSecret"`
 	Alias             *string                `json:"alias,omitempty"`
 	AllowFrom         *string                `json:"allowFrom,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
@@ -5730,6 +5912,7 @@ func (c *Client) DeleteWhatsAppIntegration(ctx context.Context, id string) (*Del
 type GetWhatsAppIntegrationResponse struct {
 	ID                *string                `json:"id"`
 	AccessToken       *string                `json:"accessToken,omitempty"`
+	AppSecret         *string                `json:"appSecret,omitempty"`
 	Alias             *string                `json:"alias,omitempty"`
 	AllowFrom         *string                `json:"allowFrom,omitempty"`
 	Attachments       *bool                  `json:"attachments,omitempty"`
@@ -5755,6 +5938,7 @@ func (c *Client) GetWhatsAppIntegration(ctx context.Context, id string) (*GetWha
 					node {
 						id
 						accessToken
+						appSecret
 						alias
 						allowFrom
 						attachments

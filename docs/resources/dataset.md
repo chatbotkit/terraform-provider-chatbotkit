@@ -84,7 +84,6 @@ The following arguments are supported:
 - `search_min_score` - (Optional) Minimum similarity score (0-1) for search results to be included.
 - `reranker` - (Optional) The reranking model to use for improving search relevance.
 - `separators` - (Optional) Custom separators for text chunking.
-- `store` - (Optional) The storage backend to use.
 - `visibility` - (Optional) The visibility level of the dataset. Can be "private" or "public".
 - `meta` - (Optional) A map of metadata key-value pairs.
 

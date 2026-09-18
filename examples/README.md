@@ -22,9 +22,9 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 | [soc-investigator](./soc-investigator/) | An autonomous security-operations agent that runs on a cycle: pull SIEM alerts, correlate into cases, triage, investigate, enrich, and accumulate knowledge — showing the deterministic-scripts vs agentic-skills split | File-based skills (`SKILL.md`) + stdlib scripts, `pack/shell` + space skills, Workspace case store + knowledge base, Correlation/dedup, Scheduled cycle triggers, Human approval gate |
 | [community-scout](./community-scout/) | A product-led-growth agent that monitors Reddit on a cycle for threads where the product genuinely helps, scores relevance, drafts a disclosed reply, and suggests it to the team on Slack — it has no Reddit-post tool, so a human posts | Read-only Reddit (`pack/reddit[read-only]`), Slack hand-off (`slack/conversation/start`), File-based skills + dedup script, Workspace mention store, Scheduled cycle triggers, Structural human-in-the-loop gate |
 | [internal-services-fetch](./internal-services-fetch/) | An agent that reaches internal corporate services with the `fetch` action, authenticated by a shared service token (machine-to-machine) and a personal OAuth secret (acting on behalf of the signed-in employee) | Fetch action, Shared bearer secret, Personal OAuth secret, `${SECRET_DEFAULT}` vs named references, Both secrets in one request, Slack integration |
-| [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's own sub-account, from one module. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
-| [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer (each its own module/folder), composed into one shared state and deployed in a single apply. One master token + `run_as` per provider alias | Sub-accounts (partner users), `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
-| [code-foundry](./code-foundry/) | An autonomous code foundry on a multi-account architecture: a shared "tools" account (GitHub token-minter, an exported `global-coding-tools` skillset, design/coding spaces) that per-user sub-accounts install cross-account; each user's Coding Agent has a heartbeat and a per-user context (repo + Vercel) | Multi-account (`run_as` + provider aliases), Shared account + reusable per-user module, Cross-account skillset install (`@shared@global-coding-tools`), GitHub App JWT secret, `bot/apply` token minting, Per-user context, Heartbeat |
+| [multi-tenant-agents-shared](./multi-tenant-agents-shared/) | The same agent deployed into each customer's child User from one module. One parent User API token + `run_as` per provider alias | Child Users, `run_as` (X-RunAs-UserId), Provider aliases, Shared module, Per-tenant isolation |
+| [multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/) | A bespoke agent per customer, each in its own module or folder, composed into one shared state and deployed in a single apply. One parent User API token + `run_as` per provider alias | Child Users, `run_as` (X-RunAs-UserId), Provider aliases, Per-customer modules, Shared state |
+| [code-foundry](./code-foundry/) | An autonomous code foundry with a multi-User architecture: child Users install tools from a shared tools User, and each child User's Coding Agent has a heartbeat and per-User context for its repository and Vercel project | Multi-User (`run_as` + provider aliases), Shared User + reusable child-User module, Cross-User skillset install (`@shared@global-coding-tools`), GitHub App JWT secret, `bot/apply` token minting, Per-User context, Heartbeat |
 | [dual-agent-programmable-workflows](./dual-agent-programmable-workflows/) | Two-agent architecture for workflow programming and execution | Multi-agent collaboration, Shared resources, Asymmetric access patterns, Scheduled triggers |
 | [system-diagnostics-agent](./system-diagnostics-agent/) | Self-monitoring agent that reports on its own capabilities | Self-introspection, Blueprint resource discovery, Scheduled diagnostics, Automated reporting |
 | [second-brain](./second-brain/) | Personal knowledge management system with Notion and Calendar | Persistent workspace, Notion integration, Google Calendar, Telegram bot, Dynamic skillsets |
@@ -40,14 +40,14 @@ These examples demonstrate production-ready architectures based on ChatBotKit bl
 ### Prerequisites
 
 1. [Terraform](https://www.terraform.io/downloads.html) >= 1.0
-2. A ChatBotKit account and API key from [chatbotkit.com](https://chatbotkit.com)
+2. A ChatBotKit account and API token from [chatbotkit.com](https://chatbotkit.com)
 
 ### Quick Start
 
-1. Set your ChatBotKit API key:
+1. Set your ChatBotKit API token:
 
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 ```
 
 2. Choose an example and navigate to its directory:
@@ -158,32 +158,32 @@ A product-led-growth agent that runs on a cycle to watch public conversations (R
 
 ### Multi-Tenant Agents Examples
 A pair of examples deploying a separate, isolated agent for each customer in that
-customer's own ChatBotKit sub-account (a "partner user"). Both use **one** master
-token plus the provider's `run_as` attribute (the `X-RunAs-UserId` header) to
-target each customer's sub-account — no per-customer tokens, no `for_each`.
+customer's own child User. Both use **one** API token belonging to the parent User
+plus the provider's `run_as` attribute (the `X-RunAs-UserId` header) to target
+each customer's child User. No per-customer tokens or `for_each` are required.
 
 - **[multi-tenant-agents-shared](./multi-tenant-agents-shared/)** — the same agent for every customer, from one module, via provider aliases.
 - **[multi-tenant-agents-per-customer](./multi-tenant-agents-per-customer/)** — a bespoke agent per customer, each in its own folder.
 
 **What you'll learn:**
-- The platform's sub-account (partner user) model for multi-tenant SaaS
-- Using one master token + `run_as` to operate on many sub-accounts (like the AWS provider's `assume_role`)
+- The platform's parent/child User model for multi-tenant SaaS
+- Using one parent User API token with `run_as` to operate on many child Users, similar to the AWS provider's `assume_role`
 - Provider aliases composing one reused module (shared) vs. a distinct module per customer (per-customer)
-- Per-customer isolation via separate sub-accounts (`run_as`), all from a single shared state and one apply — no `for_each`
+- Per-customer isolation via separate child Users (`run_as`), all from a single shared state and one apply without `for_each`
 
 **Use when:** You are building a multi-tenant product where each customer needs their own isolated agent and resources, not a shared account.
 
-### Code Foundry Example (multi-account)
-An autonomous code foundry on a multi-account architecture. A single shared "tools" account holds the expensive, sensitive machinery once — a GitHub bot that mints repository-scoped App tokens (JWT secret), a Coding Tools skillset exported account-wide as `global-coding-tools`, shared Design/Coding spaces, and a Designs Manager with a Sync trigger. Each user gets a thin, isolated sub-account whose Coding Agent installs the shared toolset cross-account (`@shared@global-coding-tools`) and works on that user's own repo.
+### Code Foundry Example (multi-User)
+An autonomous code foundry with a multi-User architecture. A shared tools User holds the expensive, sensitive machinery once: a GitHub bot that mints repository-scoped App tokens, a Coding Tools skillset exposed to child Users as `global-coding-tools`, shared Design and Coding spaces, and a Designs Manager with a Sync trigger. Each customer gets a thin, isolated child User whose Coding Agent installs the shared toolset across Users (`@shared@global-coding-tools`) and works on that customer's repository.
 
 **What you'll learn:**
-- A shared-account + per-user-sub-account architecture on one partner token, using provider aliases + `run_as` (building on the multi-tenant examples)
-- Exporting a skillset account-wide (`visibility = protected` + alias) and installing it cross-account from a sub-account with `conversation/skillset/install` and an `@shared@<alias>` reference
-- Minting repository-scoped GitHub App tokens without putting the App key in each sub-account: the agent `bot/apply`s a shared GitHub bot that holds the JWT secret
-- Driving "which repo" from a per-user **context** rather than hard-coding it (a security boundary, since agents belong to users) — set via the partner-user context API, now exposed via GraphQL (and a future native `chatbotkit_context` resource)
+- A shared User plus child-User architecture using one parent User API token, provider aliases, and `run_as`
+- Exposing a skillset to child Users (`visibility = protected` plus an alias) and installing it with `conversation/skillset/install` and an `@shared@<alias>` reference
+- Minting repository-scoped GitHub App tokens without putting the App key in each child User: the agent `bot/apply`s a shared GitHub bot that holds the JWT secret
+- Selecting the repository through per-User **context** rather than hard-coding it, using the User context API exposed through GraphQL and the native `chatbotkit_context` resource
 - A **heartbeat** trigger that keeps a coding agent making the next step on a long-running task across ticks
 
-**Use when:** You are productising an autonomous agent to many users and want the heavy/sensitive tooling defined once and borrowed cross-account, with each user isolated and scoped to their own repo by context.
+**Use when:** You are productising an autonomous agent for many customers and want the heavy or sensitive tooling defined once and borrowed across Users, with each child User isolated and scoped to its own repository by context.
 
 ### Dual-Agent Programmable Workflows Example
 Two-agent architecture where a Workflow Architect programs custom scripts and a Task Runner executes them.
@@ -422,12 +422,12 @@ terraform init  # Re-initialize to download the provider
 
 ### "Invalid API key"
 ```bash
-# Verify your API key is set
-echo $CHATBOTKIT_API_KEY
+# Verify your API token is set
+echo $CHATBOTKIT_API_TOKEN
 
 # Or configure directly in the provider block
 provider "chatbotkit" {
-  api_key = "your-api-key"
+  api_token = "your-api-token"
 }
 ```
 

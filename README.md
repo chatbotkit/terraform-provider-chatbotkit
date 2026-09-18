@@ -1,6 +1,5 @@
-[![ChatBotKit](https://img.shields.io/badge/credits-ChatBotKit-blue.svg)](https://chatbotkit.com)
 [![CBK.AI](https://img.shields.io/badge/credits-CBK.AI-blue.svg)](https://cbk.ai)
-[![Email](https://img.shields.io/badge/Email-Support-blue?logo=mail.ru)](mailto:support@chatbotkit.com)
+[![Email](https://img.shields.io/badge/Email-Support-blue?logo=mail.ru)](mailto:support@cbk.ai)
 [![Discord](https://img.shields.io/badge/Discord-Support-blue?logo=discord)](https://go.cbk.ai/discord)
 [![Terraform Registry](https://img.shields.io/badge/Terraform-Registry-purple.svg)](https://registry.terraform.io/providers/chatbotkit/chatbotkit/latest)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/chatbotkit.svg?logo=twitter)](https://twitter.com/chatbotkit)
@@ -73,10 +72,10 @@ provider_installation {
 }
 ```
 
-### 2. Set API Key
+### 2. Set API Token
 
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 ```
 
 ### 3. Test with Example Configuration
@@ -94,8 +93,8 @@ terraform apply
 # Run unit tests
 go test -v ./internal/provider/ -run "^Test[^Acc]"
 
-# Run acceptance tests (requires CHATBOTKIT_API_KEY)
-CHATBOTKIT_API_KEY=your-api-key go test -v ./internal/provider/ -run "^TestAcc"
+# Run acceptance tests (requires CHATBOTKIT_API_TOKEN)
+CHATBOTKIT_API_TOKEN=your-api-token go test -v ./internal/provider/ -run "^TestAcc"
 ```
 
 ## Directory Structure
@@ -185,7 +184,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # Create a new bot

@@ -33,6 +33,7 @@ type MessengerIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
 	AccessToken       types.String `tfsdk:"access_token"`
+	AppSecret         types.String `tfsdk:"app_secret"`
 	Alias             types.String `tfsdk:"alias"`
 	Attachments       types.Bool   `tfsdk:"attachments"`
 	BlueprintId       types.String `tfsdk:"blueprint_id"`
@@ -66,6 +67,11 @@ func (r *MessengerIntegrationResource) Schema(ctx context.Context, req resource.
 
 			"access_token": schema.StringAttribute{
 				MarkdownDescription: "The Facebook Messenger page access token",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"app_secret": schema.StringAttribute{
+				MarkdownDescription: "The Facebook Messenger app secret used to verify webhook signatures",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -151,6 +157,7 @@ func (r *MessengerIntegrationResource) Create(ctx context.Context, req resource.
 
 	result, err := r.client.CreateMessengerIntegration(ctx, CreateMessengerIntegrationInput{
 		AccessToken:       data.AccessToken.ValueStringPointer(),
+		AppSecret:         data.AppSecret.ValueStringPointer(),
 		Alias:             data.Alias.ValueStringPointer(),
 		Attachments:       data.Attachments.ValueBoolPointer(),
 		BlueprintId:       data.BlueprintId.ValueStringPointer(),
@@ -201,9 +208,9 @@ func (r *MessengerIntegrationResource) Read(ctx context.Context, req resource.Re
 
 	// Update data model with response values
 
-	if result.AccessToken != nil {
-		data.AccessToken = types.StringPointerValue(result.AccessToken)
-	}
+	// Secrets come back masked once configured; keep the configured value.
+	data.AccessToken = sensitiveStringFromAPI(data.AccessToken, result.AccessToken)
+	data.AppSecret = sensitiveStringFromAPI(data.AppSecret, result.AppSecret)
 	if result.Alias != nil {
 		data.Alias = types.StringPointerValue(result.Alias)
 	}
@@ -259,6 +266,7 @@ func (r *MessengerIntegrationResource) Update(ctx context.Context, req resource.
 
 	_, err := r.client.UpdateMessengerIntegration(ctx, data.ID.ValueString(), UpdateMessengerIntegrationInput{
 		AccessToken:       data.AccessToken.ValueStringPointer(),
+		AppSecret:         data.AppSecret.ValueStringPointer(),
 		Alias:             data.Alias.ValueStringPointer(),
 		Attachments:       data.Attachments.ValueBoolPointer(),
 		BlueprintId:       data.BlueprintId.ValueStringPointer(),

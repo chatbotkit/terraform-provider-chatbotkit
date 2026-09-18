@@ -106,10 +106,10 @@ The AI Employee is a digital team member engineered to operate within profession
 
 ## Usage
 
-1. Set your ChatBotKit API key:
+1. Set your ChatBotKit API token:
 
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 ```
 
 2. Configure OAuth2 secrets (done via ChatBotKit platform):

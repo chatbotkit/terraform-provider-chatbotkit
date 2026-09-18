@@ -101,9 +101,9 @@ This blueprint demonstrates a factory-style architecture for an MCP server that 
 
 ## Usage
 
-1. Set your ChatBotKit API key:
+1. Set your ChatBotKit API token:
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 ```
 
 2. Initialize Terraform:
