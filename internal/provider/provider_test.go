@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -16,11 +15,11 @@ var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 	"chatbotkit": providerserver.NewProtocol6WithError(New("test")()),
 }
 
-// testAccPreCheck validates the necessary test API keys exist in the testing
-// environment.
+// testAccPreCheck validates the API token exists in the testing environment,
+// under any of the names the provider reads.
 func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("CHATBOTKIT_API_KEY"); v == "" {
-		t.Fatal("CHATBOTKIT_API_KEY must be set for acceptance tests")
+	if tokenFromEnv() == "" {
+		t.Fatal("CHATBOTKIT_API_TOKEN must be set for acceptance tests")
 	}
 }
 

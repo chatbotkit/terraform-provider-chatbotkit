@@ -92,7 +92,7 @@ the platform catalogue.)
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="..."
+export CHATBOTKIT_API_TOKEN="..."
 terraform init
 terraform apply
 ```

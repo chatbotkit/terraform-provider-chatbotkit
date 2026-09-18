@@ -105,5 +105,5 @@ jobs:
 
       - name: Run acceptance tests
         env:
-          CHATBOTKIT_API_KEY: ${{ secrets.CHATBOTKIT_API_KEY }}
+          CHATBOTKIT_API_TOKEN: ${{ secrets.CHATBOTKIT_API_KEY }}
         run: go test -v ./internal/provider/ -run "^TestAcc"

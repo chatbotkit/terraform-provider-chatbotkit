@@ -22,7 +22,7 @@
 # the live agent — the files are the source of truth.
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable
+# - Set the CHATBOTKIT_API_TOKEN environment variable
 # - (Optional) Provide Slack credentials via variables to activate the channel
 
 terraform {
@@ -34,7 +34,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================

@@ -88,7 +88,6 @@ The following attributes are exported:
 - `search_min_score` - Minimum similarity score for search results.
 - `reranker` - The reranking model used.
 - `separators` - Custom separators for text chunking.
-- `store` - The storage backend used.
 - `visibility` - The visibility setting of the dataset.
 - `meta` - A map of metadata key-value pairs.
 - `created_at` - The timestamp when the dataset was created.

@@ -7,7 +7,7 @@
 # - A trigger integration linked to the bot
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable or configure api_key below
+# - Set the CHATBOTKIT_API_TOKEN environment variable or configure api_token below
 
 terraform {
   required_providers {
@@ -18,7 +18,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================

@@ -1,16 +1,16 @@
-# A per-user coding sub-account.
+# A per-customer child User.
 #
-# Each user gets their own isolated sub-account containing just a Coding Agent
-# and a single ability that installs the shared toolset cross-account. The heavy
-# tooling lives once in the `shared` account; this module borrows it.
+# Each customer gets an isolated child User containing a Coding Agent and one
+# ability that installs the shared toolset across Users. The heavy tooling lives
+# once in the shared User; this module borrows it.
 #
-# Applied via a provider alias whose `run_as` targets this user's sub-account.
+# Applied through a provider alias whose `run_as` targets this child User.
 #
 # Two things make the setup work end to end:
 #   1. install the shared coding skillset (`@shared@global-coding-tools`)
-#   2. set this user's CONTEXT (which repo + which Vercel project) so the shared
-#      GitHub bot knows which repository to mint a token for — hard-coding the
-#      repo would be a security risk because each agent belongs to a user.
+#   2. set this child User's CONTEXT (which repo + which Vercel project) so the shared
+#      GitHub bot knows which repository to mint a token for; hard-coding the
+#      repo would be a security risk because each agent belongs to a child User.
 
 terraform {
   required_providers {
@@ -21,22 +21,22 @@ terraform {
 }
 
 variable "user_name" {
-  description = "Display name of the user this sub-account belongs to"
+  description = "Display name of the customer represented by this child User"
   type        = string
 }
 
 variable "repo_owner" {
-  description = "The GitHub repository owner for this user's project"
+  description = "The GitHub repository owner for this child User's project"
   type        = string
 }
 
 variable "repo_name" {
-  description = "The GitHub repository name for this user's project"
+  description = "The GitHub repository name for this child User's project"
   type        = string
 }
 
 variable "vercel_project_id" {
-  description = "The Vercel project ID this user's agent deploys to"
+  description = "The Vercel project ID this child User's agent deploys to"
   type        = string
   default     = ""
 }
@@ -73,9 +73,9 @@ resource "chatbotkit_skillset" "coder_tools" {
   description = "Bootstrap toolset: installs the shared coding skillset on demand"
 }
 
-# The only ability the agent ships with: install the shared toolset cross-account.
+# The only ability the agent ships with: install the shared toolset across Users.
 # `@shared@global-coding-tools` resolves to the Coding Tools skillset in the
-# account aliased `shared`.
+# User aliased `shared`.
 resource "chatbotkit_skillset_ability" "install_coding_skillset" {
   skillset_id = chatbotkit_skillset.coder_tools.id
   name        = "Install Coding Skillset"
@@ -98,7 +98,7 @@ resource "chatbotkit_bot" "coder" {
     You must install the relevant skills / tools to obtain specific platform capabilities.
 
     For access to the repo use the github tools to mint a token and get the repo access.
-    The repository and Vercel project for this account come from your context — do
+    The repository and Vercel project for this User come from your context. Do
     not assume or hard-code them.
 
     Then you must use the provided shell environment to perform the actions.
@@ -111,7 +111,7 @@ resource "chatbotkit_bot" "coder" {
 }
 
 # ============================================================================
-# heartbeat — keep working the active task
+# heartbeat - keep working the active task
 # ============================================================================
 # Coding tasks span many steps. This recurring tick nudges the agent to make the
 # next concrete step on whatever it is currently working on, reusing one
@@ -122,7 +122,7 @@ resource "chatbotkit_trigger_integration" "heartbeat" {
   description      = <<-EOT
     Continue the current coding task. Review your workspace and the repo for
     in-progress work and make the next concrete step toward completion (commit and
-    push as you go). If there is no active task, stop and wait — do not invent work.
+    push as you go). If there is no active task, stop and wait. Do not invent work.
   EOT
   bot_id           = chatbotkit_bot.coder.id
   schedule         = var.heartbeat_schedule
@@ -131,15 +131,15 @@ resource "chatbotkit_trigger_integration" "heartbeat" {
 }
 
 # ============================================================================
-# context — which repo + Vercel project this user's agent works on
+# context - which repo and Vercel project this child User's agent works on
 # ============================================================================
 # The shared GitHub bot reads this to know which repository to scope a token to.
-# Created in THIS sub-account (the module's provider is run_as'd to it), so each
-# agent is scoped to its own repo — never hard-coded. payload is map(string).
+# Created for this child User through the module's provider, so each agent is
+# scoped to its own repository. The payload is map(string).
 
 resource "chatbotkit_context" "project" {
   name        = "project"
-  description = "Repository and Vercel project for this user's coding agent"
+  description = "Repository and Vercel project for this child User's coding agent"
 
   payload = {
     githubOwner     = var.repo_owner
@@ -154,6 +154,6 @@ resource "chatbotkit_context" "project" {
 # ============================================================================
 
 output "bot_id" {
-  description = "The coding agent bot ID in this user's sub-account"
+  description = "The coding agent bot ID in this child User"
   value       = chatbotkit_bot.coder.id
 }

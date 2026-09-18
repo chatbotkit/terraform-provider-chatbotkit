@@ -21,7 +21,7 @@ automation along with the bot it drives.
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 
 terraform init
 terraform plan

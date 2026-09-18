@@ -13,7 +13,7 @@
 # - Notion integration for knowledge management
 #
 # Prerequisites:
-# - Set the CHATBOTKIT_API_KEY environment variable
+# - Set the CHATBOTKIT_API_TOKEN environment variable
 # - Configure Google Mail OAuth2 credentials (platform/google/mail)
 # - Configure Notion OAuth2 credentials (platform/notion)
 
@@ -26,7 +26,7 @@ terraform {
 }
 
 provider "chatbotkit" {
-  # api_key = "..." # Or set CHATBOTKIT_API_KEY env var
+  # api_token = "..." # Or set CHATBOTKIT_API_TOKEN env var
 }
 
 # ============================================================================

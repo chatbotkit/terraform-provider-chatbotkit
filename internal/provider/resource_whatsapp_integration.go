@@ -33,6 +33,7 @@ type WhatsAppIntegrationResourceModel struct {
 	ID types.String `tfsdk:"id"`
 
 	AccessToken       types.String `tfsdk:"access_token"`
+	AppSecret         types.String `tfsdk:"app_secret"`
 	Alias             types.String `tfsdk:"alias"`
 	AllowFrom         types.String `tfsdk:"allow_from"`
 	Attachments       types.Bool   `tfsdk:"attachments"`
@@ -68,6 +69,11 @@ func (r *WhatsAppIntegrationResource) Schema(ctx context.Context, req resource.S
 
 			"access_token": schema.StringAttribute{
 				MarkdownDescription: "The WhatsApp Business API access token",
+				Optional:            true,
+				Sensitive:           true,
+			},
+			"app_secret": schema.StringAttribute{
+				MarkdownDescription: "The WhatsApp Business app secret used to verify webhook signatures",
 				Optional:            true,
 				Sensitive:           true,
 			},
@@ -161,6 +167,7 @@ func (r *WhatsAppIntegrationResource) Create(ctx context.Context, req resource.C
 
 	result, err := r.client.CreateWhatsAppIntegration(ctx, CreateWhatsAppIntegrationInput{
 		AccessToken:       data.AccessToken.ValueStringPointer(),
+		AppSecret:         data.AppSecret.ValueStringPointer(),
 		Alias:             data.Alias.ValueStringPointer(),
 		AllowFrom:         data.AllowFrom.ValueStringPointer(),
 		Attachments:       data.Attachments.ValueBoolPointer(),
@@ -213,9 +220,9 @@ func (r *WhatsAppIntegrationResource) Read(ctx context.Context, req resource.Rea
 
 	// Update data model with response values
 
-	if result.AccessToken != nil {
-		data.AccessToken = types.StringPointerValue(result.AccessToken)
-	}
+	// Secrets come back masked once configured; keep the configured value.
+	data.AccessToken = sensitiveStringFromAPI(data.AccessToken, result.AccessToken)
+	data.AppSecret = sensitiveStringFromAPI(data.AppSecret, result.AppSecret)
 	if result.Alias != nil {
 		data.Alias = types.StringPointerValue(result.Alias)
 	}
@@ -277,6 +284,7 @@ func (r *WhatsAppIntegrationResource) Update(ctx context.Context, req resource.U
 
 	_, err := r.client.UpdateWhatsAppIntegration(ctx, data.ID.ValueString(), UpdateWhatsAppIntegrationInput{
 		AccessToken:       data.AccessToken.ValueStringPointer(),
+		AppSecret:         data.AppSecret.ValueStringPointer(),
 		Alias:             data.Alias.ValueStringPointer(),
 		AllowFrom:         data.AllowFrom.ValueStringPointer(),
 		Attachments:       data.Attachments.ValueBoolPointer(),

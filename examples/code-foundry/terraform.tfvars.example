@@ -1,10 +1,10 @@
-# Copy to terraform.tfvars and fill in. The partner/master token comes from the
-# CHATBOTKIT_API_KEY environment variable (not a variable here).
+# Copy to terraform.tfvars and fill in. The parent User API token comes from the
+# CHATBOTKIT_API_TOKEN environment variable (not a variable here).
 #
-# Accounts (partner users) are created out of band (dashboard or partner API).
-# The shared account MUST have the alias `shared`.
+# Child Users are created out of band through the dashboard or User API.
+# The shared User MUST have the alias `shared`.
 
-shared_account_id = "user_xxxxxxxxxxxx" # the shared "tools" account (alias: shared)
+shared_account_id = "user_xxxxxxxxxxxx" # the shared tools User (alias: shared)
 alice_account_id  = "user_aaaaaaaaaaaa"
 bob_account_id    = "user_bbbbbbbbbbbb"
 

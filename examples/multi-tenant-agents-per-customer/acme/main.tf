@@ -1,8 +1,8 @@
 # Acme's bespoke agent (a module).
 #
 # This folder holds Acme's own agent definition. It is composed into the shared
-# root (../main.tf), which wires it to Acme's sub-account via a provider alias +
-# run_as — so this module just declares resources and lets the root pick the
+# root (../main.tf), which wires it to Acme's child User via a provider alias and
+# run_as, so this module just declares resources and lets the root pick the
 # account. Acme wants a customer-support agent; Globex's folder is different.
 
 terraform {

@@ -1,9 +1,9 @@
 # The one canonical agent, shared by every customer.
 #
 # Instantiated once per customer by the per-tenant root (../../main.tf). The
-# caller passes a chatbotkit provider authenticated with that customer's
-# sub-account token, so every resource below is created inside the customer's
-# isolated sub-account. Improve the agent here and it ships to all customers on
+# caller passes a chatbotkit provider configured to run as that customer's
+# child User, so every resource below is created inside the isolated User.
+# Improve the agent here and it ships to all customers on
 # the next deploy.
 
 terraform {
@@ -66,11 +66,11 @@ resource "chatbotkit_bot" "agent" {
 }
 
 output "bot_id" {
-  description = "The bot ID created in the customer's sub-account"
+  description = "The bot ID created in the customer's child User"
   value       = chatbotkit_bot.agent.id
 }
 
 output "workspace_id" {
-  description = "The workspace ID created in the customer's sub-account"
+  description = "The workspace ID created in the customer's child User"
   value       = chatbotkit_space.workspace.id
 }

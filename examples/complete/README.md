@@ -48,21 +48,21 @@ This example demonstrates a complete ChatBotKit setup using Terraform, including
 ## Prerequisites
 
 1. [Terraform](https://www.terraform.io/downloads.html) >= 1.0
-2. A ChatBotKit account and API key
+2. A ChatBotKit account and API token
 
 ## Usage
 
-1. Set your ChatBotKit API key:
+1. Set your ChatBotKit API token:
 
 ```bash
-export CHATBOTKIT_API_KEY="your-api-key"
+export CHATBOTKIT_API_TOKEN="your-api-token"
 ```
 
 Or configure it directly in `main.tf`:
 
 ```hcl
 provider "chatbotkit" {
-  api_key = "your-api-key"
+  api_token = "your-api-token"
 }
 ```
 

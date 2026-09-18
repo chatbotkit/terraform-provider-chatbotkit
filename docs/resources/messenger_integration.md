@@ -37,6 +37,7 @@ resource "chatbotkit_messenger_integration" "advanced" {
   bot_id      = chatbotkit_bot.assistant.id
   
   access_token     = var.messenger_access_token
+  app_secret       = var.messenger_app_secret
   session_duration = 3600000  # 1 hour in milliseconds
   attachments      = true
 }
@@ -66,7 +67,8 @@ The following arguments are supported:
 - `name` - (Optional) The name of the integration. This is displayed in the ChatBotKit dashboard.
 - `description` - (Optional) A description of the integration's purpose.
 - `bot_id` - (Optional) The ID of the ChatBotKit bot to connect.
-- `access_token` - (Optional, Sensitive) The Facebook Messenger page access token.
+- `access_token` - (Optional, Sensitive) The Facebook Messenger page access token. Removing `access_token` from your configuration sends an explicit null on update, which clears the page access token on the platform.
+- `app_secret` - (Optional, Sensitive) The Facebook Messenger app secret used to verify webhook signatures. The API never returns the configured value (it is masked on read), so the value from your configuration is kept in state. Removing `app_secret` from your configuration sends an explicit null on update, which clears the app secret on the platform.
 - `session_duration` - (Optional) The duration of a conversation session in milliseconds.
 - `attachments` - (Optional) Whether to enable file attachments in conversations.
 - `blueprint_id` - (Optional) The ID of a blueprint to associate with this integration.

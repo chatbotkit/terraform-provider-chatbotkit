@@ -1,8 +1,8 @@
 # Globex's bespoke agent (a module).
 #
 # Composed into the shared root (../main.tf), which wires it to Globex's
-# sub-account via a provider alias + run_as. Globex wants a research agent with a
-# sandbox — a completely different shape from Acme's support bot. Each customer
+# child User via a provider alias and run_as. Globex wants a research agent with
+# a sandbox, a completely different shape from Acme's support bot. Each customer
 # folder evolves independently.
 
 terraform {

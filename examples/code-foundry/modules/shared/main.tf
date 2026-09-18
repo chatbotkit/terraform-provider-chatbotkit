@@ -1,16 +1,16 @@
-# The SHARED "tools" account.
+# The shared tools User.
 #
-# This is the master toolbox every coding sub-account borrows from. It holds:
+# This is the toolbox every child User borrows from. It holds:
 #   - a GitHub bot that mints short-lived, repository-scoped GitHub App tokens
-#   - a "Coding Tools" skillset, exported account-wide as `global-coding-tools`
-#     (visibility = protected, alias = global-coding-tools) so sub-accounts can
-#     install it cross-account with `@shared@global-coding-tools`
+#   - a "Coding Tools" skillset exposed as `global-coding-tools`
+#     (visibility = protected, alias = global-coding-tools) so child Users can
+#     install it across Users with `@shared@global-coding-tools`
 #   - shared Design and Coding spaces (design files + coding skills)
 #   - a Designs Manager bot + Sync trigger that keep the Design space in sync
 #
 # This module is applied via a provider alias whose `run_as` targets the shared
-# account. That account MUST have the alias `shared` (set on the partner user),
-# because sub-accounts reference its skillset as `@shared@global-coding-tools`.
+# User. That User MUST have the alias `shared`, because child Users reference
+# its skillset as `@shared@global-coding-tools`.
 
 terraform {
   required_providers {
@@ -32,7 +32,7 @@ variable "github_app_private_key" {
 }
 
 # ============================================================================
-# GitHub — the bot that mints repository-scoped tokens
+# GitHub - the bot that mints repository-scoped tokens
 # ============================================================================
 
 resource "chatbotkit_secret" "github_app" {
@@ -84,16 +84,16 @@ resource "chatbotkit_bot" "github" {
 }
 
 # ============================================================================
-# Coding Tools — the exported, account-wide skillset (global-coding-tools)
+# Coding Tools - the skillset exposed to child Users (global-coding-tools)
 # ============================================================================
-# This is what sub-accounts install. visibility=protected + a stable alias make
-# it referenceable cross-account as `@shared@global-coding-tools`.
+# This is what child Users install. visibility=protected plus a stable alias make
+# it referenceable across Users as `@shared@global-coding-tools`.
 
 resource "chatbotkit_skillset" "coding_tools" {
   name        = "Coding Tools"
   visibility  = "protected"
   alias       = "global-coding-tools"
-  description = "The shared coding toolset borrowed by every coding sub-account"
+  description = "The shared coding toolset borrowed by every child User"
 }
 
 # Shell tools (ephemeral per-conversation sandbox).
@@ -119,7 +119,7 @@ resource "chatbotkit_skillset_ability" "import_url" {
 }
 
 # Mint a repo token by delegating to the GitHub bot (which reads the caller's
-# context to learn which repository this is about — see the README).
+# context to learn which repository this is about; see the README).
 resource "chatbotkit_skillset_ability" "mint_github_repo_token" {
   skillset_id = chatbotkit_skillset.coding_tools.id
   bot_id      = chatbotkit_bot.github.id
@@ -137,7 +137,7 @@ resource "chatbotkit_skillset_ability" "mint_github_repo_token" {
 }
 
 # ============================================================================
-# Design space — shared design system files
+# Design space - shared design system files
 # ============================================================================
 
 resource "chatbotkit_space" "design" {
@@ -162,7 +162,7 @@ resource "chatbotkit_skillset_ability" "read_design_file" {
 }
 
 # ============================================================================
-# Coding space — shared coding skills (how-to playbooks)
+# Coding space - shared coding skills (how-to playbooks)
 # ============================================================================
 
 resource "chatbotkit_space" "coding" {
@@ -187,7 +187,7 @@ resource "chatbotkit_skillset_ability" "read_coding_skills" {
 }
 
 # ============================================================================
-# Designs Manager — keeps the Design space in sync with upstream
+# Designs Manager - keeps the Design space in sync with upstream
 # ============================================================================
 
 resource "chatbotkit_skillset" "designs_manager_tools" {
@@ -232,7 +232,7 @@ output "github_bot_id" {
 }
 
 output "coding_tools_alias" {
-  description = "The cross-account reference for the exported coding toolset"
+  description = "The cross-User reference for the shared coding toolset"
   value       = "@shared@${chatbotkit_skillset.coding_tools.alias}"
 }
 

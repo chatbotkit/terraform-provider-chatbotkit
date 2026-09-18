@@ -1,8 +1,8 @@
 # Secret values for the internal-services-fetch example.
 #
-# The ChatBotKit API key itself is supplied separately via the environment:
+# The ChatBotKit API token itself is supplied separately via the environment:
 #
-#   export CHATBOTKIT_API_KEY="sk-...your-api-key..."
+#   export CHATBOTKIT_API_TOKEN="sk-...your-api-token..."
 #
 # Copy this file to terraform.tfvars and fill in the real values. Do not commit
 # terraform.tfvars — it contains secrets.

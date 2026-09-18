@@ -102,7 +102,7 @@ agent/skills/learn/              SKILL.md                               (judgmen
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="..."
+export CHATBOTKIT_API_TOKEN="..."
 terraform apply \
   -var="slack_bot_token=xoxb-..." \
   -var="slack_signing_secret=..."

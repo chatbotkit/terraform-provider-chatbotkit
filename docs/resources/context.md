@@ -7,7 +7,7 @@ description: |-
 
 # chatbotkit_context (Resource)
 
-Manages a ChatBotKit Context. A context binds the current account (or, under `run_as`, a partner sub-account) to a set of platform resources — a blueprint, bot, dataset, or skillset — along with a free-form payload. It is commonly used to scope a sub-account to a pre-defined configuration, or to attach per-account data (such as a repository or project id) that an agent reads at runtime.
+Manages a ChatBotKit Context. A context binds the current User, or the child User selected by `run_as`, to a set of platform resources such as a blueprint, bot, dataset, or skillset, along with a free-form payload. It is commonly used to scope a User to a predefined configuration or attach per-User data, such as a repository or project ID, that an agent reads at runtime.
 
 ## Example Usage
 
@@ -47,11 +47,11 @@ resource "chatbotkit_context" "onboarding" {
 }
 ```
 
-### Per-sub-account context (with run_as)
+### Per-User context (with run_as)
 
 ```terraform
-# A provider alias whose run_as targets a partner sub-account; the context is
-# created inside that sub-account.
+# A provider alias whose run_as targets a child User. The context is
+# created for that User.
 provider "chatbotkit" {
   alias  = "customer"
   run_as = var.customer_account_id

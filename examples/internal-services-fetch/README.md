@@ -67,7 +67,7 @@ in `X-Forwarded-Authorization` — both supplied as bearer values by the secrets
 ## Usage
 
 ```bash
-export CHATBOTKIT_API_KEY="sk-...your-api-key..."
+export CHATBOTKIT_API_TOKEN="sk-...your-api-token..."
 
 cp terraform.tfvars.example terraform.tfvars   # fill in the secret values
 terraform init
