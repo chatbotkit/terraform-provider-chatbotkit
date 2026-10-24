@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.1] - 2026-10-24
+
+### Security
+
+- Update gRPC to 1.83.2 and golang.org/x/net to 0.60.0, with their required
+  transitive dependencies, to address gRPC and HTTP/2 security advisories.
+- Require Go 1.26.10 or later when building the provider.
+
+### Fixed
+
+- Include the existing protocol 6 registry manifest in release assets and
+  the signed checksum list.
+
 ## [1.10.0] - 2026-09-18
 
 ### Added
